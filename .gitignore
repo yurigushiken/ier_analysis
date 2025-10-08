@@ -1,4 +1,7 @@
-# Ignore raw and archived datasets; keep temp utilities under version control.
-data/
-\(archive\)/
+# Ignore raw dataset contents but keep directory structure discoverable.
+data/*
+!data/.gitkeep
+
+# Ignore archived snapshots entirely.
+(archive)/
 

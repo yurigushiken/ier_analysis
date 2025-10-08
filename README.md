@@ -1,6 +1,9 @@
 Always connect to the environment
 conda activate ier_env
 
+Source of data: https://drive.google.com/drive/folders/1byyY6j6rA3PXoZxDsoJV8lcu2eXdpCes?usp=drive_link
+put into data\raw
+
 Welcome to the Infant Event Representation (IER) Analysis project! We're thrilled to have you on the team. The goal of this document is to provide you with a comprehensive background on the scientific context of our work and, most importantly, a detailed guide to the data you will be working with.
 1. Project Background and Scientific Goals
 

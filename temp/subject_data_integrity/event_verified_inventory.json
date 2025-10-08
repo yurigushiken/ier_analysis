@@ -1,0 +1,998 @@
+{
+  "all_events": [
+    "f",
+    "gw",
+    "gwo",
+    "hw",
+    "hwo",
+    "sw",
+    "swo",
+    "ugw",
+    "ugwo",
+    "uhw",
+    "uhwo"
+  ],
+  "files": [
+    {
+      "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv",
+      "events_present": [
+        "f",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv",
+      "events_present": [
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    },
+    {
+      "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv",
+      "events_present": [
+        "f",
+        "gw",
+        "gwo",
+        "hw",
+        "hwo",
+        "sw",
+        "swo",
+        "ugw",
+        "ugwo",
+        "uhw",
+        "uhwo"
+      ]
+    }
+  ],
+  "files_missing_events": {
+    "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv": [],
+    "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv": [],
+    "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv": [],
+    "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv": [],
+    "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv": [],
+    "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv": [],
+    "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv": [],
+    "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv": [],
+    "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv": [
+      "gw"
+    ],
+    "data\\raw\\child-gl\\Eight-months-0101-947gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv": [],
+    "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv": [],
+    "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv": [],
+    "data\\raw\\child-gl\\Nine-months-0101-598gl.csv": [],
+    "data\\raw\\child-gl\\Nine-months-0101-694gl.csv": [],
+    "data\\raw\\child-gl\\Nine-months-0101-707gl.csv": [],
+    "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv": [],
+    "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv": [],
+    "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv": [
+      "f",
+      "ugw",
+      "ugwo",
+      "uhw",
+      "uhwo"
+    ],
+    "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv": [],
+    "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv": [],
+    "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0101-246lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0301-242lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0401-800lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0501-455lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0601-825lg.csv": [],
+    "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv": [],
+    "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv": [],
+    "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv": []
+  },
+  "events_missing_files": {
+    "f": [
+      "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+    ],
+    "gw": [
+      "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+    ],
+    "gwo": [],
+    "hw": [],
+    "hwo": [],
+    "sw": [],
+    "swo": [],
+    "ugw": [
+      "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+    ],
+    "ugwo": [
+      "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+    ],
+    "uhw": [
+      "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+    ],
+    "uhwo": [
+      "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+    ]
+  }
+}

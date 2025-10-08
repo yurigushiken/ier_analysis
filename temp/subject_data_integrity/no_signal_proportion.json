@@ -1,0 +1,394 @@
+[
+  {
+    "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv",
+    "participant": "FiftySix-years-0501-1673vvv",
+    "total_rows": 5655,
+    "no_signal_rows": 915,
+    "proportion_no_signal": 0.16180371352785147
+  },
+  {
+    "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv",
+    "participant": "FortyOne-years-0101-1677vv",
+    "total_rows": 5196,
+    "no_signal_rows": 407,
+    "proportion_no_signal": 0.07832948421862972
+  },
+  {
+    "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv",
+    "participant": "FortySix-years-0101-1666vv",
+    "total_rows": 5487,
+    "no_signal_rows": 1219,
+    "proportion_no_signal": 0.2221614725715327
+  },
+  {
+    "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv",
+    "participant": "FourtySix-years-0401-1672vv",
+    "total_rows": 5659,
+    "no_signal_rows": 1040,
+    "proportion_no_signal": 0.18377805265948047
+  },
+  {
+    "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv",
+    "participant": "ThirtyFive-years-0301-1675vv",
+    "total_rows": 6478,
+    "no_signal_rows": 863,
+    "proportion_no_signal": 0.13322012966965113
+  },
+  {
+    "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv",
+    "participant": "ThirtyNine-years-0101-1660vv",
+    "total_rows": 6119,
+    "no_signal_rows": 768,
+    "proportion_no_signal": 0.12551070436345807
+  },
+  {
+    "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv",
+    "participant": "ThirtyOne-years-0201-1676vv",
+    "total_rows": 5471,
+    "no_signal_rows": 290,
+    "proportion_no_signal": 0.053006762931822334
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv",
+    "participant": "TwentyEight-years-0101-1664vv",
+    "total_rows": 5672,
+    "no_signal_rows": 229,
+    "proportion_no_signal": 0.0403737658674189
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv",
+    "participant": "TwentyFive-years-0101-1667vv",
+    "total_rows": 5549,
+    "no_signal_rows": 328,
+    "proportion_no_signal": 0.05910974950441521
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv",
+    "participant": "TwentyFive-years-0201-1669vv",
+    "total_rows": 5928,
+    "no_signal_rows": 316,
+    "proportion_no_signal": 0.053306342780026994
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv",
+    "participant": "TwentyFour-years-0101-1663vv",
+    "total_rows": 5487,
+    "no_signal_rows": 275,
+    "proportion_no_signal": 0.050118461818844544
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv",
+    "participant": "TwentySeven-years-0101-1670vv",
+    "total_rows": 5497,
+    "no_signal_rows": 339,
+    "proportion_no_signal": 0.06167000181917409
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv",
+    "participant": "TwentyThree-years-0601-1671vv",
+    "total_rows": 5825,
+    "no_signal_rows": 111,
+    "proportion_no_signal": 0.019055793991416308
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv",
+    "participant": "TwentyTwo-years-0101-1661vv",
+    "total_rows": 6865,
+    "no_signal_rows": 260,
+    "proportion_no_signal": 0.037873270211216316
+  },
+  {
+    "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv",
+    "participant": "TwentyTwo-years-0201-1665vv",
+    "total_rows": 5626,
+    "no_signal_rows": 625,
+    "proportion_no_signal": 0.11109136153572698
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv",
+    "participant": "Eight-months-0101-1579gl",
+    "total_rows": 5433,
+    "no_signal_rows": 3996,
+    "proportion_no_signal": 0.7355052457205964
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv",
+    "participant": "Eight-months-0101-947gl",
+    "total_rows": 8350,
+    "no_signal_rows": 6316,
+    "proportion_no_signal": 0.7564071856287425
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv",
+    "participant": "Eight-months-0201-1170gl",
+    "total_rows": 8504,
+    "no_signal_rows": 6834,
+    "proportion_no_signal": 0.8036218250235183
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv",
+    "participant": "Eight-months-0201-1464gl",
+    "total_rows": 7155,
+    "no_signal_rows": 2763,
+    "proportion_no_signal": 0.38616352201257864
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv",
+    "participant": "Eight-months-0301-1158gl",
+    "total_rows": 6082,
+    "no_signal_rows": 3994,
+    "proportion_no_signal": 0.6566918776718185
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv",
+    "participant": "Eight-months-0301-1658gl",
+    "total_rows": 10060,
+    "no_signal_rows": 6731,
+    "proportion_no_signal": 0.6690854870775348
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv",
+    "participant": "Eight-months-0302-5513gl",
+    "total_rows": 7801,
+    "no_signal_rows": 5519,
+    "proportion_no_signal": 0.7074734008460454
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv",
+    "participant": "Eight-months-0401-1638gl",
+    "total_rows": 10455,
+    "no_signal_rows": 5098,
+    "proportion_no_signal": 0.4876135820181731
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv",
+    "participant": "Eight-months-0501-6206gl",
+    "total_rows": 6253,
+    "no_signal_rows": 1526,
+    "proportion_no_signal": 0.2440428594274748
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv",
+    "participant": "Eight-months-0601-5801gl",
+    "total_rows": 10840,
+    "no_signal_rows": 7091,
+    "proportion_no_signal": 0.6541512915129152
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv",
+    "participant": "Eleven-months-0101-141gl",
+    "total_rows": 5959,
+    "no_signal_rows": 779,
+    "proportion_no_signal": 0.13072663198523243
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv",
+    "participant": "Eleven-months-0101-342gl",
+    "total_rows": 8084,
+    "no_signal_rows": 3944,
+    "proportion_no_signal": 0.48787728847105394
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv",
+    "participant": "Eleven-months-0201-209gl",
+    "total_rows": 5700,
+    "no_signal_rows": 699,
+    "proportion_no_signal": 0.12263157894736842
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv",
+    "participant": "Eleven-months-0202-5721gl",
+    "total_rows": 7249,
+    "no_signal_rows": 3172,
+    "proportion_no_signal": 0.4375775969099186
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv",
+    "participant": "Eleven-months-0301-372gl",
+    "total_rows": 12114,
+    "no_signal_rows": 9262,
+    "proportion_no_signal": 0.7645699191018656
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv",
+    "participant": "Eleven-months-0301-418gl",
+    "total_rows": 6264,
+    "no_signal_rows": 3043,
+    "proportion_no_signal": 0.4857918263090677
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv",
+    "participant": "Eleven-months-0301-5909gl",
+    "total_rows": 7764,
+    "no_signal_rows": 2932,
+    "proportion_no_signal": 0.377640391550747
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+    "participant": "Eleven-months-0401-682gl",
+    "total_rows": 9766,
+    "no_signal_rows": 8537,
+    "proportion_no_signal": 0.8741552324390743
+  },
+  {
+    "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv",
+    "participant": "Eleven-months-0501-837gl",
+    "total_rows": 8270,
+    "no_signal_rows": 3960,
+    "proportion_no_signal": 0.4788391777509069
+  },
+  {
+    "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv",
+    "participant": "Nine-months-0101-598gl",
+    "total_rows": 5642,
+    "no_signal_rows": 3848,
+    "proportion_no_signal": 0.6820276497695853
+  },
+  {
+    "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv",
+    "participant": "Nine-months-0101-694gl",
+    "total_rows": 8085,
+    "no_signal_rows": 5002,
+    "proportion_no_signal": 0.6186765615337044
+  },
+  {
+    "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv",
+    "participant": "Nine-months-0101-707gl",
+    "total_rows": 5482,
+    "no_signal_rows": 2331,
+    "proportion_no_signal": 0.42520977745348415
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv",
+    "participant": "Seven-months-0201-1152lg",
+    "total_rows": 11015,
+    "no_signal_rows": 8127,
+    "proportion_no_signal": 0.73781207444394
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv",
+    "participant": "Seven-months-0202-6362lg",
+    "total_rows": 5814,
+    "no_signal_rows": 3174,
+    "proportion_no_signal": 0.5459236326109391
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv",
+    "participant": "Seven-months-0301-1342lg",
+    "total_rows": 3737,
+    "no_signal_rows": 2411,
+    "proportion_no_signal": 0.6451699223976451
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv",
+    "participant": "Seven-months-0301-6399lg",
+    "total_rows": 7786,
+    "no_signal_rows": 5883,
+    "proportion_no_signal": 0.7555869509375803
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+    "participant": "Seven-months-0401-1655lg",
+    "total_rows": 8529,
+    "no_signal_rows": 6254,
+    "proportion_no_signal": 0.733262985109626
+  },
+  {
+    "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv",
+    "participant": "Seven-months-0601-6417lg",
+    "total_rows": 7776,
+    "no_signal_rows": 3679,
+    "proportion_no_signal": 0.4731224279835391
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv",
+    "participant": "Ten-months-0101-246lg",
+    "total_rows": 4586,
+    "no_signal_rows": 1868,
+    "proportion_no_signal": 0.40732664631487137
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv",
+    "participant": "Ten-months-0102-5728lg",
+    "total_rows": 11388,
+    "no_signal_rows": 6277,
+    "proportion_no_signal": 0.5511942395504039
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv",
+    "participant": "Ten-months-0301-1158lg",
+    "total_rows": 11003,
+    "no_signal_rows": 5940,
+    "proportion_no_signal": 0.5398527674270653
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv",
+    "participant": "Ten-months-0301-242lg",
+    "total_rows": 6785,
+    "no_signal_rows": 2378,
+    "proportion_no_signal": 0.35047899778924096
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv",
+    "participant": "Ten-months-0401-800lg",
+    "total_rows": 8546,
+    "no_signal_rows": 2934,
+    "proportion_no_signal": 0.34331851158436694
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv",
+    "participant": "Ten-months-0501-455lg",
+    "total_rows": 6002,
+    "no_signal_rows": 155,
+    "proportion_no_signal": 0.025824725091636122
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv",
+    "participant": "Ten-months-0501-5669lg",
+    "total_rows": 8422,
+    "no_signal_rows": 5175,
+    "proportion_no_signal": 0.6144621230111612
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv",
+    "participant": "Ten-months-0501-5753lg",
+    "total_rows": 9223,
+    "no_signal_rows": 3966,
+    "proportion_no_signal": 0.4300119267049767
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv",
+    "participant": "Ten-months-0601-5737lg",
+    "total_rows": 7739,
+    "no_signal_rows": 3374,
+    "proportion_no_signal": 0.43597364000516864
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv",
+    "participant": "Ten-months-0601-825lg",
+    "total_rows": 6418,
+    "no_signal_rows": 1596,
+    "proportion_no_signal": 0.24867559987535057
+  },
+  {
+    "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv",
+    "participant": "Ten-months-0602-5894lg",
+    "total_rows": 7054,
+    "no_signal_rows": 2626,
+    "proportion_no_signal": 0.37227105188545506
+  },
+  {
+    "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv",
+    "participant": "Twelve-months-0101-1647lg",
+    "total_rows": 8377,
+    "no_signal_rows": 2442,
+    "proportion_no_signal": 0.29151247463292346
+  },
+  {
+    "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv",
+    "participant": "Twelve-months-0101-1654lg",
+    "total_rows": 6986,
+    "no_signal_rows": 1431,
+    "proportion_no_signal": 0.20483824792442026
+  }
+]

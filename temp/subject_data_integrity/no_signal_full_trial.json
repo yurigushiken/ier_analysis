@@ -1,0 +1,2664 @@
+[
+  {
+    "participant": "Eleven-0401-682",
+    "group": "child-gl",
+    "total_trials": 16,
+    "full_no_signal_trials": 8,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      },
+      {
+        "trial_id": "16",
+        "path": "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0401-682gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16"
+    ]
+  },
+  {
+    "participant": "Seven-0401-1655",
+    "group": "child-gl",
+    "total_trials": 23,
+    "full_no_signal_trials": 5,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "16",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "17",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "18",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "19",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "20",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "21",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "22",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      },
+      {
+        "trial_id": "23",
+        "path": "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0401-1655lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "11",
+      "12",
+      "13",
+      "19",
+      "22"
+    ]
+  },
+  {
+    "participant": "Ten-0102-5728",
+    "group": "child-gl",
+    "total_trials": 20,
+    "full_no_signal_trials": 4,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "16",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "17",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "18",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "19",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      },
+      {
+        "trial_id": "20",
+        "path": "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv",
+      "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv",
+      "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv",
+      "data\\raw\\child-gl\\Ten-months-0102-5728lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "14",
+      "17",
+      "18",
+      "20"
+    ]
+  },
+  {
+    "participant": "Eleven-0301-372",
+    "group": "child-gl",
+    "total_trials": 14,
+    "full_no_signal_trials": 3,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "10",
+      "13",
+      "14"
+    ]
+  },
+  {
+    "participant": "Seven-0202-6362",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 3,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv",
+      "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "4",
+      "5",
+      "6"
+    ]
+  },
+  {
+    "participant": "Eight-0401-1638",
+    "group": "child-gl",
+    "total_trials": 17,
+    "full_no_signal_trials": 2,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "16",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      },
+      {
+        "trial_id": "17",
+        "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv",
+      "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "12",
+      "15"
+    ]
+  },
+  {
+    "participant": "Twelve-0101-1647",
+    "group": "child-gl",
+    "total_trials": 14,
+    "full_no_signal_trials": 2,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv",
+      "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "10",
+      "11"
+    ]
+  },
+  {
+    "participant": "Eleven-0101-342",
+    "group": "child-gl",
+    "total_trials": 10,
+    "full_no_signal_trials": 2,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv",
+      "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "9",
+      "10"
+    ]
+  },
+  {
+    "participant": "Eight-0301-1658",
+    "group": "child-gl",
+    "total_trials": 17,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "16",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      },
+      {
+        "trial_id": "17",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "14"
+    ]
+  },
+  {
+    "participant": "Ten-0301-1158",
+    "group": "child-gl",
+    "total_trials": 15,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "14",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      },
+      {
+        "trial_id": "15",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "11"
+    ]
+  },
+  {
+    "participant": "Eight-0302-5513",
+    "group": "child-gl",
+    "total_trials": 11,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "6"
+    ]
+  },
+  {
+    "participant": "Eight-0601-5801",
+    "group": "child-gl",
+    "total_trials": 10,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "10"
+    ]
+  },
+  {
+    "participant": "Eight-0101-947",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Eight-months-0101-947gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "8"
+    ]
+  },
+  {
+    "participant": "Ten-0501-5669",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "7"
+    ]
+  },
+  {
+    "participant": "Ten-0601-825",
+    "group": "child-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Ten-months-0601-825lg.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "7"
+    ]
+  },
+  {
+    "participant": "Nine-0101-707",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 1,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [
+      "data\\raw\\child-gl\\Nine-months-0101-707gl.csv"
+    ],
+    "full_no_signal_trial_ids": [
+      "4"
+    ]
+  },
+  {
+    "participant": "Seven-0201-1152",
+    "group": "child-gl",
+    "total_trials": 13,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "12",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      },
+      {
+        "trial_id": "13",
+        "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Nine-0101-694",
+    "group": "child-gl",
+    "total_trials": 11,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0501-5753",
+    "group": "child-gl",
+    "total_trials": 11,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      },
+      {
+        "trial_id": "11",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0301-5909",
+    "group": "child-gl",
+    "total_trials": 10,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Seven-0601-6417",
+    "group": "child-gl",
+    "total_trials": 10,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      },
+      {
+        "trial_id": "10",
+        "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eight-0201-1170",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0401-800",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0601-5737",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0602-5894",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Twelve-0101-1654",
+    "group": "child-gl",
+    "total_trials": 9,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      },
+      {
+        "trial_id": "9",
+        "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "FiftySix-0501-1673",
+    "group": "adult-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0101-141",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0202-5721",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0301-418",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0501-837",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Seven-0301-6399",
+    "group": "child-gl",
+    "total_trials": 8,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      },
+      {
+        "trial_id": "8",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "ThirtyFive-0301-1675",
+    "group": "adult-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyFive-0201-1669",
+    "group": "adult-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyThree-0601-1671",
+    "group": "adult-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyTwo-0101-1661",
+    "group": "adult-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eight-0201-1464",
+    "group": "child-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eight-0301-1158",
+    "group": "child-gl",
+    "total_trials": 7,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      },
+      {
+        "trial_id": "7",
+        "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "FortyOne-0101-1677",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "FortySix-0101-1666",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "FourtySix-0401-1672",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "ThirtyNine-0101-1660",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "ThirtyOne-0201-1676",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyEight-0101-1664",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyFive-0101-1667",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyFour-0101-1663",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentySeven-0101-1670",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "TwentyTwo-0201-1665",
+    "group": "adult-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eight-0101-1579",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0101-1579gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eight-0501-6206",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Eleven-0201-209",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Nine-0101-598",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Seven-0301-1342",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Seven-months-0301-1342lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0301-242",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0501-455",
+    "group": "child-gl",
+    "total_trials": 6,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      },
+      {
+        "trial_id": "5",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      },
+      {
+        "trial_id": "6",
+        "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  },
+  {
+    "participant": "Ten-0101-246",
+    "group": "child-gl",
+    "total_trials": 4,
+    "full_no_signal_trials": 0,
+    "all_trial_paths": [
+      {
+        "trial_id": "1",
+        "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv"
+      },
+      {
+        "trial_id": "2",
+        "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv"
+      },
+      {
+        "trial_id": "3",
+        "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv"
+      },
+      {
+        "trial_id": "4",
+        "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv"
+      }
+    ],
+    "full_no_signal_trial_paths": [],
+    "full_no_signal_trial_ids": []
+  }
+]

@@ -1,0 +1,4 @@
+# Ignore raw and archived datasets; keep temp utilities under version control.
+data/
+\(archive\)/
+

@@ -1,0 +1,971 @@
+[
+  {
+    "participant": "FiftySix-0501-1673",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\FiftySix-years-0501-1673vvv.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "ugw": 1,
+      "ugwo": 3,
+      "f": 4,
+      "hwo": 8,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "gw": 3,
+      "gwo": 3
+    }
+  },
+  {
+    "participant": "FortyOne-0101-1677",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\FortyOne-years-0101-1677vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 1,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "FortySix-0101-1666",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\FortySix-years-0101-1666vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "FourtySix-0401-1672",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\FourtySix-years-0401-1672vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "f": 3,
+      "hwo": 6,
+      "hw": 3,
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "ugw": 4,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "ThirtyFive-0301-1675",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\ThirtyFive-years-0301-1675vv.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "sw": 4,
+      "swo": 5,
+      "hw": 3,
+      "hwo": 7,
+      "gw": 3,
+      "gwo": 4,
+      "uhw": 3,
+      "uhwo": 3,
+      "f": 4,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "ThirtyNine-0101-1660",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\ThirtyNine-years-0101-1660vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 4,
+      "sw": 4,
+      "swo": 4,
+      "hw": 4,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "ThirtyOne-0201-1676",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\ThirtyOne-years-0201-1676vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "f": 3,
+      "hwo": 6,
+      "gw": 3,
+      "gwo": 3,
+      "hw": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "TwentyEight-0101-1664",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyEight-years-0101-1664vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 4,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "TwentyFive-0101-1667",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyFive-years-0101-1667vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "TwentyFive-0201-1669",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyFive-years-0201-1669vv.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "f": 4,
+      "hwo": 7,
+      "gw": 3,
+      "gwo": 4,
+      "hw": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "TwentyFour-0101-1663",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyFour-years-0101-1663vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "TwentySeven-0101-1670",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentySeven-years-0101-1670vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "TwentyThree-0601-1671",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyThree-years-0601-1671vv.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "hw": 4,
+      "hwo": 7,
+      "gw": 3,
+      "gwo": 3,
+      "f": 3,
+      "ugw": 3,
+      "ugwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "uhw": 3,
+      "uhwo": 3
+    }
+  },
+  {
+    "participant": "TwentyTwo-0101-1661",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyTwo-years-0101-1661vv.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "gw": 4,
+      "gwo": 4,
+      "uhw": 4,
+      "uhwo": 4,
+      "sw": 4,
+      "swo": 4,
+      "hw": 3,
+      "hwo": 7,
+      "ugw": 5,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "TwentyTwo-0201-1665",
+    "group": "adult-gl",
+    "path": "data\\raw\\adult-gl\\TwentyTwo-years-0201-1665vv.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "sw": 4,
+      "swo": 3,
+      "f": 3,
+      "hwo": 6,
+      "gw": 3,
+      "gwo": 3,
+      "hw": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "Eight-0101-947",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0101-947gl.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 5,
+      "uhwo": 6,
+      "sw": 4,
+      "swo": 5,
+      "hw": 5,
+      "hwo": 9,
+      "ugw": 7,
+      "ugwo": 3,
+      "f": 4
+    }
+  },
+  {
+    "participant": "Eight-0201-1170",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0201-1170gl.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "sw": 4,
+      "swo": 4,
+      "f": 7,
+      "hwo": 7,
+      "gw": 9,
+      "gwo": 3,
+      "hw": 4,
+      "uhw": 4,
+      "uhwo": 6,
+      "ugw": 4,
+      "ugwo": 4
+    }
+  },
+  {
+    "participant": "Eight-0201-1464",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0201-1464gl.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "f": 3,
+      "hwo": 7,
+      "gw": 3,
+      "gwo": 4,
+      "hw": 4,
+      "uhw": 3,
+      "uhwo": 4,
+      "ugw": 6,
+      "ugwo": 7
+    }
+  },
+  {
+    "participant": "Eight-0301-1158",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0301-1158gl.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 7,
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 4,
+      "uhwo": 4,
+      "f": 3,
+      "ugw": 4,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "Eight-0301-1658",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0301-1658gl.csv",
+    "total_trials": 17,
+    "event_counts": {
+      "sw": 3,
+      "swo": 6,
+      "hw": 3,
+      "hwo": 17,
+      "gw": 9,
+      "gwo": 5,
+      "uhw": 3,
+      "uhwo": 7,
+      "f": 5,
+      "ugw": 3,
+      "ugwo": 5
+    }
+  },
+  {
+    "participant": "Eight-0302-5513",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0302-5513gl.csv",
+    "total_trials": 11,
+    "event_counts": {
+      "sw": 4,
+      "swo": 3,
+      "hw": 4,
+      "hwo": 11,
+      "gw": 4,
+      "gwo": 3,
+      "uhw": 6,
+      "uhwo": 5,
+      "f": 5,
+      "ugw": 4,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "Eight-0401-1638",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0401-1638gl.csv",
+    "total_trials": 17,
+    "event_counts": {
+      "f": 3,
+      "hwo": 8,
+      "hw": 3,
+      "gw": 3,
+      "gwo": 8,
+      "uhw": 4,
+      "uhwo": 10,
+      "sw": 4,
+      "swo": 3,
+      "ugw": 17,
+      "ugwo": 6
+    }
+  },
+  {
+    "participant": "Eight-0501-6206",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0501-6206gl.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3,
+      "hwo": 6,
+      "uhw": 4,
+      "uhwo": 4,
+      "sw": 5,
+      "swo": 3,
+      "hw": 3,
+      "gw": 4,
+      "gwo": 3
+    }
+  },
+  {
+    "participant": "Eight-0601-5801",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eight-months-0601-5801gl.csv",
+    "total_trials": 10,
+    "event_counts": {
+      "hw": 5,
+      "hwo": 10,
+      "gw": 9,
+      "gwo": 7,
+      "f": 10,
+      "ugw": 5,
+      "ugwo": 6,
+      "sw": 5,
+      "swo": 6,
+      "uhw": 3,
+      "uhwo": 5
+    }
+  },
+  {
+    "participant": "Eleven-0101-141",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0101-141gl.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 4,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 8,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "Eleven-0101-342",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0101-342gl.csv",
+    "total_trials": 10,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 4,
+      "sw": 3,
+      "swo": 4,
+      "hw": 3,
+      "hwo": 10,
+      "ugw": 4,
+      "ugwo": 8,
+      "f": 8
+    }
+  },
+  {
+    "participant": "Eleven-0201-209",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0201-209gl.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "sw": 3,
+      "swo": 4,
+      "f": 3,
+      "hwo": 6,
+      "gw": 3,
+      "gwo": 3,
+      "hw": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "Eleven-0202-5721",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0202-5721gl.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "f": 3,
+      "hwo": 8,
+      "gw": 4,
+      "gwo": 8,
+      "hw": 4,
+      "uhw": 3,
+      "uhwo": 4,
+      "ugw": 4,
+      "ugwo": 4
+    }
+  },
+  {
+    "participant": "Eleven-0301-372",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-372gl.csv",
+    "total_trials": 14,
+    "event_counts": {
+      "sw": 5,
+      "swo": 3,
+      "hw": 4,
+      "hwo": 9,
+      "gw": 4,
+      "gwo": 8,
+      "uhw": 9,
+      "uhwo": 14,
+      "f": 4,
+      "ugw": 12,
+      "ugwo": 8
+    }
+  },
+  {
+    "participant": "Eleven-0301-418",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-418gl.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "sw": 4,
+      "swo": 3,
+      "hw": 4,
+      "hwo": 8,
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "f": 3,
+      "ugw": 3,
+      "ugwo": 4
+    }
+  },
+  {
+    "participant": "Eleven-0301-5909",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0301-5909gl.csv",
+    "total_trials": 10,
+    "event_counts": {
+      "sw": 4,
+      "swo": 3,
+      "hw": 6,
+      "hwo": 10,
+      "gw": 4,
+      "gwo": 5,
+      "uhw": 3,
+      "uhwo": 4,
+      "f": 3,
+      "ugw": 3,
+      "ugwo": 6
+    }
+  },
+  {
+    "participant": "Eleven-0501-837",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Eleven-months-0501-837gl.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "ugw": 6,
+      "ugwo": 5,
+      "f": 5,
+      "hwo": 7,
+      "uhw": 3,
+      "uhwo": 5,
+      "sw": 4,
+      "swo": 4,
+      "hw": 8,
+      "gw": 4,
+      "gwo": 3
+    }
+  },
+  {
+    "participant": "Nine-0101-598",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Nine-months-0101-598gl.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 4,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "Nine-0101-694",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Nine-months-0101-694gl.csv",
+    "total_trials": 11,
+    "event_counts": {
+      "gw": 4,
+      "gwo": 5,
+      "uhw": 4,
+      "uhwo": 5,
+      "sw": 5,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 11,
+      "ugw": 6,
+      "ugwo": 4,
+      "f": 3
+    }
+  },
+  {
+    "participant": "Nine-0101-707",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Nine-months-0101-707gl.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 6,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 3
+    }
+  },
+  {
+    "participant": "Seven-0201-1152",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Seven-months-0201-1152lg.csv",
+    "total_trials": 13,
+    "event_counts": {
+      "sw": 4,
+      "swo": 6,
+      "f": 3,
+      "hwo": 13,
+      "gw": 11,
+      "gwo": 7,
+      "hw": 8,
+      "uhw": 5,
+      "uhwo": 6,
+      "ugw": 5,
+      "ugwo": 4
+    }
+  },
+  {
+    "participant": "Seven-0202-6362",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Seven-months-0202-6362lg.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "sw": 3,
+      "swo": 3,
+      "f": 3,
+      "hwo": 6,
+      "gw": 3,
+      "gwo": 4,
+      "hw": 4,
+      "uhw": 3,
+      "uhwo": 3,
+      "ugw": 3,
+      "ugwo": 3
+    }
+  },
+  {
+    "participant": "Seven-0301-6399",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Seven-months-0301-6399lg.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "sw": 3,
+      "swo": 5,
+      "hw": 5,
+      "hwo": 8,
+      "gw": 7,
+      "gwo": 4,
+      "uhw": 3,
+      "uhwo": 3,
+      "f": 5,
+      "ugw": 4,
+      "ugwo": 4
+    }
+  },
+  {
+    "participant": "Seven-0601-6417",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Seven-months-0601-6417lg.csv",
+    "total_trials": 10,
+    "event_counts": {
+      "hw": 4,
+      "hwo": 10,
+      "gw": 6,
+      "gwo": 5,
+      "f": 3,
+      "ugw": 5,
+      "ugwo": 3,
+      "sw": 4,
+      "swo": 4,
+      "uhw": 4,
+      "uhwo": 3
+    }
+  },
+  {
+    "participant": "Ten-0101-246",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0101-246lg.csv",
+    "total_trials": 4,
+    "event_counts": {
+      "gw": 4,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 2,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 4,
+      "ugw": 3,
+      "ugwo": 3,
+      "f": 1
+    }
+  },
+  {
+    "participant": "Ten-0301-1158",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0301-1158lg.csv",
+    "total_trials": 15,
+    "event_counts": {
+      "sw": 3,
+      "swo": 5,
+      "hw": 8,
+      "hwo": 8,
+      "gw": 5,
+      "gwo": 6,
+      "uhw": 15,
+      "uhwo": 6,
+      "f": 3,
+      "ugw": 6,
+      "ugwo": 7
+    }
+  },
+  {
+    "participant": "Ten-0301-242",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0301-242lg.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "sw": 3,
+      "swo": 4,
+      "hw": 3,
+      "hwo": 6,
+      "gw": 4,
+      "gwo": 3,
+      "uhw": 5,
+      "uhwo": 3,
+      "f": 3,
+      "ugw": 5,
+      "ugwo": 5
+    }
+  },
+  {
+    "participant": "Ten-0401-800",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0401-800lg.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "f": 3,
+      "hwo": 7,
+      "hw": 3,
+      "gw": 7,
+      "gwo": 4,
+      "uhw": 4,
+      "uhwo": 8,
+      "sw": 3,
+      "swo": 4,
+      "ugw": 4,
+      "ugwo": 9
+    }
+  },
+  {
+    "participant": "Ten-0501-455",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0501-455lg.csv",
+    "total_trials": 6,
+    "event_counts": {
+      "ugw": 3,
+      "ugwo": 4,
+      "f": 3,
+      "hwo": 6,
+      "uhw": 3,
+      "uhwo": 4,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "gw": 4,
+      "gwo": 3
+    }
+  },
+  {
+    "participant": "Ten-0501-5669",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0501-5669lg.csv",
+    "total_trials": 8,
+    "event_counts": {
+      "ugw": 8,
+      "ugwo": 6,
+      "f": 3,
+      "hwo": 6,
+      "uhw": 5,
+      "uhwo": 3,
+      "sw": 6,
+      "swo": 5,
+      "hw": 5,
+      "gw": 3,
+      "gwo": 5
+    }
+  },
+  {
+    "participant": "Ten-0501-5753",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0501-5753lg.csv",
+    "total_trials": 11,
+    "event_counts": {
+      "ugw": 3,
+      "ugwo": 5,
+      "f": 3,
+      "hwo": 11,
+      "uhw": 3,
+      "uhwo": 5,
+      "sw": 9,
+      "swo": 4,
+      "hw": 7,
+      "gw": 5,
+      "gwo": 5
+    }
+  },
+  {
+    "participant": "Ten-0601-5737",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0601-5737lg.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "hw": 3,
+      "hwo": 9,
+      "gw": 3,
+      "gwo": 5,
+      "f": 6,
+      "ugw": 5,
+      "ugwo": 3,
+      "sw": 4,
+      "swo": 6,
+      "uhw": 3,
+      "uhwo": 3
+    }
+  },
+  {
+    "participant": "Ten-0601-825",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0601-825lg.csv",
+    "total_trials": 7,
+    "event_counts": {
+      "hw": 3,
+      "hwo": 6,
+      "gw": 3,
+      "gwo": 3,
+      "f": 3,
+      "ugw": 4,
+      "ugwo": 3,
+      "sw": 4,
+      "swo": 3,
+      "uhw": 3,
+      "uhwo": 7
+    }
+  },
+  {
+    "participant": "Ten-0602-5894",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Ten-months-0602-5894lg.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "hw": 3,
+      "hwo": 9,
+      "gw": 4,
+      "gwo": 4,
+      "f": 4,
+      "ugw": 3,
+      "ugwo": 5,
+      "sw": 3,
+      "swo": 4,
+      "uhw": 4,
+      "uhwo": 3
+    }
+  },
+  {
+    "participant": "Twelve-0101-1647",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Twelve-months-0101-1647lg.csv",
+    "total_trials": 14,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 3,
+      "sw": 3,
+      "swo": 3,
+      "hw": 4,
+      "hwo": 14,
+      "ugw": 8,
+      "ugwo": 8,
+      "f": 3
+    }
+  },
+  {
+    "participant": "Twelve-0101-1654",
+    "group": "child-gl",
+    "path": "data\\raw\\child-gl\\Twelve-months-0101-1654lg.csv",
+    "total_trials": 9,
+    "event_counts": {
+      "gw": 3,
+      "gwo": 3,
+      "uhw": 3,
+      "uhwo": 4,
+      "sw": 3,
+      "swo": 3,
+      "hw": 3,
+      "hwo": 9,
+      "ugw": 3,
+      "ugwo": 9,
+      "f": 3
+    }
+  }
+]

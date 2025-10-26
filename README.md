@@ -1,14 +1,14 @@
 Always connect to the environment
-conda activate ier_env
+conda activate ier_analysis
 
-Source of data: https://drive.google.com/drive/folders/1byyY6j6rA3PXoZxDsoJV8lcu2eXdpCes?usp=drive_link
+Source of data: https://drive.google.com/drive/u/0/folders/1fZQjgI5_J19K9s54ciDbHXmunB_SDHAt
 put into data\raw
 
 1. Project Background and Scientific Goals
 
 Our research is focused on one of the most fundamental questions in cognitive science: How do infants begin to understand the structure of events and language before they can speak?
 
-When we describe an action like "The girl gives the toy to the boy," we are using a "verb-argument structure." The verb is 'gives', and it requires three arguments to make sense: a giver (the girl), a recipient (the boy), and an object being given (the toy). A different action, like 'hugging', only requires two arguments: a hugger and someone being hugged.
+When we describe an action like "The woman gives the toy to the man," we are using a "verb-argument structure." The verb is 'gives', and it requires three arguments to make sense: a giver (the woman), a recipient (the man), and an object being given (the toy). A different action, like 'hugging', only requires two arguments: a hugger and someone being hugged.
 
 The central hypothesis of our work, inspired by the foundational studies of Dr. Peter Gordon (e.g., Gordon, 2003), is that infants have a pre-linguistic understanding of this argument structure. We believe they can distinguish between elements that are essential to an event's meaning (like the toy in 'giving') and elements that are merely incidental (like a toy being held during a 'hugging' event).
 
@@ -47,6 +47,17 @@ Eight-0101-947,00:00:05:8667,no,signal,5.8667,5.9,,gw,176,1,1,1,1,1,approach,1,i
     etc.
     "toy" "other" means subject was looking at the toy. This should only occur in trials that are "with" or "with toy"
     "toy2" "other"  means subject was looking where the toy would be had there been a toy there, had it been the 'with' version. This only occurs during 'wo' or 'without' trials/events.
+So, the only "what" "where" pair combinations are as follows (with counts):
+no, signal -> 147,577
+screen, other -> 62,152
+woman, face -> 35,784
+man, face -> 33,450
+toy, other -> 29,269
+man, body -> 19,114
+toy2, other -> 16,959
+woman, body -> 15,595
+man, hands -> 4,258
+woman, hands -> 2,001
 
     Onset & Offset: These are the precise start and end times for the event on this line, measured in seconds from the start of the trial video. This is the primary time measurement we will use for calculations.
 

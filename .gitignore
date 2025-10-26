@@ -5,3 +5,8 @@ data/*
 # Ignore archived snapshots entirely.
 (archive)/
 
+specify/
+specs/*
+.cursor/
+.specify/
+temp/

@@ -1,0 +1,38 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<section id="overview">
+    <h2>1. Overview</h2>
+    <p>{{ overview_text }}</p>
+</section>
+
+<section id="methods">
+    <h2>2. Methods</h2>
+    <p>{{ methods_text }}</p>
+</section>
+
+<section id="results">
+    <h2>3. Results</h2>
+    <h3>3.1 Triplet Frequencies</h3>
+    {{ frequency_table | safe }}
+
+    <h3>3.2 Age Group Summaries</h3>
+    {{ age_group_table | safe }}
+
+    <h3>3.3 Visualizations</h3>
+    {% for figure in figure_entries %}
+        <figure>
+            <img src="{{ figure.path }}" alt="{{ figure.caption }}">
+            <figcaption>{{ figure.caption }}</figcaption>
+        </figure>
+    {% endfor %}
+
+    <h3>3.4 Statistical Tests</h3>
+    {{ statistics_table | safe }}
+</section>
+
+<section id="interpretation">
+    <h2>4. Interpretation</h2>
+    <p>{{ interpretation_text }}</p>
+</section>
+{% endblock %}

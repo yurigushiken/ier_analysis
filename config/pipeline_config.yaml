@@ -1,0 +1,279 @@
+# IER Analysis Pipeline Configuration
+# Version: 1.0.0
+# Last Updated: 2025-10-25
+
+# Analysis Parameters
+analysis:
+  # Statistical significance threshold
+  alpha: 0.05
+
+  # Minimum consecutive frames to define a gaze event
+  min_gaze_frames: 3
+
+  # Minimum sample size for statistical tests (n < 3 will skip test with warning)
+  min_statistical_n: 3
+
+  # Multiple comparison correction method
+  # Options: "bonferroni", "holm", "fdr_bh", "none"
+  multiple_comparison_correction: "bonferroni"
+
+  # Confidence level for confidence intervals
+  confidence_level: 0.95
+
+# Edge Case Handling Strategy
+edge_cases:
+  # Strategy: "strict_fail" - HALT on ANY data errors
+  # - Structural errors: halt pipeline immediately
+  # - Data quality issues: halt pipeline immediately
+  # - No partial results allowed from invalid data
+  strategy: "strict_fail"
+
+  # Flag trials where participant was off-screen more than this proportion
+  # (for reporting purposes - still fails if data is invalid)
+  outlier_threshold_offscreen_pct: 0.5
+
+# Reporting Configuration
+reporting:
+  # Figure resolution (DPI) for publication quality
+  figure_dpi: 300
+
+  # Figure format for saving
+  figure_format: "png"
+
+  # Error bar type: "sem" (standard error of mean) or "ci" (confidence interval)
+  error_bar_type: "sem"
+
+  # Color palette (matplotlib/seaborn compatible)
+  # Options: "colorblind", "deep", "muted", "pastel", "bright", "dark"
+  color_palette: "colorblind"
+
+  # Font sizes for publication
+  font_size_title: 14
+  font_size_labels: 12
+  font_size_ticks: 10
+  font_size_legend: 10
+
+  # Report format versions
+  generate_html: true
+  generate_pdf: true
+
+  # Include raw data tables in reports (for transparency)
+  include_raw_tables: false
+
+  # Statistical precision (decimal places for p-values, stats)
+  stat_precision: 3
+
+# Data Paths
+paths:
+  # Raw data directory (read-only)
+  raw_data: "data/csvs_human_verified_vv"
+  raw_data_child: "data/csvs_human_verified_vv/child"
+  raw_data_adult: "data/csvs_human_verified_vv/adult"
+
+  # Processed data directory
+  processed_data: "data/processed"
+  gaze_events_file: "data/processed/gaze_events.csv"
+
+  # Results directory for individual analyses
+  results: "results"
+
+  # Final compiled reports directory
+  final_reports: "reports"
+
+  # Templates directory for Jupyter notebooks
+  templates: "templates"
+
+  # Logs directory
+  logs: "logs"
+
+# Logging Configuration
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+
+  # Log file path
+  file: "logs/pipeline.log"
+
+  # Also output to console
+  console: true
+
+  # Log format
+  format: "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+
+  # Date format
+  date_format: "%Y-%m-%d %H:%M:%S"
+
+  # Rotate log files (max size before rotation)
+  max_bytes: 10485760  # 10 MB
+  backup_count: 3
+
+# Data Validation
+validation:
+  # Required columns in raw CSV files (structural validation)
+  required_columns:
+    - "Participant"
+    - "Frame Number"
+    - "Time"
+    - "What"
+    - "Where"
+    - "Onset"
+    - "Offset"
+    - "Blue Dot Center"
+    - "event_verified"
+    - "frame_count_event"
+    - "trial_number"
+    - "trial_number_global"
+    - "frame_count_trial_number"
+    - "segment"
+    - "frame_count_segment"
+    - "participant_type"
+    - "participant_age_months"
+    - "participant_age_years"
+
+  # Valid AOI combinations (What, Where pairs)
+  valid_aoi_combinations:
+    - ["no", "signal"]           # off_screen
+    - ["screen", "other"]         # screen_nonAOI
+    - ["woman", "face"]           # woman_face
+    - ["man", "face"]             # man_face
+    - ["toy", "other"]            # toy_present
+    - ["toy2", "other"]           # toy_location
+    - ["man", "body"]             # man_body
+    - ["woman", "body"]           # woman_body
+    - ["man", "hands"]            # man_hands
+    - ["woman", "hands"]          # woman_hands
+
+  # Halt on structural errors
+  halt_on_structural_error: true
+
+  # Halt on data quality issues (strict validation)
+  halt_on_quality_issue: true
+
+# AOI Category Mapping
+aoi_mapping:
+  "no,signal": "off_screen"
+  "screen,other": "screen_nonAOI"
+  "woman,face": "woman_face"
+  "man,face": "man_face"
+  "toy,other": "toy_present"
+  "toy2,other": "toy_location"
+  "man,body": "man_body"
+  "woman,body": "woman_body"
+  "man,hands": "man_hands"
+  "woman,hands": "woman_hands"
+
+# Condition Code Mapping (all 11 event types verified in data)
+condition_mapping:
+  "gw": "GIVE_WITH"
+  "gwo": "GIVE_WITHOUT"
+  "hw": "HUG_WITH"
+  "hwo": "HUG_WITHOUT"
+  "sw": "SHOW_WITH"
+  "swo": "SHOW_WITHOUT"
+  "ugw": "UPSIDE_DOWN_GIVE_WITH"
+  "ugwo": "UPSIDE_DOWN_GIVE_WITHOUT"
+  "uhw": "UPSIDE_DOWN_HUG_WITH"
+  "uhwo": "UPSIDE_DOWN_HUG_WITHOUT"
+  "f": "FLOATING"
+
+# Age Group Classification
+age_groups:
+  # Infant age groups (in months)
+  infant:
+    - label: "8-month-olds"
+      min_months: 7
+      max_months: 9
+    - label: "12-month-olds"
+      min_months: 11
+      max_months: 13
+    - label: "16-month-olds"
+      min_months: 15
+      max_months: 17
+    - label: "20-month-olds"
+      min_months: 19
+      max_months: 21
+
+  # Adult classification (age in months > threshold)
+  adult_threshold_months: 216  # 18 years
+
+# Analysis-Specific Configuration
+analysis_specific:
+  # AR-2: Transition Analysis
+  ar2_transitions:
+    # Minimum transition count to include in matrix
+    min_transition_count: 1
+
+    # Generate directed graph visualization
+    generate_graph: true
+
+    # Graph layout algorithm: "spring", "circular", "kamada_kawai"
+    graph_layout: "spring"
+
+  # AR-3: Social Gaze Triplets
+  ar3_social_triplets:
+    # Valid triplet patterns (person1 -> toy -> person2 where person1 != person2)
+    valid_patterns:
+      - ["man_face", "toy_present", "woman_face"]
+      - ["woman_face", "toy_present", "man_face"]
+
+  # AR-5: Developmental Trajectory
+  ar5_development:
+    # Model type: "anova" or "mixed_effects"
+    model_type: "anova"
+
+  # AR-6: Learning/Habituation
+  ar6_learning:
+    # Metrics to plot across trials
+    metrics:
+      - "social_triplet_frequency"
+      - "toy_looking_proportion"
+
+# Performance Settings
+performance:
+  # Number of workers for parallel processing (0 = auto-detect)
+  num_workers: 0
+
+  # Chunk size for processing large CSV files
+  csv_chunk_size: 10000
+
+  # Cache intermediate results
+  enable_caching: false
+
+# Reproducibility
+reproducibility:
+  # Random seed (not used in current analyses but reserved for future)
+  random_seed: 42
+
+  # Record git commit hash in reports
+  record_git_commit: true
+
+  # Record environment info in reports
+  record_environment: true
+
+# Feature Flags (enable/disable analyses)
+features:
+  # Individual analyses can be toggled
+  enable_ar1: true
+  enable_ar2: true
+  enable_ar3: true
+  enable_ar4: true
+  enable_ar5: true
+  enable_ar6: true
+  enable_ar7: true  # Will auto-skip if SHOW condition not present
+
+  # Generate final compiled report
+  enable_final_report: true
+
+# Development/Debug Settings
+debug:
+  # Enable debug mode (more verbose logging, keep intermediate files)
+  enabled: false
+
+  # Limit number of participants for faster testing
+  max_participants: null  # null = no limit, set integer for testing
+
+  # Limit number of trials per participant
+  max_trials_per_participant: null
+
+  # Save intermediate DataFrames as CSV for inspection
+  save_intermediate_dataframes: false

@@ -1,0 +1,286 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Analysis Report Output Schema",
+  "description": "Schema for validating analysis report outputs (HTML, PDF, and associated files)",
+  "type": "object",
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "enum": ["AR-1", "AR-2", "AR-3", "AR-4", "AR-5", "AR-6", "AR-7", "final"],
+      "description": "Analytical requirement identifier or 'final' for compiled report"
+    },
+    "analysis_type": {
+      "type": "string",
+      "description": "Human-readable analysis name"
+    },
+    "generation_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when report was generated"
+    },
+    "files": {
+      "type": "object",
+      "properties": {
+        "html": {
+          "$ref": "#/definitions/ReportFile"
+        },
+        "pdf": {
+          "$ref": "#/definitions/ReportFile"
+        },
+        "figures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FigureFile"
+          }
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TableFile"
+          }
+        }
+      },
+      "required": ["html", "pdf"]
+    },
+    "statistical_results": {
+      "type": "object",
+      "description": "Key statistical outcomes from the analysis",
+      "properties": {
+        "tests_performed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StatisticalTest"
+          },
+          "minItems": 1
+        },
+        "summary_statistics": {
+          "type": "object",
+          "description": "Summary statistics (means, SDs, sample sizes)"
+        }
+      },
+      "required": ["tests_performed"]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "data_source": {
+          "type": "string",
+          "description": "Path to gaze_events.csv or other data source"
+        },
+        "config_version": {
+          "type": "string",
+          "description": "Version of pipeline configuration used"
+        },
+        "participants_included": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of participants included in analysis"
+        },
+        "participants_excluded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of participants excluded due to data quality"
+        },
+        "exclusion_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of reasons for participant/trial exclusions"
+        }
+      },
+      "required": ["data_source", "participants_included"]
+    }
+  },
+  "required": ["report_id", "analysis_type", "generation_timestamp", "files", "statistical_results", "metadata"],
+  "definitions": {
+    "ReportFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute or relative path to report file"
+        },
+        "exists": {
+          "type": "boolean",
+          "const": true,
+          "description": "File must exist"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "File size in bytes (must be non-empty)"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["HTML", "PDF"],
+          "description": "File format"
+        }
+      },
+      "required": ["path", "exists", "format"]
+    },
+    "FigureFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to figure file (PNG)"
+        },
+        "exists": {
+          "type": "boolean",
+          "const": true
+        },
+        "format": {
+          "type": "string",
+          "const": "PNG",
+          "description": "All figures must be PNG format"
+        },
+        "dpi": {
+          "type": "integer",
+          "minimum": 300,
+          "description": "Resolution in DPI (must be at least 300 for publication quality)"
+        },
+        "figure_type": {
+          "type": "string",
+          "enum": [
+            "bar_chart",
+            "line_plot",
+            "directed_graph",
+            "interaction_plot",
+            "other"
+          ],
+          "description": "Type of visualization"
+        },
+        "description": {
+          "type": "string",
+          "description": "Caption or description of figure"
+        }
+      },
+      "required": ["path", "exists", "format", "dpi", "figure_type"]
+    },
+    "TableFile": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to table file (CSV)"
+        },
+        "exists": {
+          "type": "boolean",
+          "const": true
+        },
+        "format": {
+          "type": "string",
+          "const": "CSV",
+          "description": "All tables must be CSV format"
+        },
+        "table_type": {
+          "type": "string",
+          "enum": [
+            "summary_statistics",
+            "transition_matrix",
+            "anova_table",
+            "regression_table",
+            "other"
+          ],
+          "description": "Type of table"
+        },
+        "description": {
+          "type": "string",
+          "description": "Caption or description of table"
+        }
+      },
+      "required": ["path", "exists", "format", "table_type"]
+    },
+    "StatisticalTest": {
+      "type": "object",
+      "properties": {
+        "test_name": {
+          "type": "string",
+          "enum": [
+            "independent_t_test",
+            "one_way_anova",
+            "two_way_anova",
+            "chi_squared",
+            "linear_regression",
+            "mixed_effects_model",
+            "other"
+          ],
+          "description": "Type of statistical test performed"
+        },
+        "comparison": {
+          "type": "string",
+          "description": "What was compared (e.g., 'GIVE vs HUG on toy looking time')"
+        },
+        "statistic": {
+          "type": "number",
+          "description": "Test statistic value (t, F, chi-squared, etc.)"
+        },
+        "degrees_of_freedom": {
+          "type": ["integer", "array"],
+          "description": "Degrees of freedom (single value or array for F-tests)"
+        },
+        "p_value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "P-value from hypothesis test"
+        },
+        "effect_size": {
+          "type": "object",
+          "properties": {
+            "measure": {
+              "type": "string",
+              "enum": ["cohens_d", "eta_squared", "partial_eta_squared", "r_squared", "other"],
+              "description": "Effect size measure used"
+            },
+            "value": {
+              "type": "number",
+              "description": "Effect size value"
+            }
+          },
+          "description": "Effect size for practical significance"
+        },
+        "sample_sizes": {
+          "type": "object",
+          "description": "Sample sizes for each group compared"
+        },
+        "assumptions_tested": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "assumption": {
+                "type": "string",
+                "enum": ["normality", "homogeneity_of_variance", "independence", "other"]
+              },
+              "test_used": {
+                "type": "string",
+                "description": "Test used to check assumption (e.g., 'Shapiro-Wilk', 'Levene')"
+              },
+              "result": {
+                "type": "string",
+                "enum": ["met", "violated", "not_tested"]
+              }
+            },
+            "required": ["assumption", "result"]
+          },
+          "description": "Statistical assumptions and whether they were met"
+        }
+      },
+      "required": ["test_name", "comparison", "statistic", "p_value"]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-10-25",
+    "purpose": "Validate analysis report outputs for completeness and quality",
+    "validation_level": "contract",
+    "notes": [
+      "All reports must include both HTML and PDF versions",
+      "All figures must be 300 DPI PNG files",
+      "All statistical tests must report p-values",
+      "Effect sizes should be reported where appropriate"
+    ]
+  }
+}

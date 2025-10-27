@@ -1,0 +1,103 @@
+# AR-4: Dwell Time Analysis Configuration
+# Purpose: Analyze processing depth via mean dwell time per gaze event
+
+analysis_name: "AR-4: Dwell Time Analysis"
+description: "Analysis of mean dwell time (duration per gaze event) as indicator of processing depth"
+
+# Dwell Time Calculation
+dwell_time:
+  # Unit for dwell time reporting
+  time_unit: "milliseconds"  # or "seconds", "frames"
+
+  # Outlier handling for extreme dwell times
+  outlier_threshold_sd: 3  # Remove dwell times > 3 SD from mean
+  handle_outliers: true
+
+  # Minimum dwell time to include (filter very brief gazes)
+  min_dwell_time_ms: 100  # 100ms minimum
+
+  # Maximum reasonable dwell time (detect data errors)
+  max_dwell_time_ms: 10000  # 10 seconds maximum
+
+# Statistical Methods
+statistics:
+  # Primary test: Linear Mixed Model (accounts for multiple gaze events per participant)
+  primary_test: "linear_mixed_model"
+
+  # LMM formula specification
+  lmm_formula: "dwell_time_ms ~ condition + (1 | participant)"
+
+  # Random effects structure
+  random_intercept: true  # Each participant has their own baseline dwell time
+
+  # Analyze by AOI category
+  analyze_by_aoi: true
+
+  # LMM formula when analyzing by AOI
+  lmm_formula_by_aoi: "dwell_time_ms ~ condition * aoi_category + (1 | participant)"
+
+  # Multiple comparison correction when analyzing multiple AOIs
+  multiple_comparison_correction: "bonferroni"
+
+  # Effect size
+  calculate_effect_size: true  # Cohen's d from fixed effects
+
+  # Model diagnostics
+  report_aic_bic: true
+  check_residuals: true
+
+# AOI-Specific Analysis
+aoi_analysis:
+  # Which AOI categories to analyze separately
+  aoi_categories_of_interest:
+    - "man_face"
+    - "woman_face"
+    - "toy_present"
+
+  # Minimum gaze events per AOI to include in analysis
+  min_gaze_events_per_aoi: 3
+
+# Visualization Settings
+visualization:
+  # Primary plot type
+  plot_type: "bar_with_error_bars"
+
+  # Also generate violin plots to show distribution
+  generate_violin_plot: true
+
+  # Show individual participant means
+  show_individual_points: true
+  point_alpha: 0.4
+
+  # Colors
+  colors:
+    - "#e67e22"  # Orange for GIVE
+    - "#8e44ad"  # Purple for HUG
+
+  # Figure dimensions
+  figure_width: 10
+  figure_height: 6
+
+  # Axis labels
+  xlabel: "Experimental Condition"
+  ylabel: "Mean Dwell Time (ms)"
+
+  # Separate subplot per AOI if analyzing by AOI
+  subplot_by_aoi: true
+
+# Output Settings
+output:
+  # Export gaze event-level dwell times
+  export_event_level_data: true
+
+  # Export participant-level means
+  export_participant_means: true
+
+  # Export AOI-specific summaries
+  export_aoi_summaries: true
+
+  # Generate diagnostic plots
+  generate_diagnostic_plots: true
+
+  # Include distribution plots in report
+  include_distribution_plots: true

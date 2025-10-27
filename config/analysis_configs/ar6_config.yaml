@@ -1,0 +1,133 @@
+# AR-6: Trial-Order Effects Analysis Configuration
+# Purpose: Detect changes across repeated presentations of same event type
+
+analysis_name: "AR-6: Trial-Order Effects"
+description: "Analysis of how looking patterns change across repeated presentations of the same event type (within-event learning/adaptation)"
+
+# Trial Analysis
+trial_analysis:
+  # Use trial_cumulative_by_event column (1st, 2nd, 3rd presentation of each event type)
+  trial_variable: "trial_cumulative_by_event"
+
+  # Maximum presentations per event type
+  max_presentations: 5  # Most events shown ~3 times
+
+  # Minimum presentations per participant per event type
+  min_presentations_per_event: 2  # Need at least 2 to test change
+
+  # Expected patterns to test:
+  # "learning" = increasing looking time across repetitions
+  # "adaptation" = decreasing looking time across repetitions
+  # "both" = test both directions
+  expected_pattern: "both"  # Test for any systematic change
+
+# Statistical Methods
+statistics:
+  # Primary test: Linear Mixed Model with random slopes (GOLD STANDARD for habituation)
+  primary_test: "linear_mixed_model"
+
+  # LMM formula specification (random intercept + random slope)
+  # Tests if looking patterns change across repeated presentations of same event
+  lmm_formula: "gaze_metric ~ trial_cumulative_by_event * event + (1 + trial_cumulative_by_event | participant)"
+
+  # Random effects structure
+  random_intercept: true  # Each participant has their own baseline
+  random_slope: true  # Each participant has their own trial-order effect rate
+  random_slope_predictor: "trial_cumulative_by_event"
+
+  # Test slope significance
+  test_slope_significance: true
+
+  # Compare slopes between conditions (interaction term)
+  compare_slopes_by_condition: true
+
+  # Effect size
+  calculate_effect_size: true  # R-squared marginal (fixed effects) and conditional (fixed + random)
+
+  # Individual participant slopes (BLUPs - Best Linear Unbiased Predictors)
+  extract_individual_slopes: true
+
+  # Model diagnostics
+  report_aic_bic: true
+  check_residuals: true
+
+  # Variance components
+  report_variance_components: true  # How much variance is between vs within participants
+
+# Trial-Order Effect Criteria
+trial_order_effects:
+  # Criterion for systematic change
+  slope_threshold: 0.01  # Absolute value - any systematic change
+
+  # Minimum R-squared to consider effect reliable
+  min_r_squared: 0.05
+
+  # Classify participants by pattern:
+  # "learner" = positive slope (increasing looking time)
+  # "adapter" = negative slope (decreasing looking time)
+  # "stable" = no significant slope
+  classify_participants: true
+
+# Metrics to Analyze
+metrics:
+  # Which gaze metrics to examine across trials
+  dependent_variables:
+    - "proportion_primary_aois"
+    - "social_triplet_count"
+    - "mean_dwell_time"
+
+# Visualization Settings
+visualization:
+  # Primary plot type
+  plot_type: "line_with_regression"
+
+  # Show individual participant trajectories
+  show_individual_trajectories: true
+  individual_alpha: 0.2
+
+  # Show group mean trajectory
+  show_group_mean: true
+
+  # Colors by condition
+  colors:
+    GIVE: "#16a085"
+    HUG: "#c0392b"
+
+  # Markers
+  markers:
+    GIVE: "o"
+    HUG: "^"
+
+  # Figure dimensions
+  figure_width: 10
+  figure_height: 7
+
+  # Axis labels
+  xlabel: "Trial Number"
+  ylabel: "Gaze Metric"
+
+  # Show regression statistics on plot
+  annotate_regression_stats: true
+
+  # Separate plot per condition
+  separate_by_condition: true
+
+# Output Settings
+output:
+  # Export trial-level data
+  export_trial_data: true
+
+  # Export regression coefficients
+  export_regression_coefficients: true
+
+  # Export individual participant slopes
+  export_individual_slopes: true
+
+  # Export habituation classifications
+  export_habituation_classifications: true
+
+  # Generate separate plots for each metric
+  plot_per_metric: true
+
+  # Include interpretation of learning/habituation patterns
+  include_learning_interpretation: true

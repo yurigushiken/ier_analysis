@@ -1,0 +1,40 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<section id="overview">
+    <h2>1. Overview</h2>
+    <p>{{ summary_text }}</p>
+    <p><strong>Conditions:</strong> {{ conditions | join(', ') }}</p>
+    <p><strong>Age groups:</strong> {{ age_groups | join(', ') }}</p>
+</section>
+
+<section id="methods">
+    <h2>2. Methods</h2>
+    <p>{{ methods_text }}</p>
+</section>
+
+<section id="results">
+    <h2>3. Results</h2>
+    <h3>3.1 Transition Matrices</h3>
+    {% for table in transition_tables %}
+        <h4>{{ table.title }}</h4>
+        {{ table.html | safe }}
+    {% endfor %}
+
+    <h3>3.2 Directed Graphs</h3>
+    {% for figure in graph_figures %}
+        <figure>
+            <img src="{{ figure.path }}" alt="{{ figure.caption }}">
+            <figcaption>{{ figure.caption }}</figcaption>
+        </figure>
+    {% endfor %}
+
+    <h3>3.3 Statistical Tests</h3>
+    {{ statistics_table | safe }}
+</section>
+
+<section id="interpretation">
+    <h2>4. Interpretation</h2>
+    <p>{{ interpretation_text }}</p>
+</section>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<section id="overview">
+    <h2>1. Overview</h2>
+    <p>
+        This analysis tests the central hypothesis that infants selectively attend to objects based on
+        their relevance to an event's meaning. Specifically, we examine whether infants look longer at
+        a toy when it is relevant to the event (GIVE condition) compared to when it is irrelevant
+        (HUG condition).
+    </p>
+
+    <div class="stats-summary">
+        <h4>Analysis Summary</h4>
+        <div class="stat-item">
+            <span class="stat-label">Total Participants</span>
+            <span class="stat-value">{{ total_participants }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Participants Included</span>
+            <span class="stat-value">{{ participants_included }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Participants Excluded</span>
+            <span class="stat-value">{{ participants_excluded }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Total Gaze Events Analyzed</span>
+            <span class="stat-value">{{ total_gaze_events }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Conditions Compared</span>
+            <span class="stat-value">{{ conditions|join(', ') }}</span>
+        </div>
+    </div>
+
+    {% if exclusions %}
+    <div class="exclusions">
+        <h4>Data Exclusions</h4>
+        <p>The following participants/trials were excluded from this analysis:</p>
+        <ul>
+        {% for exclusion in exclusions %}
+            <li>{{ exclusion }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</section>
+
+<section id="methods">
+    <h2>2. Methods</h2>
+
+    <h3>2.1 Gaze Event Definition</h3>
+    <p>
+        A <strong>gaze event</strong> is defined as {{ min_gaze_frames }} or more consecutive frames
+        where the infant's gaze remains on the same Area of Interest (AOI). This conservative threshold
+        ensures that brief, transient fixations are not counted as sustained attention.
+    </p>
+
+    <h3>2.2 Dependent Variable</h3>
+    <p>
+        The primary dependent variable is the <strong>proportion of total looking time</strong> spent
+        on the toy AOI (toy_present or toy_location) within each trial. This proportion is calculated as:
+    </p>
+    <p style="text-align: center; font-family: 'Courier New', monospace; padding: 10px; background: #f4f4f4; border-radius: 4px;">
+        Proportion = (Total duration on toy) / (Total duration on all AOIs)
+    </p>
+
+    <h3>2.3 Statistical Tests</h3>
+    <p>We performed the following statistical tests:</p>
+    <ul>
+        <li><strong>Independent samples t-test:</strong> Comparing mean toy-looking proportion between GIVE and HUG conditions</li>
+        <li><strong>One-way ANOVA:</strong> Comparing toy-looking proportions across age groups</li>
+    </ul>
+    <p>
+        Statistical significance threshold: α = {{ alpha }}.
+        Effect sizes are reported using Cohen's d for t-tests and eta-squared (η²) for ANOVA.
+    </p>
+</section>
+
+<section id="results">
+    <h2>3. Results</h2>
+
+    <h3>3.1 Descriptive Statistics</h3>
+    <p>
+        Table 1 presents the mean proportion of looking time at the toy for each experimental condition.
+    </p>
+
+    {{ descriptive_stats_table }}
+
+    <h3>3.2 Main Effect: Condition</h3>
+
+    <figure>
+        <img src="{{ figure_duration_by_condition }}" alt="Mean looking time at toy by condition">
+        <figcaption>
+            <strong>Figure 1.</strong> Mean proportion of looking time at the toy object in GIVE vs. HUG conditions.
+            Error bars represent {{ error_bar_type }}. {{ significance_marker }}
+        </figcaption>
+    </figure>
+
+    <div class="stats-summary">
+        <h4>Independent Samples t-Test Results</h4>
+        <div class="stat-item">
+            <span class="stat-label">t-statistic</span>
+            <span class="stat-value {% if ttest_p < alpha %}significant{% else %}not-significant{% endif %}">
+                t({{ ttest_df }}) = {{ ttest_statistic }}
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">p-value</span>
+            <span class="stat-value {% if ttest_p < alpha %}significant{% else %}not-significant{% endif %}">
+                p = {{ ttest_p }}
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Cohen's d (effect size)</span>
+            <span class="stat-value">{{ cohens_d }}</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">95% Confidence Interval</span>
+            <span class="stat-value">[{{ ci_lower }}, {{ ci_upper }}]</span>
+        </div>
+    </div>
+
+    {% if ttest_p < alpha %}
+    <div class="alert alert-success">
+        <strong>Significant Result:</strong> Infants looked significantly longer at the toy in the
+        {{ significant_condition }} condition compared to the {{ other_condition }} condition
+        (p {{ p_comparison }} {{ alpha }}, d = {{ cohens_d }}).
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <strong>Non-Significant Result:</strong> No significant difference was found in toy-looking
+        time between GIVE and HUG conditions (p = {{ ttest_p }}).
+    </div>
+    {% endif %}
+
+    <h3>3.3 Developmental Analysis</h3>
+
+    <figure>
+        <img src="{{ figure_duration_by_age }}" alt="Mean looking time at toy by age group">
+        <figcaption>
+            <strong>Figure 2.</strong> Mean proportion of looking time at the toy object across age groups.
+            Error bars represent {{ error_bar_type }}.
+        </figcaption>
+    </figure>
+
+    {{ anova_results_table }}
+
+    <div class="stats-summary">
+        <h4>One-Way ANOVA Results</h4>
+        <div class="stat-item">
+            <span class="stat-label">F-statistic</span>
+            <span class="stat-value {% if anova_p < alpha %}significant{% else %}not-significant{% endif %}">
+                F({{ anova_df1 }}, {{ anova_df2 }}) = {{ anova_f_statistic }}
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">p-value</span>
+            <span class="stat-value {% if anova_p < alpha %}significant{% else %}not-significant{% endif %}">
+                p = {{ anova_p }}
+            </span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Eta-squared (η²)</span>
+            <span class="stat-value">{{ eta_squared }}</span>
+        </div>
+    </div>
+
+    {% if assumptions_violated %}
+    <div class="alert alert-warning">
+        <strong>Assumption Check:</strong> {{ assumptions_violated_message }}
+    </div>
+    {% endif %}
+</section>
+
+<section id="interpretation">
+    <h2>4. Interpretation</h2>
+
+    <h3>4.1 Theoretical Implications</h3>
+    <p>{{ interpretation_text }}</p>
+
+    <h3>4.2 Comparison to Gordon (2003)</h3>
+    <p>{{ comparison_to_gordon }}</p>
+
+    <h3>4.3 Limitations and Future Directions</h3>
+    <p>{{ limitations }}</p>
+</section>
+
+<section id="raw-data" class="no-print">
+    <h2>5. Supplementary Data</h2>
+
+    <h3>5.1 Summary Statistics by Participant</h3>
+    <details>
+        <summary>Click to expand participant-level data</summary>
+        {{ participant_summary_table }}
+    </details>
+
+    <h3>5.2 Assumptions Testing</h3>
+    <details>
+        <summary>Click to expand normality and homogeneity tests</summary>
+        {{ assumptions_testing_table }}
+    </details>
+</section>
+{% endblock %}

@@ -1,0 +1,123 @@
+# AR-7: Event Dissociation Analysis Configuration
+# Purpose: Demonstrate dissociation between visual attention and event understanding
+
+analysis_name: "AR-7: Event Dissociation"
+description: "Analysis comparing GIVE vs HUG vs SHOW to test whether seeing (SHOW) differs from giving/hugging"
+
+# Condition Comparisons
+comparisons:
+  # Specific condition contrasts
+  contrasts:
+    - name: "GIVE vs HUG"
+      conditions: ["GIVE", "HUG"]
+      hypothesis: "Different gaze patterns for events with different argument structures (3-arg vs 2-arg)"
+
+    - name: "GIVE vs SHOW"
+      conditions: ["GIVE", "SHOW"]
+      hypothesis: "Different social gaze patterns despite similar toy salience"
+
+    - name: "HUG vs SHOW"
+      conditions: ["HUG", "SHOW"]
+      hypothesis: "Baseline comparison of 2-argument events"
+
+  # Multiple comparison correction across contrasts
+  correction_method: "bonferroni"
+
+# Statistical Methods
+statistics:
+  # Primary test: Linear Mixed Model with multiple conditions
+  primary_test: "linear_mixed_model"
+
+  # LMM formula specification (condition as categorical predictor)
+  lmm_formula: "gaze_metric ~ condition + (1 | participant)"
+
+  # Random effects structure
+  random_intercept: true  # Each participant has their own baseline
+
+  # Pairwise comparisons with multiple comparison correction
+  posthoc_comparisons: true
+  posthoc_method: "bonferroni"  # or "holm", "fdr"
+
+  # Effect size
+  calculate_effect_size: true  # Cohen's d for pairwise comparisons
+
+  # Planned contrasts (theory-driven comparisons)
+  use_planned_contrasts: true
+  contrasts:
+    # Contrast 1: GIVE vs other conditions (3-arg vs 2-arg events)
+    GIVE_vs_others:
+      comparison: "GIVE vs (HUG + SHOW) / 2"
+      hypothesis: "GIVE (3-argument event) differs from 2-argument events"
+
+    # Contrast 2: HUG vs SHOW (both 2-arg, but different social structure)
+    HUG_vs_SHOW:
+      comparison: "HUG vs SHOW"
+      hypothesis: "Social gaze differs between hugging and showing"
+
+  # Model diagnostics
+  report_aic_bic: true
+  check_residuals: true
+
+# Dissociation Criteria
+dissociation:
+  # Evidence for dissociation: significant difference in key metric
+  key_metric: "social_gaze_pattern"
+
+  # Minimum effect size to claim dissociation
+  min_effect_size: 0.5  # Medium effect (Cohen's d)
+
+  # Pattern prediction: SHOW should differ from GIVE in social gaze despite similar toy attention
+  expected_pattern: "GIVE_social_gaze > SHOW_social_gaze AND GIVE_toy_attention ≈ SHOW_toy_attention"
+
+# Metrics to Analyze
+metrics:
+  # Primary dependent variables
+  dependent_variables:
+    - "proportion_primary_aois"
+    - "social_triplet_rate"
+    - "gaze_to_recipient_face"
+
+# Visualization Settings
+visualization:
+  # Primary plot type
+  plot_type: "grouped_bar"
+
+  # Colors by condition
+  colors:
+    GIVE: "#27ae60"
+    GIVE_TO_SELF: "#f39c12"
+    HUG: "#2980b9"
+
+  # Figure dimensions
+  figure_width: 10
+  figure_height: 6
+
+  # Axis labels
+  xlabel: "Event Type"
+  ylabel: "Gaze Metric"
+
+  # Show pairwise comparison significance brackets
+  show_significance_brackets: true
+
+  # Separate subplot per metric
+  subplot_per_metric: true
+
+# Output Settings
+output:
+  # Export ANOVA table
+  export_anova_table: true
+
+  # Export post-hoc comparison results
+  export_posthoc_results: true
+
+  # Export contrast coefficients and results
+  export_contrast_results: true
+
+  # Export condition means and SEs
+  export_descriptive_stats: true
+
+  # Generate dissociation interpretation
+  include_dissociation_interpretation: true
+
+  # Generate theory-driven interpretation (Gordon 2003)
+  include_theoretical_interpretation: true

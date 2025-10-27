@@ -1,0 +1,104 @@
+# AR-5: Developmental Trajectory Analysis Configuration
+# Purpose: Examine age-related changes and Age × Condition interactions
+
+analysis_name: "AR-5: Developmental Trajectory"
+description: "Analysis of age-related changes in gaze patterns with Age × Condition interactions"
+
+# Age Modeling
+age_modeling:
+  # Use continuous age (preserves information, more power)
+  use_continuous_age: true
+
+  # Test for non-linear age effects
+  test_nonlinear: true  # Adds quadratic term: age_months^2
+
+# Statistical Methods
+statistics:
+  # Primary test: Linear Mixed Model with continuous age
+  primary_test: "linear_mixed_model"
+
+  # LMM formula specification (Age × Condition interaction)
+  lmm_formula: "gaze_metric ~ age_months * condition + (1 | participant)"
+
+  # Non-linear age formula (if test_nonlinear is true)
+  lmm_formula_nonlinear: "gaze_metric ~ age_months + age_squared + condition + age_months:condition + (1 | participant)"
+
+  # Random effects structure
+  random_intercept: true  # Each participant has their own baseline
+
+  # Interaction term
+  test_interaction: true  # Age × Condition
+
+  # Effect sizes
+  calculate_effect_size: true  # R-squared, Cohen's f-squared for interaction
+
+  # Model diagnostics
+  report_aic_bic: true
+  check_residuals: true
+
+  # Compare linear vs non-linear models
+  compare_models: true
+
+# Metrics to Analyze
+metrics:
+  # Which gaze metrics to examine developmentally
+  dependent_variables:
+    - "proportion_primary_aois"  # From AR-1
+    - "social_triplet_rate"      # From AR-3
+    - "mean_dwell_time"          # From AR-4
+
+# Visualization Settings
+visualization:
+  # Primary plot type
+  plot_type: "line_with_error_bars"  # For continuous age
+  alternative_plot_type: "grouped_bar"  # For age bins
+
+  # Show interaction plot
+  generate_interaction_plot: true
+
+  # Colors by condition
+  colors:
+    GIVE: "#3498db"
+    HUG: "#e74c3c"
+
+  # Line styles
+  line_styles:
+    GIVE: "-"   # Solid
+    HUG: "--"   # Dashed
+
+  # Markers
+  markers:
+    GIVE: "o"
+    HUG: "s"
+
+  # Figure dimensions
+  figure_width: 10
+  figure_height: 7
+
+  # Axis labels
+  xlabel: "Age (months)"
+  ylabel: "Gaze Metric"
+
+  # Show regression line if using continuous age
+  show_regression_line: true
+
+  # Confidence band for regression
+  show_confidence_band: true
+  confidence_level: 0.95
+
+# Output Settings
+output:
+  # Export age group summaries
+  export_age_group_summaries: true
+
+  # Export ANOVA table
+  export_anova_table: true
+
+  # Export regression coefficients if applicable
+  export_regression_coefficients: true
+
+  # Generate separate plots for each dependent variable
+  plot_per_metric: true
+
+  # Include developmental interpretation
+  include_developmental_interpretation: true

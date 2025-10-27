@@ -1,0 +1,104 @@
+================================================================================
+EXPLORATORY DATA ANALYSIS: Infant Event Representation
+================================================================================
+
+================================================================================
+1. FILE INVENTORY
+================================================================================
+
+Total child participant files: 36
+
+First 10 files:
+   1. Eight-months-0101-947gl.csv
+   2. Eight-months-0201-1170gl.csv
+   3. Eight-months-0201-1464gl.csv
+   4. Eight-months-0301-1158gl.csv
+   5. Eight-months-0301-1658gl.csv
+   6. Eight-months-0302-5513gl.csv
+   7. Eight-months-0401-1638gl.csv
+   8. Eight-months-0501-6206gl.csv
+   9. Eight-months-0601-5801gl.csv
+  10. Eleven-months-0101-141gl.csv
+
+================================================================================
+2. SAMPLE FILE STRUCTURE
+================================================================================
+
+Analyzing: Eight-months-0101-947gl.csv
+
+Total rows: 8350
+Total columns: 19
+
+Column names:
+   1. ﻿Participant
+   2. Time
+   3. What
+   4. Where
+   5. Onset
+   6. Offset
+   7. Blue Dot Center
+   8. event
+   9. session_frame
+  10. trial_block_cumulative_order
+  11. trial_block_frame
+  12. trial_block_trial
+  13. trial_frame
+  14. trial_cumulative_by_event
+  15. segment
+  16. segment_frame
+  17. participant_type
+  18. participant_age_months
+  19. participant_age_years
+
+First 3 rows (selected columns):
+
+  Row 1:
+    event: gw
+    What: no
+    Where: signal
+    participant_age_months: 8
+    trial_frame: 1
+
+  Row 2:
+    event: gw
+    What: no
+    Where: signal
+    participant_age_months: 8
+    trial_frame: 2
+
+  Row 3:
+    event: gw
+    What: no
+    Where: signal
+    participant_age_months: 8
+    trial_frame: 3
+
+================================================================================
+3. MULTI-PARTICIPANT ANALYSIS (First 10 files)
+================================================================================
+Error loading Eight-months-0101-947gl.csv: 'Participant'
+Error loading Eight-months-0201-1170gl.csv: 'Participant'
+Error loading Eight-months-0201-1464gl.csv: 'Participant'
+Error loading Eight-months-0301-1158gl.csv: 'Participant'
+Error loading Eight-months-0301-1658gl.csv: 'Participant'
+Error loading Eight-months-0302-5513gl.csv: 'Participant'
+Error loading Eight-months-0401-1638gl.csv: 'Participant'
+Error loading Eight-months-0501-6206gl.csv: 'Participant'
+Error loading Eight-months-0601-5801gl.csv: 'Participant'
+Error loading Eleven-months-0101-141gl.csv: 'Participant'
+
+Loaded 10 total rows from 0 participants
+
+================================================================================
+4. PARTICIPANT AND TRIAL STRUCTURE
+================================================================================
+
+Participants: 0
+First 5: []
+
+Trials per participant:
+Traceback (most recent call last):
+  File "C:\CascadeProjects\ier_analysis\temp_analysis\explore_data_basic.py", line 110, in <module>
+    print(f"  Mean: {sum(trials_per_participant) / len(trials_per_participant):.1f}")
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ZeroDivisionError: division by zero

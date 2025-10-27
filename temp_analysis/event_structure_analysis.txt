@@ -1,0 +1,28 @@
+================================================================================
+EVENT STRUCTURE ANALYSIS - DETAILED RESULTS
+================================================================================
+
+Total participants: 36
+Unique event types: 11
+Event types: ['f', 'gw', 'gwo', 'hw', 'hwo', 'sw', 'swo', 'ugw', 'ugwo', 'uhw', 'uhwo']
+
+Event meanings:
+  f = FLOATING (control)
+  gw = GIVE WITH toy
+  gwo = GIVE WITHOUT toy
+  hw = HUG WITH toy
+  hwo = HUG WITHOUT toy
+  sw = SHOW WITH toy
+  swo = SHOW WITHOUT toy
+  ugw = UPSIDE-DOWN GIVE WITH toy
+  ugwo = UPSIDE-DOWN GIVE WITHOUT toy
+  uhw = UPSIDE-DOWN HUG WITH toy
+  uhwo = UPSIDE-DOWN HUG WITHOUT toy
+
+Average unique events per participant: 11.0
+Estimated presentations per participant: ~12
+
+================================================================================
+NESTING STRUCTURE
+================================================================================
+Participant

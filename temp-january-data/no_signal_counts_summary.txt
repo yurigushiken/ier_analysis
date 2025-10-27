@@ -1,0 +1,22 @@
+Participants analyzed: 66
+Top 20 by no-signal rows:
+Eleven-0301-372 (child) -> no_signal=9262, total=12114, proportion=76.46%
+Eleven-0401-682 (child) -> no_signal=8537, total=9766, proportion=87.42%
+Seven-0201-1152 (child) -> no_signal=8127, total=11015, proportion=73.78%
+Eight-0601-5801 (child) -> no_signal=7091, total=10840, proportion=65.42%
+Eight-0201-1170 (child) -> no_signal=6834, total=8504, proportion=80.36%
+Eight-0301-1658 (child) -> no_signal=6731, total=10060, proportion=66.91%
+Eight-0101-947 (child) -> no_signal=6316, total=8350, proportion=75.64%
+Ten-0102-5728 (child) -> no_signal=6277, total=11388, proportion=55.12%
+Seven-0401-1655 (child) -> no_signal=6254, total=8529, proportion=73.33%
+Ten-0301-1158 (child) -> no_signal=5940, total=11003, proportion=53.99%
+Seven-0102-5982 (child) -> no_signal=5885, total=10198, proportion=57.71%
+Seven-0301-6399 (child) -> no_signal=5883, total=7786, proportion=75.56%
+Eight-0302-5513 (child) -> no_signal=5519, total=7801, proportion=70.75%
+Nine-0301-1171 (child) -> no_signal=5221, total=8651, proportion=60.35%
+Ten-0501-5669 (child) -> no_signal=5175, total=8422, proportion=61.45%
+Eight-0401-1638 (child) -> no_signal=5098, total=10455, proportion=48.76%
+Nine-0101-694 (child) -> no_signal=5002, total=8085, proportion=61.87%
+Nine-0401-1013 (child) -> no_signal=4351, total=7612, proportion=57.16%
+Nine-0301-1009 (child) -> no_signal=4317, total=6665, proportion=64.77%
+Nine-0601-5532 (child) -> no_signal=4089, total=8252, proportion=49.55%

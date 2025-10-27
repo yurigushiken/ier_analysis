@@ -1,0 +1,15 @@
+NEW DATA STRUCTURE ANALYSIS
+================================================================================
+
+Path: data/csvs_human_verified_vv/
+
+Participants: 51
+Age range: 7.0 - 12.0 months
+Event types: ['f', 'gw', 'gwo', 'hw', 'hwo', 'sw', 'swo', 'ugw', 'ugwo', 'uhw', 'uhwo']
+Total presentations: 2568
+
+event_presentation_id formula:
+  participant + '_' + event + '_' + trial_number_global
+
+Unique IDs: 2568
+Duplicates: 0

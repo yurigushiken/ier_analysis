@@ -1,0 +1,2 @@
+gaze_event_id,participant_id,participant_type,age_months,age_group,trial_number,condition,condition_name,segment,aoi_category,gaze_start_frame,gaze_end_frame,gaze_duration_frames,gaze_duration_ms,gaze_onset_time,gaze_offset_time
+1,Eight-0101-947,infant,8,8-month-olds,1,gw,GIVE_WITH,approach,man_face,1,3,3,100.0,0.0,0.1

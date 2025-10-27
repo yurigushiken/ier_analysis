@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Raw Eye-Tracking Data Schema",
+  "description": "Schema for raw frame-by-frame eye-tracking CSV files from infant event representation study",
+  "type": "object",
+  "properties": {
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 18,
+      "contains": {
+        "enum": [
+          "Participant",
+          "Frame Number",
+          "Time",
+          "What",
+          "Where",
+          "Onset",
+          "Offset",
+          "Blue Dot Center",
+          "event_verified",
+          "frame_count_event",
+          "trial_number",
+          "trial_number_global",
+          "frame_count_trial_number",
+          "segment",
+          "frame_count_segment",
+          "participant_type",
+          "participant_age_months",
+          "participant_age_years"
+        ]
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/RawFrameRecord"
+      }
+    }
+  },
+  "required": ["columns", "rows"],
+  "definitions": {
+    "RawFrameRecord": {
+      "type": "object",
+      "properties": {
+        "Participant": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique participant identifier (e.g., 'Eight-0101-947')"
+        },
+        "Frame Number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Frame index within session context"
+        },
+        "Time": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2}:\\d+$",
+          "description": "Human-readable timestamp in HH:MM:SS:MS format"
+        },
+        "What": {
+          "type": "string",
+          "enum": ["no", "screen", "woman", "man", "toy", "toy2"],
+          "description": "First part of AOI identifier"
+        },
+        "Where": {
+          "type": "string",
+          "enum": ["signal", "other", "face", "body", "hands"],
+          "description": "Second part of AOI identifier"
+        },
+        "Onset": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Frame onset time in seconds"
+        },
+        "Offset": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Frame offset time in seconds"
+        },
+        "Blue Dot Center": {
+          "type": ["string", "null"],
+          "pattern": "^\\(\\d+\\.?\\d*, \\d+\\.?\\d*\\)$",
+          "description": "Gaze coordinate on screen in format '(x, y)' or null if off-screen"
+        },
+        "event_verified": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Verified experimental condition code (e.g., 'gw', 'gwo', 'sw')"
+        },
+        "frame_count_event": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Cumulative frame within current event presentation"
+        },
+        "trial_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Sequential trial number within session"
+        },
+        "trial_number_global": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Repetition count for the same event for a participant"
+        },
+        "segment": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Event segment (e.g., 'approach', 'action', 'post')"
+        },
+        "frame_count_segment": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Frame index within current segment"
+        },
+        "frame_count_trial_number": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Frame index within current trial"
+        },
+        "participant_type": {
+          "type": "string",
+          "enum": ["infant", "adult"],
+          "description": "Participant age category"
+        },
+        "participant_age_months": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1200,
+          "description": "Participant age in months"
+        },
+        "participant_age_years": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Participant age in years"
+        }
+      },
+      "required": [
+        "Participant",
+        "Time",
+        "What",
+        "Where",
+        "Onset",
+        "Offset",
+        "Frame Number",
+        "event_verified",
+        "frame_count_event",
+        "trial_number",
+        "trial_number_global",
+        "frame_count_trial_number",
+        "segment",
+        "frame_count_segment",
+        "participant_type",
+        "participant_age_months",
+        "participant_age_years"
+      ]
+    },
+    "ValidAOICombinations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "What": {"type": "string"},
+          "Where": {"type": "string"},
+          "AOI_Category": {"type": "string"},
+          "Meaning": {"type": "string"}
+        }
+      },
+      "const": [
+        {"What": "no", "Where": "signal", "AOI_Category": "off_screen", "Meaning": "No gaze detected / off screen"},
+        {"What": "screen", "Where": "other", "AOI_Category": "screen_nonAOI", "Meaning": "On screen but not a specific AOI"},
+        {"What": "woman", "Where": "face", "AOI_Category": "woman_face", "Meaning": "Woman's face"},
+        {"What": "man", "Where": "face", "AOI_Category": "man_face", "Meaning": "Man's face"},
+        {"What": "toy", "Where": "other", "AOI_Category": "toy_present", "Meaning": "Toy object (in 'with' trials)"},
+        {"What": "toy2", "Where": "other", "AOI_Category": "toy_location", "Meaning": "Toy location (in 'without' trials)"},
+        {"What": "man", "Where": "body", "AOI_Category": "man_body", "Meaning": "Man's body"},
+        {"What": "woman", "Where": "body", "AOI_Category": "woman_body", "Meaning": "Woman's body"},
+        {"What": "man", "Where": "hands", "AOI_Category": "man_hands", "Meaning": "Man's hands"},
+        {"What": "woman", "Where": "hands", "AOI_Category": "woman_hands", "Meaning": "Woman's hands"}
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2025-10-25",
+    "purpose": "Validate raw eye-tracking CSV files before preprocessing",
+    "validation_level": "structural",
+    "halt_on_failure": true
+  }
+}

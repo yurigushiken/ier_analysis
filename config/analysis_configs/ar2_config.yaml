@@ -1,0 +1,97 @@
+# AR-2: Gaze Transition Analysis Configuration
+# Purpose: Analyze sequential gaze transitions between AOI categories
+
+analysis_name: "AR-2: Gaze Transitions"
+description: "Sequential gaze transition analysis between AOI categories using transition matrices and directed graphs"
+
+# Statistical Methods
+statistics:
+  # Primary test: Chi-squared test for independence
+  primary_test: "chi_squared"
+
+  # Minimum transition count for inclusion in analysis
+  min_transition_count: 5
+
+  # Multiple comparison correction for pairwise comparisons
+  multiple_comparison_correction: "bonferroni"
+
+  # Calculate transition probabilities
+  calculate_probabilities: true
+
+  # Expected frequency threshold for chi-squared validity
+  min_expected_frequency: 5
+
+# Visualization Settings
+visualization:
+  # Directed graph layout algorithm
+  # Options: "spring", "circular", "kamada_kawai", "spectral"
+  graph_layout: "spring"
+
+  # Node appearance
+  node_size_metric: "total_duration"  # or "visit_count"
+  node_size_scale: 300  # Base size multiplier
+  node_color_by: "aoi_category"  # Color nodes by AOI type
+
+  # Edge appearance
+  edge_thickness_metric: "transition_probability"
+  edge_thickness_scale: 1.5
+  show_edge_labels: true
+  edge_label_font_size: 8
+  min_edge_probability_display: 0.05  # Don't show edges < 5% probability
+
+  # Color mapping for AOI categories
+  node_colors:
+    faces: "#e74c3c"      # Red
+    bodies: "#3498db"     # Blue
+    objects: "#2ecc71"    # Green
+    hands: "#f39c12"      # Orange
+    screen: "#95a5a6"     # Gray
+    off_screen: "#34495e" # Dark gray
+
+  # Figure dimensions
+  figure_width: 12
+  figure_height: 10
+
+  # Colormap for heatmap visualization
+  colormap: "YlOrRd"  # Yellow-Orange-Red for transition matrices
+
+# Transition Matrix Settings
+transition_matrix:
+  # Normalize by row (source AOI)
+  normalize_by_row: true
+
+  # Separate matrices by condition
+  separate_by_condition: true
+
+  # Include self-transitions (staying on same AOI)
+  include_self_transitions: false
+
+  # AOI ordering in matrix (for consistent visualization)
+  aoi_order:
+    - "man_face"
+    - "woman_face"
+    - "toy_present"
+    - "man_body"
+    - "woman_body"
+    - "man_hands"
+    - "woman_hands"
+    - "screen_nonAOI"
+    - "off_screen"
+
+# Output Settings
+output:
+  # Export transition matrices as CSV
+  export_transition_matrices: true
+
+  # Export directed graph data (networkx format)
+  export_graph_data: true
+
+  # Generate both individual condition graphs and combined
+  generate_combined_graph: true
+  generate_per_condition_graphs: true
+
+  # Heatmap of transition probabilities
+  generate_heatmap: true
+
+  # Statistical comparison tables
+  export_statistical_comparisons: true

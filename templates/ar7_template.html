@@ -1,0 +1,35 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<section id="overview">
+    <h2>1. Overview</h2>
+    <p>{{ overview_text }}</p>
+</section>
+
+<section id="methods">
+    <h2>2. Methods</h2>
+    <p>{{ methods_text }}</p>
+</section>
+
+<section id="results">
+    <h2>3. Results</h2>
+    <h3>3.1 Toy Attention</h3>
+    {{ toy_stats_table | safe }}
+    <figure>
+        <img src="{{ toy_figure }}" alt="Toy attention">
+        <figcaption>{{ toy_caption }}</figcaption>
+    </figure>
+
+    <h3>3.2 Social Gaze Triplets</h3>
+    {{ triplet_stats_table | safe }}
+    <figure>
+        <img src="{{ triplet_figure }}" alt="Triplet comparison">
+        <figcaption>{{ triplet_caption }}</figcaption>
+    </figure>
+</section>
+
+<section id="interpretation">
+    <h2>4. Synthesis</h2>
+    <p>{{ synthesis_text }}</p>
+</section>
+{% endblock %}

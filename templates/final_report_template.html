@@ -1,0 +1,24 @@
+{% extends "base_report.html" %}
+
+{% block content %}
+<section id="summary">
+    <h2>Executive Summary</h2>
+    <p>{{ executive_summary }}</p>
+</section>
+
+<section id="table-of-contents">
+    <h2>Table of Contents</h2>
+    <ol>
+        {% for section in sections %}
+            <li><a href="#{{ section.report_id|lower }}">{{ section.title }}</a></li>
+        {% endfor %}
+    </ol>
+</section>
+
+{% for section in sections %}
+<section id="{{ section.report_id|lower }}" class="page-break">
+    <h2>{{ section.title }}</h2>
+    {{ section.content | safe }}
+</section>
+{% endfor %}
+{% endblock %}

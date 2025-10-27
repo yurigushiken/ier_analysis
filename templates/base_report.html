@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ report_title }} | IER Analysis</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .no-print {
+                display: none;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        header .metadata {
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        header .metadata span {
+            margin-right: 20px;
+        }
+
+        /* Main Content */
+        main {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h1 { font-size: 2.2em; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        h2 { font-size: 1.8em; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        h3 { font-size: 1.4em; color: #667eea; }
+        h4 { font-size: 1.2em; }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* Links */
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table thead {
+            background-color: #667eea;
+            color: white;
+        }
+
+        table th,
+        table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Numeric columns */
+        table td.numeric,
+        table th.numeric {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Statistical significance markers */
+        .significant {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .not-significant {
+            color: #95a5a6;
+        }
+
+        /* Figures */
+        figure {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        figcaption {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Code Blocks */
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Alert Boxes */
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            background-color: #e8f4f8;
+            border-color: #3498db;
+            color: #2980b9;
+        }
+
+        .alert-warning {
+            background-color: #fef5e7;
+            border-color: #f39c12;
+            color: #e67e22;
+        }
+
+        .alert-danger {
+            background-color: #fadbd8;
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .alert-success {
+            background-color: #d5f4e6;
+            border-color: #27ae60;
+            color: #229954;
+        }
+
+        /* Statistics Summary Box */
+        .stats-summary {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .stats-summary h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .stat-value {
+            font-family: 'Courier New', monospace;
+            color: #333;
+        }
+
+        /* Exclusions/Warnings Section */
+        .exclusions {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .exclusions h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        .exclusions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .exclusions li {
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+            border-top: 2px solid #eee;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-muted { color: #6c757d; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-20 { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{ report_title }}</h1>
+        <div class="subtitle">{{ analysis_name }}</div>
+        <div class="metadata">
+            <span><strong>Analysis ID:</strong> {{ analysis_id }}</span>
+            <span><strong>Generated:</strong> {{ generation_date }}</span>
+            <span><strong>Pipeline Version:</strong> {{ pipeline_version }}</span>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Content will be inserted here by child templates -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>
+            <strong>Infant Event Representation Analysis System</strong><br>
+            Based on Gordon (2003) | Generated by IER Analysis Pipeline v{{ pipeline_version }}<br>
+            <span class="text-muted">Configuration: α={{ alpha }}, Min Gaze Frames={{ min_gaze_frames }}, Error Bars={{ error_bar_type }}</span>
+        </p>
+        {% if git_commit %}
+        <p class="text-muted" style="font-size: 0.8em;">Git Commit: {{ git_commit }}</p>
+        {% endif %}
+    </footer>
+</body>
+</html>

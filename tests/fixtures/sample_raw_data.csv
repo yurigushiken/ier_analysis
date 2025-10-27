@@ -1,0 +1,4 @@
+Participant,Frame Number,Time,What,Where,Onset,Offset,Blue Dot Center,event_verified,frame_count_event,trial_number,trial_number_global,frame_count_trial_number,segment,frame_count_segment,participant_type,participant_age_months,participant_age_years
+Eight-0101-947,1,00:00:00:001,man,face,0.0,0.033,(123.4, 567.8),gw,1,1,1,1,approach,1,infant,8,0.67
+Eight-0101-947,2,00:00:00:034,man,face,0.033,0.066,(124.1, 566.5),gw,2,1,1,2,approach,2,infant,8,0.67
+Eight-0101-947,3,00:00:00:067,man,face,0.066,0.100,(124.5, 565.9),gw,3,1,1,3,approach,3,infant,8,0.67

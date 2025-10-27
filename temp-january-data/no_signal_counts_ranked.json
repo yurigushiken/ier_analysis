@@ -1,0 +1,464 @@
+[
+  {
+    "participant": "Eleven-0301-372",
+    "participant_type": "child",
+    "no_signal_rows": 9262,
+    "total_rows": 12114,
+    "proportion_no_signal": 0.7645699191018656
+  },
+  {
+    "participant": "Eleven-0401-682",
+    "participant_type": "child",
+    "no_signal_rows": 8537,
+    "total_rows": 9766,
+    "proportion_no_signal": 0.8741552324390743
+  },
+  {
+    "participant": "Seven-0201-1152",
+    "participant_type": "child",
+    "no_signal_rows": 8127,
+    "total_rows": 11015,
+    "proportion_no_signal": 0.73781207444394
+  },
+  {
+    "participant": "Eight-0601-5801",
+    "participant_type": "child",
+    "no_signal_rows": 7091,
+    "total_rows": 10840,
+    "proportion_no_signal": 0.6541512915129152
+  },
+  {
+    "participant": "Eight-0201-1170",
+    "participant_type": "child",
+    "no_signal_rows": 6834,
+    "total_rows": 8504,
+    "proportion_no_signal": 0.8036218250235183
+  },
+  {
+    "participant": "Eight-0301-1658",
+    "participant_type": "child",
+    "no_signal_rows": 6731,
+    "total_rows": 10060,
+    "proportion_no_signal": 0.6690854870775348
+  },
+  {
+    "participant": "Eight-0101-947",
+    "participant_type": "child",
+    "no_signal_rows": 6316,
+    "total_rows": 8350,
+    "proportion_no_signal": 0.7564071856287425
+  },
+  {
+    "participant": "Ten-0102-5728",
+    "participant_type": "child",
+    "no_signal_rows": 6277,
+    "total_rows": 11388,
+    "proportion_no_signal": 0.5511942395504039
+  },
+  {
+    "participant": "Seven-0401-1655",
+    "participant_type": "child",
+    "no_signal_rows": 6254,
+    "total_rows": 8529,
+    "proportion_no_signal": 0.733262985109626
+  },
+  {
+    "participant": "Ten-0301-1158",
+    "participant_type": "child",
+    "no_signal_rows": 5940,
+    "total_rows": 11003,
+    "proportion_no_signal": 0.5398527674270653
+  },
+  {
+    "participant": "Seven-0102-5982",
+    "participant_type": "child",
+    "no_signal_rows": 5885,
+    "total_rows": 10198,
+    "proportion_no_signal": 0.5770739360658953
+  },
+  {
+    "participant": "Seven-0301-6399",
+    "participant_type": "child",
+    "no_signal_rows": 5883,
+    "total_rows": 7786,
+    "proportion_no_signal": 0.7555869509375803
+  },
+  {
+    "participant": "Eight-0302-5513",
+    "participant_type": "child",
+    "no_signal_rows": 5519,
+    "total_rows": 7801,
+    "proportion_no_signal": 0.7074734008460454
+  },
+  {
+    "participant": "Nine-0301-1171",
+    "participant_type": "child",
+    "no_signal_rows": 5221,
+    "total_rows": 8651,
+    "proportion_no_signal": 0.6035140446191192
+  },
+  {
+    "participant": "Ten-0501-5669",
+    "participant_type": "child",
+    "no_signal_rows": 5175,
+    "total_rows": 8422,
+    "proportion_no_signal": 0.6144621230111612
+  },
+  {
+    "participant": "Eight-0401-1638",
+    "participant_type": "child",
+    "no_signal_rows": 5098,
+    "total_rows": 10455,
+    "proportion_no_signal": 0.4876135820181731
+  },
+  {
+    "participant": "Nine-0101-694",
+    "participant_type": "child",
+    "no_signal_rows": 5002,
+    "total_rows": 8085,
+    "proportion_no_signal": 0.6186765615337044
+  },
+  {
+    "participant": "Nine-0401-1013",
+    "participant_type": "child",
+    "no_signal_rows": 4351,
+    "total_rows": 7612,
+    "proportion_no_signal": 0.5715974776668419
+  },
+  {
+    "participant": "Nine-0301-1009",
+    "participant_type": "child",
+    "no_signal_rows": 4317,
+    "total_rows": 6665,
+    "proportion_no_signal": 0.6477119279819955
+  },
+  {
+    "participant": "Nine-0601-5532",
+    "participant_type": "child",
+    "no_signal_rows": 4089,
+    "total_rows": 8252,
+    "proportion_no_signal": 0.49551623848763937
+  },
+  {
+    "participant": "Eight-0101-1579",
+    "participant_type": "child",
+    "no_signal_rows": 3996,
+    "total_rows": 5433,
+    "proportion_no_signal": 0.7355052457205964
+  },
+  {
+    "participant": "Eight-0301-1158",
+    "participant_type": "child",
+    "no_signal_rows": 3994,
+    "total_rows": 6082,
+    "proportion_no_signal": 0.6566918776718185
+  },
+  {
+    "participant": "Ten-0501-5753",
+    "participant_type": "child",
+    "no_signal_rows": 3966,
+    "total_rows": 9223,
+    "proportion_no_signal": 0.4300119267049767
+  },
+  {
+    "participant": "Eleven-0501-837",
+    "participant_type": "child",
+    "no_signal_rows": 3960,
+    "total_rows": 8270,
+    "proportion_no_signal": 0.4788391777509069
+  },
+  {
+    "participant": "Eleven-0101-342",
+    "participant_type": "child",
+    "no_signal_rows": 3944,
+    "total_rows": 8084,
+    "proportion_no_signal": 0.48787728847105394
+  },
+  {
+    "participant": "Nine-0101-598",
+    "participant_type": "child",
+    "no_signal_rows": 3848,
+    "total_rows": 5642,
+    "proportion_no_signal": 0.6820276497695853
+  },
+  {
+    "participant": "Nine-0201-464",
+    "participant_type": "child",
+    "no_signal_rows": 3783,
+    "total_rows": 6250,
+    "proportion_no_signal": 0.60528
+  },
+  {
+    "participant": "Seven-0601-6417",
+    "participant_type": "child",
+    "no_signal_rows": 3679,
+    "total_rows": 7776,
+    "proportion_no_signal": 0.4731224279835391
+  },
+  {
+    "participant": "Ten-0601-5737",
+    "participant_type": "child",
+    "no_signal_rows": 3374,
+    "total_rows": 7739,
+    "proportion_no_signal": 0.43597364000516864
+  },
+  {
+    "participant": "Seven-0202-6362",
+    "participant_type": "child",
+    "no_signal_rows": 3174,
+    "total_rows": 5814,
+    "proportion_no_signal": 0.5459236326109391
+  },
+  {
+    "participant": "Eleven-0202-5721",
+    "participant_type": "child",
+    "no_signal_rows": 3172,
+    "total_rows": 7249,
+    "proportion_no_signal": 0.4375775969099186
+  },
+  {
+    "participant": "Eleven-0301-418",
+    "participant_type": "child",
+    "no_signal_rows": 3043,
+    "total_rows": 6264,
+    "proportion_no_signal": 0.4857918263090677
+  },
+  {
+    "participant": "Nine-0201-1035",
+    "participant_type": "child",
+    "no_signal_rows": 2982,
+    "total_rows": 5498,
+    "proportion_no_signal": 0.542379046926155
+  },
+  {
+    "participant": "Ten-0401-800",
+    "participant_type": "child",
+    "no_signal_rows": 2934,
+    "total_rows": 8546,
+    "proportion_no_signal": 0.34331851158436694
+  },
+  {
+    "participant": "Eleven-0301-5909",
+    "participant_type": "child",
+    "no_signal_rows": 2932,
+    "total_rows": 7764,
+    "proportion_no_signal": 0.377640391550747
+  },
+  {
+    "participant": "Nine-0401-1096",
+    "participant_type": "child",
+    "no_signal_rows": 2882,
+    "total_rows": 8170,
+    "proportion_no_signal": 0.35275397796817626
+  },
+  {
+    "participant": "Seven-0101-1373",
+    "participant_type": "child",
+    "no_signal_rows": 2811,
+    "total_rows": 5867,
+    "proportion_no_signal": 0.47912050451678884
+  },
+  {
+    "participant": "Eight-0201-1464",
+    "participant_type": "child",
+    "no_signal_rows": 2763,
+    "total_rows": 7155,
+    "proportion_no_signal": 0.38616352201257864
+  },
+  {
+    "participant": "Ten-0602-5894",
+    "participant_type": "child",
+    "no_signal_rows": 2626,
+    "total_rows": 7054,
+    "proportion_no_signal": 0.37227105188545506
+  },
+  {
+    "participant": "Twelve-0101-1647",
+    "participant_type": "child",
+    "no_signal_rows": 2442,
+    "total_rows": 8377,
+    "proportion_no_signal": 0.29151247463292346
+  },
+  {
+    "participant": "Seven-0301-1342",
+    "participant_type": "child",
+    "no_signal_rows": 2411,
+    "total_rows": 3737,
+    "proportion_no_signal": 0.6451699223976451
+  },
+  {
+    "participant": "Ten-0301-242",
+    "participant_type": "child",
+    "no_signal_rows": 2378,
+    "total_rows": 6785,
+    "proportion_no_signal": 0.35047899778924096
+  },
+  {
+    "participant": "Nine-0101-707",
+    "participant_type": "child",
+    "no_signal_rows": 2331,
+    "total_rows": 5482,
+    "proportion_no_signal": 0.42520977745348415
+  },
+  {
+    "participant": "Ten-0101-246",
+    "participant_type": "child",
+    "no_signal_rows": 1868,
+    "total_rows": 4586,
+    "proportion_no_signal": 0.40732664631487137
+  },
+  {
+    "participant": "Ten-0601-825",
+    "participant_type": "child",
+    "no_signal_rows": 1596,
+    "total_rows": 6418,
+    "proportion_no_signal": 0.24867559987535057
+  },
+  {
+    "participant": "Eight-0501-6206",
+    "participant_type": "child",
+    "no_signal_rows": 1526,
+    "total_rows": 6253,
+    "proportion_no_signal": 0.2440428594274748
+  },
+  {
+    "participant": "Twelve-0101-1654",
+    "participant_type": "child",
+    "no_signal_rows": 1431,
+    "total_rows": 6986,
+    "proportion_no_signal": 0.20483824792442026
+  },
+  {
+    "participant": "FortySix-0101-1666",
+    "participant_type": "adult",
+    "no_signal_rows": 1219,
+    "total_rows": 5487,
+    "proportion_no_signal": 0.2221614725715327
+  },
+  {
+    "participant": "Nine-0502-5656",
+    "participant_type": "child",
+    "no_signal_rows": 1110,
+    "total_rows": 6263,
+    "proportion_no_signal": 0.1772313587737506
+  },
+  {
+    "participant": "FourtySix-0401-1672",
+    "participant_type": "adult",
+    "no_signal_rows": 1040,
+    "total_rows": 5659,
+    "proportion_no_signal": 0.18377805265948047
+  },
+  {
+    "participant": "FiftySix-0501-1673",
+    "participant_type": "adult",
+    "no_signal_rows": 915,
+    "total_rows": 5655,
+    "proportion_no_signal": 0.16180371352785147
+  },
+  {
+    "participant": "ThirtyFive-0301-1675",
+    "participant_type": "adult",
+    "no_signal_rows": 863,
+    "total_rows": 6478,
+    "proportion_no_signal": 0.13322012966965113
+  },
+  {
+    "participant": "Eleven-0101-141",
+    "participant_type": "child",
+    "no_signal_rows": 779,
+    "total_rows": 5959,
+    "proportion_no_signal": 0.13072663198523243
+  },
+  {
+    "participant": "ThirtyNine-0101-1660",
+    "participant_type": "adult",
+    "no_signal_rows": 768,
+    "total_rows": 6119,
+    "proportion_no_signal": 0.12551070436345807
+  },
+  {
+    "participant": "Eleven-0201-209",
+    "participant_type": "child",
+    "no_signal_rows": 699,
+    "total_rows": 5700,
+    "proportion_no_signal": 0.12263157894736842
+  },
+  {
+    "participant": "TwentyTwo-0201-1665",
+    "participant_type": "adult",
+    "no_signal_rows": 625,
+    "total_rows": 5626,
+    "proportion_no_signal": 0.11109136153572698
+  },
+  {
+    "participant": "FortyOne-0101-1677",
+    "participant_type": "adult",
+    "no_signal_rows": 407,
+    "total_rows": 5196,
+    "proportion_no_signal": 0.07832948421862972
+  },
+  {
+    "participant": "TwentySeven-0101-1670",
+    "participant_type": "adult",
+    "no_signal_rows": 339,
+    "total_rows": 5497,
+    "proportion_no_signal": 0.06167000181917409
+  },
+  {
+    "participant": "TwentyFive-0101-1667",
+    "participant_type": "adult",
+    "no_signal_rows": 328,
+    "total_rows": 5549,
+    "proportion_no_signal": 0.05910974950441521
+  },
+  {
+    "participant": "TwentyFive-0201-1669",
+    "participant_type": "adult",
+    "no_signal_rows": 316,
+    "total_rows": 5928,
+    "proportion_no_signal": 0.053306342780026994
+  },
+  {
+    "participant": "ThirtyOne-0201-1676",
+    "participant_type": "adult",
+    "no_signal_rows": 290,
+    "total_rows": 5471,
+    "proportion_no_signal": 0.053006762931822334
+  },
+  {
+    "participant": "TwentyFour-0101-1663",
+    "participant_type": "adult",
+    "no_signal_rows": 275,
+    "total_rows": 5487,
+    "proportion_no_signal": 0.050118461818844544
+  },
+  {
+    "participant": "TwentyTwo-0101-1661",
+    "participant_type": "adult",
+    "no_signal_rows": 260,
+    "total_rows": 6865,
+    "proportion_no_signal": 0.037873270211216316
+  },
+  {
+    "participant": "TwentyEight-0101-1664",
+    "participant_type": "adult",
+    "no_signal_rows": 229,
+    "total_rows": 5672,
+    "proportion_no_signal": 0.0403737658674189
+  },
+  {
+    "participant": "Ten-0501-455",
+    "participant_type": "child",
+    "no_signal_rows": 155,
+    "total_rows": 6002,
+    "proportion_no_signal": 0.025824725091636122
+  },
+  {
+    "participant": "TwentyThree-0601-1671",
+    "participant_type": "adult",
+    "no_signal_rows": 111,
+    "total_rows": 5825,
+    "proportion_no_signal": 0.019055793991416308
+  }
+]

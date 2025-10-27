@@ -21,13 +21,13 @@ DEFAULT_REPORT_DIR = Path("results/AR1_Gaze_Duration")
 
 def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
     processed_dir = Path(config["paths"]["processed_data"])
-    child_path = processed_dir / "gaze_events_child.csv"
     default_path = processed_dir / "gaze_events.csv"
+    child_path = processed_dir / "gaze_events_child.csv"
 
-    if child_path.exists():
-        path = child_path
-    elif default_path.exists():
+    if default_path.exists():
         path = default_path
+    elif child_path.exists():
+        path = child_path
     else:
         raise FileNotFoundError("No gaze events file found for AR-1 analysis")
 
@@ -84,11 +84,15 @@ def _aggregate_by_condition(trial_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Da
 
 
 def _compute_statistics(
-    participant_means: pd.DataFrame, 
+    participant_means: pd.DataFrame,
     summary: pd.DataFrame,
     config: Dict[str, Any]
 ) -> Dict[str, Any]:
-    """Compute statistical comparisons using PARTICIPANT-LEVEL means."""
+    """Compute statistical comparisons using PARTICIPANT-LEVEL means.
+
+    Loads comparison configuration from ar1_config.yaml to determine
+    which conditions to compare (e.g., upright-only vs combined with upside-down).
+    """
     stats_context: Dict[str, Any] = {
         "summary_rows": [],
         "ttest": None,
@@ -112,15 +116,34 @@ def _compute_statistics(
             }
         )
 
+    # Load AR1-specific comparison configuration
+    from src.utils.config import load_analysis_config
+    try:
+        ar1_config = load_analysis_config("ar1_config")
+        comparisons = ar1_config.get("comparisons", {})
+        active_comparison = ar1_config.get("active_comparison", "primary")
+        comparison = comparisons.get(active_comparison, {})
+
+        give_conditions = comparison.get("give_conditions", ["GIVE_WITH"])
+        hug_conditions = comparison.get("hug_conditions", ["HUG_WITH"])
+
+        LOGGER.info(f"Using comparison: {active_comparison}")
+        LOGGER.info(f"GIVE conditions: {give_conditions}")
+        LOGGER.info(f"HUG conditions: {hug_conditions}")
+    except Exception as e:
+        # Fallback to upright-only if config load fails
+        LOGGER.warning(f"Could not load ar1_config.yaml, using default: {e}")
+        give_conditions = ["GIVE_WITH"]
+        hug_conditions = ["HUG_WITH"]
+
     # Use PARTICIPANT-LEVEL means for statistical tests
+    # Filter to exact conditions specified in config
     give = participant_means[
-        participant_means["condition_name"].str.upper().str.contains("GIVE") & 
-        participant_means["condition_name"].str.upper().str.contains("WITH")
+        participant_means["condition_name"].isin(give_conditions)
     ]["toy_proportion"]
-    
+
     hug = participant_means[
-        participant_means["condition_name"].str.upper().str.contains("HUG") & 
-        participant_means["condition_name"].str.upper().str.contains("WITH")
+        participant_means["condition_name"].isin(hug_conditions)
     ]["toy_proportion"]
 
     min_n = config.get("analysis", {}).get("min_statistical_n", 3)
@@ -131,15 +154,17 @@ def _compute_statistics(
     if len(give) >= min_n and len(hug) >= min_n:
         stats_context["give_mean"] = float(give.mean())
         stats_context["hug_mean"] = float(hug.mean())
-        
+
         ttest_result = t_test(give, hug)
         stats_context["ttest"] = ttest_result
         stats_context["ttest_df"] = getattr(ttest_result, "df", len(give) + len(hug) - 2)
         stats_context["ttest_p"] = float(ttest_result.pvalue)
         stats_context["ttest_statistic"] = float(ttest_result.statistic)
         stats_context["cohens_d"] = float(cohens_d(give, hug))
-        stats_context["significant_condition"] = "GIVE_WITH"
-        stats_context["other_condition"] = "HUG_WITH"
+
+        # Use actual condition names from config for reporting
+        stats_context["significant_condition"] = " + ".join(give_conditions)
+        stats_context["other_condition"] = " + ".join(hug_conditions)
         stats_context["p_comparison"] = "<" if ttest_result.pvalue < config["analysis"].get("alpha", 0.05) else "≥"
     else:
         stats_context["ttest_p"] = None

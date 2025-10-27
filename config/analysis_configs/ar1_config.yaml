@@ -56,6 +56,45 @@ visualization:
   show_individual_points: true
   point_alpha: 0.3
 
+# Condition Comparisons Configuration
+# Define which conditions to compare in statistical tests
+comparisons:
+  # Primary comparison: Upright GIVE vs HUG only
+  primary:
+    name: "Upright GIVE vs HUG"
+    description: "Test selective attention to toys in canonical (upright) events"
+    give_conditions:
+      - "GIVE_WITH"
+    hug_conditions:
+      - "HUG_WITH"
+
+  # Control comparison: Upside-down GIVE vs HUG
+  control_biomechanical:
+    name: "Upside-Down GIVE vs HUG"
+    description: "Test if effect persists with disrupted biomechanical cues"
+    give_conditions:
+      - "UPSIDE_DOWN_GIVE_WITH"
+    hug_conditions:
+      - "UPSIDE_DOWN_HUG_WITH"
+
+  # Combined comparison: All WITH conditions (current behavior)
+  combined_all_with:
+    name: "All GIVE_WITH vs All HUG_WITH"
+    description: "Test robustness across orientation variants (upright + upside-down)"
+    give_conditions:
+      - "GIVE_WITH"
+      - "UPSIDE_DOWN_GIVE_WITH"
+    hug_conditions:
+      - "HUG_WITH"
+      - "UPSIDE_DOWN_HUG_WITH"
+
+# Which comparison to use for primary analysis
+# Options: "primary", "control_biomechanical", "combined_all_with"
+active_comparison: "primary"
+
+# Run all comparisons and report separately (generates supplementary results)
+report_all_comparisons: false
+
 # AOI Categories for Analysis
 aoi_categories:
   primary_aois:

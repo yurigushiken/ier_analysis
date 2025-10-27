@@ -41,12 +41,12 @@ class DevelopmentalModelResult:
 def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
     """Load gaze events from processed data directory."""
     processed_dir = Path(config["paths"]["processed_data"])
-    child_path = processed_dir / "gaze_events_child.csv"
     default_path = processed_dir / "gaze_events.csv"
+    child_path = processed_dir / "gaze_events_child.csv"
 
-    if child_path.exists():
-        path = child_path
-    elif default_path.exists():
+    if default_path.exists():
+        path = default_path
+    elif child_path.exists():
         path = default_path
     else:
         raise FileNotFoundError("No gaze events file found for AR-5 analysis")

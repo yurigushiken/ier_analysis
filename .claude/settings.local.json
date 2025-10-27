@@ -1,16 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git fetch:*)",
-      "Bash(.specify/scripts/powershell/create-new-feature.ps1:*)",
-      "Bash(powershell.exe:*)",
-      "Bash(python temp_analysis/explore_data.py:*)",
-      "Bash(python:*)",
-      "Bash(iconv:*)",
-      "Bash(cat:*)",
-      "Bash(mkdir:*)",
-      "Bash(touch:*)",
-      "Bash(conda run:*)"
+      "Bash(C:/Users/yurig/miniforge3/envs/ier_analysis/python.exe -c:*)"
     ],
     "deny": [],
     "ask": []

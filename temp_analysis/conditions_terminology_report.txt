@@ -1,0 +1,223 @@
+================================================================================
+INVESTIGATION: AR1 CONDITION FILTERING & TERMINOLOGY
+================================================================================
+
+================================================================================
+ISSUE 1: UPSIDE_DOWN VARIANTS IN GIVE vs HUG COMPARISON
+================================================================================
+
+1. ALL CONDITIONS IN DATA:
+   - FLOATING
+   - GIVE_WITH
+   - GIVE_WITHOUT
+   - HUG_WITH
+   - HUG_WITHOUT
+   - SHOW_WITH
+   - SHOW_WITHOUT
+   - UPSIDE_DOWN_GIVE_WITH
+   - UPSIDE_DOWN_GIVE_WITHOUT
+   - UPSIDE_DOWN_HUG_WITH
+   - UPSIDE_DOWN_HUG_WITHOUT
+
+2. CURRENT AR1 LOGIC (Lines 116-124 in ar1_gaze_duration.py):
+
+   give = participant_means[
+       participant_means["condition_name"].str.upper().str.contains("GIVE") &
+       participant_means["condition_name"].str.upper().str.contains("WITH")
+   ]["toy_proportion"]
+
+   hug = participant_means[
+       participant_means["condition_name"].str.upper().str.contains("HUG") &
+       participant_means["condition_name"].str.upper().str.contains("WITH")
+   ]["toy_proportion"]
+
+
+3. WHAT GETS SELECTED:
+
+   GIVE conditions selected:
+      - GIVE_WITH
+      - GIVE_WITHOUT
+      - UPSIDE_DOWN_GIVE_WITH
+      - UPSIDE_DOWN_GIVE_WITHOUT
+
+   HUG conditions selected:
+      - HUG_WITH
+      - HUG_WITHOUT
+      - UPSIDE_DOWN_HUG_WITH
+      - UPSIDE_DOWN_HUG_WITHOUT
+
+4. SCIENTIFIC QUESTION:
+
+   - UPSIDE_DOWN variants are BIOMECHANICAL CONTROLS
+   - They test if the effect is about:")
+     * Understanding event meaning (what we want to test)
+     * vs. Visual motion patterns (control)"
+
+   - Including them may:
+     DILUTE the effect if upside-down reduces understanding
+     STRENGTHEN if upside-down doesn't affect understanding
+     CONFOUND if upside-down has different effect
+
+
+5. POSSIBLE YAML CONFIGURATION OPTIONS:
+
+Option A: Specify exact conditions to compare
+---
+comparisons:
+  primary:
+    group1: ["GIVE_WITH"]
+    group2: ["HUG_WITH"]
+  controls:
+    group1: ["UPSIDE_DOWN_GIVE_WITH"]
+    group2: ["UPSIDE_DOWN_HUG_WITH"]
+
+Option B: Use pattern matching with exclusions
+---
+comparisons:
+  primary:
+    include_patterns: ["GIVE", "WITH"]
+    exclude_patterns: ["UPSIDE_DOWN", "WITHOUT"]
+
+Option C: Use condition tags/categories
+---
+condition_categories:
+  upright_with: ["GIVE_WITH", "HUG_WITH", "SHOW_WITH"]
+  upside_down_with: ["UPSIDE_DOWN_GIVE_WITH", "UPSIDE_DOWN_HUG_WITH"]
+
+comparisons:
+  primary:
+    categories: ["upright_with"]
+    contrast: ["GIVE_WITH", "HUG_WITH"]
+
+
+================================================================================
+ISSUE 2: TERMINOLOGY - 'GAZE EVENT' vs ALTERNATIVES
+================================================================================
+
+1. CURRENT TERMINOLOGY:
+
+   Term: "gaze event"
+   Definition: 3+ consecutive frames looking at same AOI
+   Count in data: 26,560 (combined child + adult)
+
+
+2. WHY IT'S CONFUSING:
+
+   'Event' is OVERLOADED in this project:
+
+   a) VIDEO EVENT (e.g., 'gw', 'hw', 'f')
+      - The stimulus video showing an action
+      - 11 types total
+      - 150-185 frames long (~5 seconds)
+
+   b) EVENT EXPOSURE / TRIAL
+      - Each time participant sees a video event
+      - Tracked by trial_number or trial_number_global
+      - ~1,916 trials in child data
+
+   c) GAZE EVENT (CURRENT USAGE)
+      - 3+ consecutive frames on same AOI
+      - ~26,560 in combined data
+      - Detected by preprocessing pipeline
+
+
+3. ALTERNATIVE TERMINOLOGY OPTIONS:
+
+   Option 1: 'gaze_fixation'
+      Pros:
+         + Standard in eye-tracking literature
+         + Clear meaning
+         + Distinct from stimulus events
+      Cons:
+         - Technically 'fixation' has stricter definition (50-200ms)
+         - May imply spatial stability
+
+   Option 2: 'gaze_sequence'
+      Pros:
+         + Emphasizes consecutive frames
+         + Avoids 'event' confusion
+         + Accurate description
+      Cons:
+         - Less standard
+         - Could imply longer duration
+
+   Option 3: 'look'
+      Pros:
+         + Simple, intuitive
+         + Natural language
+         + Used in infant research
+      Cons:
+         - Too informal for scientific writing
+         - Vague duration
+
+   Option 4: 'gaze_bout'
+      Pros:
+         + Used in behavioral ecology
+         + Implies sustained attention
+         + Distinct from events
+      Cons:
+         - Unfamiliar to some readers
+         - Could imply longer duration
+
+   Option 5: 'gaze_episode'
+      Pros:
+         + Clear sustained attention
+         + Distinct from stimulus events
+         + Professional
+      Cons:
+         - 'Episode' has other meanings in development
+         - Slightly verbose
+
+   Option 6: 'fixation_event'
+      Pros:
+         + Combines standard term with current usage
+         + Clear it's detected instance
+      Cons:
+         - Still uses 'event'
+         - Fixation has technical definition
+
+   Option 7: 'sustained_gaze'
+      Pros:
+         + Emphasizes 3+ frame requirement
+         + Clear meaning
+         + Natural
+      Cons:
+         - Longer phrase
+         - Could be ambiguous about threshold
+
+   Option 8: 'gaze_unit'
+      Pros:
+         + Neutral, technical
+         + Clearly a unit of analysis
+         + Avoids 'event'
+      Cons:
+         - Abstract
+         - Less intuitive
+
+4. FIELD-SPECIFIC CONVENTIONS:
+
+   Eye-tracking research typically uses:
+   - FIXATION: Gaze held on point for 50-200ms (spatial + temporal)
+   - SACCADE: Rapid eye movement between fixations
+   - DWELL TIME: Total time spent in AOI (sum of fixations)
+   - VISIT: Entry into and exit from an AOI (may include multiple fixations)
+
+   Infant research often uses:
+   - LOOKING TIME: Total duration of gaze (our 'gaze_duration_ms')
+   - LOOK: Instance of looking (informal)
+   - GAZE: Visual attention (general term)
+
+   Your definition (3+ frames on same AOI) is closest to:
+   - 'Fixation' if requiring spatial stability
+   - 'Visit' if allowing eye movements within AOI
+   - 'Gaze bout' if emphasizing sustained attention
+
+
+5. RECOMMENDATION:
+Traceback (most recent call last):
+  File "C:\CascadeProjects\ier_analysis\temp_analysis\investigate_conditions_and_terminology.py", line 198, in <module>
+    print("""
+  File "C:\Users\yurig\miniforge3\envs\ier_analysis\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2265' in position 242: character maps to <undefined>

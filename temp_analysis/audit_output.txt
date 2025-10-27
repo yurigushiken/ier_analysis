@@ -1,0 +1,65 @@
+================================================================================
+COMPREHENSIVE AR1 AUDIT
+================================================================================
+
+1. DATA LOADED
+   Total gaze events: 26,560
+   Participants: 66
+   Participant types: {'infant': np.int64(19811), 'adult': np.int64(6749)}
+
+2. WHAT AR1 SHOULD ANALYZE
+   Research Question: Do infants look longer at toys in GIVE vs HUG?
+   Primary Comparison: GIVE_WITH vs HUG_WITH
+   Key Assumption: Toy is RELEVANT in GIVE, IRRELEVANT in HUG
+
+3. REPLICATING AR1 CALCULATION STEP-BY-STEP
+
+   Step 1: Exclude off-screen gazes
+   - Total gaze events: 26,560
+   - After excluding off_screen: 21,802
+   - Percentage on-screen: 82.1%
+
+   Step 2: Identify toy gazes
+   - On-screen gaze events: 21,802
+   - Toy gaze events: 4,266
+   - Toy gaze breakdown:
+      toy_present: 2,644
+      toy_location: 1,622
+
+   Step 3: Calculate toy proportion per trial
+   - Formula: toy_duration_ms / total_onscreen_duration_ms
+   - Total trials: 2,436
+   - Trials with toy looking: 1,736
+   - Trials with zero toy looking: 700
+
+   Step 4: Aggregate to participant-level means
+   - Participant × condition combinations: 694
+   - Method: Mean of trial-level proportions per participant per condition
+
+   Step 5: Calculate condition-level summary
+
+   CONDITION SUMMARY (What appears in Table 1):
+          condition_name  mean_toy_proportion  n
+                FLOATING             0.137041 62
+               GIVE_WITH             0.209715 61
+            GIVE_WITHOUT             0.129620 65
+                HUG_WITH             0.113452 61
+             HUG_WITHOUT             0.070560 66
+               SHOW_WITH             0.149883 65
+            SHOW_WITHOUT             0.108331 65
+   UPSIDE_DOWN_GIVE_WITH             0.221604 61
+UPSIDE_DOWN_GIVE_WITHOUT             0.199144 63
+    UPSIDE_DOWN_HUG_WITH             0.150807 63
+ UPSIDE_DOWN_HUG_WITHOUT             0.120159 62
+
+4. VERIFICATION: Compare with AR1 Output
+   AR1 output file: results/AR1_Gaze_Duration/summary_stats.csv
+
+   Comparison:
+Traceback (most recent call last):
+  File "C:\CascadeProjects\ier_analysis\temp_analysis\audit_ar1_comprehensive.py", line 108, in <module>
+    print(f"   {match} {row['condition_name']:30s}: Manual={row['mean_toy_proportion_manual']:.6f}, AR1={row['mean_toy_proportion_ar1']:.6f}")
+  File "C:\Users\yurig\miniforge3\envs\ier_analysis\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 3: character maps to <undefined>

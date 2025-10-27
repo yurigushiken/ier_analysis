@@ -306,4 +306,3 @@ def test_summarize_by_age_group_empty():
 
     assert result.empty
     assert "mean" in result.columns
-

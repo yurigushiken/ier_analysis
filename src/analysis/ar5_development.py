@@ -101,8 +101,12 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Merge with loaded config
     for key, value in analysis_config.items():
-        if key in defaults and isinstance(defaults[key], dict):
-            defaults[key].update(value)
+        if key in defaults:
+            target = defaults[key]
+            if isinstance(target, dict) and isinstance(value, dict):
+                target.update(value)
+            else:
+                defaults[key] = value
         else:
             defaults[key] = value
 
@@ -165,16 +169,16 @@ def calculate_social_triplet_rate(gaze_events: pd.DataFrame) -> pd.DataFrame:
     ]
 
     triplet_counts = []
-    
+
     for (participant, trial), trial_df in gaze_events.groupby(["participant_id", "trial_number"]):
         trial_df = trial_df.sort_values("gaze_onset_time").reset_index(drop=True)
         count = 0
-        
+
         for i in range(len(trial_df) - 2):
             pattern = tuple(trial_df.iloc[i : i + 3]["aoi_category"].tolist())
             if pattern in valid_patterns:
                 count += 1
-        
+
         if count > 0 and not trial_df.empty:
             triplet_counts.append(
                 {
@@ -319,7 +323,9 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
     test_nonlinear = settings.get("age_modeling", {}).get("test_nonlinear", True)
 
     age_desc = "continuous age in months" if use_continuous else "age group categories"
-    nonlinear_desc = " Quadratic age terms were tested to assess non-linear developmental trends." if test_nonlinear else ""
+    nonlinear_desc = (
+        " Quadratic age terms were tested to assess non-linear developmental trends." if test_nonlinear else ""
+    )
 
     return (
         f"Developmental trajectories were analyzed using Linear Mixed Models (LMM) with {age_desc} "
@@ -524,4 +530,3 @@ __all__ = [
     "summarize_by_age_group",
     "run",
 ]
-

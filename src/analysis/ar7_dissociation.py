@@ -93,8 +93,12 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Merge with loaded config
     for key, value in analysis_config.items():
-        if key in defaults and isinstance(defaults[key], dict):
-            defaults[key].update(value)
+        if key in defaults:
+            target = defaults[key]
+            if isinstance(target, dict) and isinstance(value, dict):
+                target.update(value)
+            else:
+                defaults[key] = value
         else:
             defaults[key] = value
 
@@ -117,13 +121,13 @@ def calculate_condition_metrics(
     if target_conditions:
         # Normalize condition names for matching (partial match)
         gaze_events = gaze_events.copy()
-        
+
         # Create a mask for rows that contain any of the target conditions
         mask = pd.Series([False] * len(gaze_events), index=gaze_events.index)
         for target in target_conditions:
             # Match if target appears in condition_name (e.g., "GIVE" matches "GIVE_WITH")
             mask |= gaze_events["condition_name"].str.upper().str.contains(target.upper(), na=False)
-        
+
         gaze_events = gaze_events[mask]
 
     if gaze_events.empty:
@@ -221,7 +225,9 @@ def fit_dissociation_model(
     pairwise_comparisons = pd.DataFrame(pairwise_data)
 
     # Determine if dissociation detected (placeholder logic)
-    dissociation_detected = len(pairwise_data) > 0 and any(row["p_value_adjusted"] < 0.05 for _, row in pairwise_comparisons.iterrows())
+    dissociation_detected = len(pairwise_data) > 0 and any(
+        row["p_value_adjusted"] < 0.05 for _, row in pairwise_comparisons.iterrows()
+    )
 
     warnings.append("LMM with post-hoc comparisons not yet implemented; using placeholder results")
 
@@ -444,4 +450,3 @@ __all__ = [
     "fit_dissociation_model",
     "run",
 ]
-

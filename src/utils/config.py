@@ -108,7 +108,7 @@ def split_child_adult_config(config: Dict[str, Any]) -> Tuple[Dict[str, Any], Di
 
 
 def _collect_env_overrides(prefix: str) -> Dict[str, Any]:
-    namespace = {}
+    namespace: Dict[str, Any] = {}
     prefix_with_sep = f"{prefix}_" if prefix else ""
     for key, value in os.environ.items():
         if not key.startswith(prefix_with_sep):
@@ -138,7 +138,7 @@ def _apply_override(config: MutableMapping[str, Any], path: Iterable[str], value
         else:
             if part not in current or not isinstance(current[part], MutableMapping):
                 current[part] = {}
-            current = current[part]  # type: ignore[assignment]
+            current = current[part]
 
 
 def _coerce_value(raw: str) -> Any:

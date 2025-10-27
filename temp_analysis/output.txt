@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "c:\CascadeProjects\ier_analysis\temp_analysis\explore_data.py", line 3, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'

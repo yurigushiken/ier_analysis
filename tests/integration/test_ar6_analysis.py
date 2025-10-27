@@ -125,4 +125,3 @@ def test_ar6_missing_gaze_events(tmp_path: Path):
 
     assert result["report_id"] == "AR-6"
     assert result["html_path"] == ""
-

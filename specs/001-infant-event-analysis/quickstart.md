@@ -165,15 +165,25 @@ python src/preprocessing/master_log_generator.py
 
 ```bash
 # AR-1: Gaze Duration Analysis
-python src/analysis/ar1_gaze_duration.py
+python -m src.analysis.ar1_gaze_duration
 
 # AR-2: Gaze Transitions
-python src/analysis/ar2_transitions.py
+python -m src.analysis.ar2_transitions
 
 # AR-3: Social Gaze Triplets
-python src/analysis/ar3_social_triplets.py
+python -m src.analysis.ar3_social_triplets
 
-# ... and so on for AR-4 through AR-7
+# AR-4: Dwell Time Analysis
+python -m src.analysis.ar4_dwell_times
+
+# AR-5: Developmental Trajectory Analysis
+python -m src.analysis.ar5_development
+
+# AR-6: Trial-Order Effects (Learning/Habituation)
+python -m src.analysis.ar6_learning
+
+# AR-7: Event Dissociation Analysis
+python -m src.analysis.ar7_dissociation
 ```
 
 **Output**: Individual reports in `results/AR*_*/report.html` and `report.pdf`
@@ -228,13 +238,21 @@ ier_analysis/
    - Can be opened in Excel or any CSV viewer for inspection
 
 2. **Individual Analysis Reports** (AR-1 through AR-7):
+   - **AR-1**: Gaze Duration (GIVE vs HUG comparison with t-tests)
+   - **AR-2**: Gaze Transitions (transition matrices, network graphs)
+   - **AR-3**: Social Gaze Triplets (face→toy→face sequence detection)
+   - **AR-4**: Dwell Times (mean fixation duration per AOI with LMM)
+   - **AR-5**: Developmental Trajectory (Age × Condition interactions)
+   - **AR-6**: Trial-Order Effects (habituation/learning with random slopes)
+   - **AR-7**: Event Dissociation (GIVE vs HUG vs SHOW comparisons)
+   
+   Each report contains:
    - **HTML version**: Open in web browser, best for viewing on screen
    - **PDF version**: For printing or archival
-   - Each report contains:
-     - Methods section explaining the analysis
-     - Statistical results with p-values, effect sizes
-     - Visualizations (bar charts, graphs)
-     - Narrative interpretation of findings
+   - Methods section explaining the analysis
+   - Statistical results with p-values, effect sizes
+   - Visualizations (bar charts, graphs, interaction plots)
+   - Narrative interpretation of findings
 
 3. **Final Compiled Report**:
    - Integrates all 7 analyses into one cohesive document

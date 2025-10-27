@@ -115,7 +115,12 @@ def test_ar7_calculate_condition_metrics_integration():
     gaze_events = pd.DataFrame(
         [
             {"participant_id": "P1", "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 600},
-            {"participant_id": "P1", "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 400},
+            {
+                "participant_id": "P1",
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 400,
+            },
             {"participant_id": "P2", "condition_name": "HUG", "aoi_category": "man_face", "gaze_duration_ms": 500},
             {"participant_id": "P2", "condition_name": "HUG", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 500},
         ]
@@ -130,4 +135,3 @@ def test_ar7_calculate_condition_metrics_integration():
 
     p2 = result[result["participant_id"] == "P2"]
     assert pytest.approx(p2.iloc[0]["proportion_primary_aois"], rel=1e-6) == 0.5
-

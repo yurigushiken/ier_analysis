@@ -44,7 +44,8 @@ class Contract:
     def column_definitions(self) -> Mapping[str, Mapping[str, Any]]:
         definitions = self.payload.get("definitions", {})
         raw_record = definitions.get("RawFrameRecord", {})
-        return raw_record.get("properties", {})
+        properties = raw_record.get("properties", {})
+        return properties if isinstance(properties, dict) else {}
 
 
 def validate_with_schema(
@@ -112,9 +113,7 @@ def validate_dataframe_against_contract(
             # Allow NaNs if column not required
             if invalid_mask.any():
                 bad_values = sorted(set(map(str, dataframe[column][invalid_mask].dropna())))
-                raise DataValidationError(
-                    f"Column '{column}' contains values not allowed by contract: {bad_values}"
-                )
+                raise DataValidationError(f"Column '{column}' contains values not allowed by contract: {bad_values}")
 
 
 def _enforce_types(series: pd.Series, column: str, expected_types: Iterable[str]) -> None:
@@ -127,9 +126,7 @@ def _enforce_types(series: pd.Series, column: str, expected_types: Iterable[str]
             continue
         if check(series.dropna()):
             return
-    raise DataValidationError(
-        f"Column '{column}' does not match expected types {list(expected_types)}"
-    )
+    raise DataValidationError(f"Column '{column}' does not match expected types {list(expected_types)}")
 
 
 def load_contract(path: Path | str) -> Contract:

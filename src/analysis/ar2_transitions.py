@@ -65,8 +65,8 @@ def _build_probability_tables(transitions: pd.DataFrame) -> Tuple[pd.DataFrame, 
     overall_counts = (
         transitions.groupby(["from_aoi", "to_aoi"], as_index=False).size().rename(columns={"size": "count"})
     )
-    overall_pivot = (
-        overall_counts.pivot_table(index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0)
+    overall_pivot = overall_counts.pivot_table(
+        index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0
     )
     overall_probs = overall_pivot.div(overall_pivot.sum(axis=1), axis=0).fillna(0)
 
@@ -85,18 +85,22 @@ def _save_tables(overall: pd.DataFrame, by_condition: Dict[str, pd.DataFrame], o
 
     overall_csv = output_dir / "transition_matrix_overall.csv"
     overall.to_csv(overall_csv)
-    tables_context.append({
-        "title": "Overall Transition Probabilities",
-        "html": overall.to_html(classes="table table-striped", float_format="{:.3f}".format),
-    })
+    tables_context.append(
+        {
+            "title": "Overall Transition Probabilities",
+            "html": overall.to_html(classes="table table-striped", float_format="{:.3f}".format),
+        }
+    )
 
     for condition, matrix in by_condition.items():
         file_path = output_dir / f"transition_matrix_{condition}.csv"
         matrix.to_csv(file_path)
-        tables_context.append({
-            "title": f"Transition Probabilities – {condition}",
-            "html": matrix.to_html(classes="table table-striped", float_format="{:.3f}".format),
-        })
+        tables_context.append(
+            {
+                "title": f"Transition Probabilities – {condition}",
+                "html": matrix.to_html(classes="table table-striped", float_format="{:.3f}".format),
+            }
+        )
 
     return {
         "tables": tables_context,

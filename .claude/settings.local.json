@@ -7,7 +7,10 @@
       "Bash(python temp_analysis/explore_data.py:*)",
       "Bash(python:*)",
       "Bash(iconv:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(conda run:*)"
     ],
     "deny": [],
     "ask": []

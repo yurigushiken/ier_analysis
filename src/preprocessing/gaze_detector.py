@@ -30,6 +30,61 @@ class GazeEvent:
 
 
 def detect_gaze_events(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.DataFrame:
+    """Detect gaze events from raw frame data using 3+ consecutive frame rule.
+    
+    A gaze event is defined as a sequence of 3 or more consecutive frames where
+    an infant's gaze remains on the same Area of Interest (AOI). This function
+    processes raw eye-tracking data and identifies all valid gaze events according
+    to the scientific definition from Gordon (2003).
+    
+    Parameters
+    ----------
+    dataframe : pd.DataFrame
+        Raw frame-by-frame eye-tracking data containing columns:
+        - Participant: participant identifier
+        - trial_number: trial number within session
+        - Frame Number: sequential frame index
+        - What, Where: AOI components mapped to AOI categories
+        - Onset, Offset: frame timing in seconds
+        - participant_type, participant_age_months: demographics
+        - event_verified: experimental condition code
+        - segment: event segment (approach, action, post)
+        - frame_count_trial_number: frame index within trial
+    min_frames : int, default=3
+        Minimum number of consecutive frames required to constitute a gaze event.
+        Default is 3 frames as per research protocol.
+    
+    Returns
+    -------
+    pd.DataFrame
+        Gaze events dataframe with columns:
+        - gaze_event_id: auto-incremented unique identifier
+        - participant_id, participant_type, age_months, age_group
+        - trial_number, condition, condition_name, segment
+        - aoi_category: mapped AOI label (e.g., "woman_face", "toy_present")
+        - gaze_start_frame, gaze_end_frame: frame indices within trial
+        - gaze_duration_frames: number of frames in event
+        - gaze_duration_ms: duration in milliseconds from Onset/Offset
+        - gaze_onset_time, gaze_offset_time: absolute timing in seconds
+    
+    Notes
+    -----
+    - Off-screen frames (no,signal AOI) break gaze sequences and are excluded
+    - Invalid AOI combinations are silently skipped with sequence reset
+    - Events are detected independently within each participant × trial combination
+    - Frame ordering is critical: data is sorted by Participant, trial_number, Frame Number
+    
+    Examples
+    --------
+    >>> raw_data = load_csv_files(["data/csvs_human_verified_vv/child/"])
+    >>> gaze_events = detect_gaze_events(raw_data, min_frames=3)
+    >>> print(f"Detected {len(gaze_events)} gaze events")
+    
+    See Also
+    --------
+    aoi_mapper.map_what_where_to_aoi : Maps What+Where pairs to AOI categories
+    master_log_generator.generate_master_log : Wrapper function for full preprocessing
+    """
     if dataframe.empty:
         return pd.DataFrame(columns=[field.name for field in fields(GazeEvent)])
 

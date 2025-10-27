@@ -21,10 +21,44 @@ def bar_plot(
     *,
     hue: str | None = None,
     title: str | None = None,
+    xlabel: str | None = None,
     ylabel: str | None = None,
     output_path: Path | str | None = None,
+    figsize: tuple[float, float] = (8, 6),
+    rotate_labels: int = 0,
 ) -> Path | None:
-    plt.figure(figsize=(8, 6))
+    """Create a bar plot with optional grouped bars and rotated labels.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Data containing x and y columns
+    x : str
+        Column name for x-axis categories
+    y : str
+        Column name for y-axis values
+    hue : str, optional
+        Column name for grouping (creates grouped bars)
+    title : str, optional
+        Plot title
+    xlabel : str, optional
+        X-axis label (defaults to x column name)
+    ylabel : str, optional
+        Y-axis label (defaults to y column name)
+    output_path : Path | str, optional
+        Path to save figure
+    figsize : tuple[float, float], default=(8, 6)
+        Figure size in inches (width, height)
+    rotate_labels : int, default=0
+        Rotation angle for x-axis labels (0, 45, 90, etc.)
+    
+    Returns
+    -------
+    Path | None
+        Path to saved figure, or None if not saved
+    """
+    plt.figure(figsize=figsize)
+    
     if hue:
         categories = data[x].unique()
         hue_levels = data[hue].unique()
@@ -33,20 +67,27 @@ def bar_plot(
             subset = data[data[hue] == level]
             positions = [i + idx * width for i in range(len(categories))]
             plt.bar(positions, subset[y], width=width, label=str(level))
-        plt.xticks([i + width * (len(hue_levels) - 1) / 2 for i in range(len(categories))], categories)
+        plt.xticks(
+            [i + width * (len(hue_levels) - 1) / 2 for i in range(len(categories))],
+            categories,
+            rotation=rotate_labels,
+            ha="right" if rotate_labels > 0 else "center"
+        )
         plt.legend()
     else:
         plt.bar(data[x], data[y])
+        if rotate_labels > 0:
+            plt.xticks(rotation=rotate_labels, ha="right")
 
-    plt.title(title or "")
-    plt.ylabel(ylabel or y)
-    plt.xlabel(x)
+    plt.title(title or "", fontsize=14, pad=15)
+    plt.ylabel(ylabel or y, fontsize=12)
+    plt.xlabel(xlabel or x, fontsize=12)
     plt.tight_layout()
 
     if output_path:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(path, dpi=300)
+        plt.savefig(path, dpi=300, bbox_inches="tight")
         plt.close()
         return path
 
@@ -161,7 +202,8 @@ def line_plot_with_error_bars(
 
     if hue:
         hue_levels = data[hue].unique()
-        colors = plt.cm.tab10(range(len(hue_levels)))
+        cmap = plt.cm.get_cmap("tab10")
+        colors = [cmap(i) for i in range(len(hue_levels))]
 
         for idx, level in enumerate(hue_levels):
             subset = data[data[hue] == level].sort_values(x)

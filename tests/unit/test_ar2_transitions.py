@@ -18,9 +18,7 @@ def _build_transition_dataframe() -> pd.DataFrame:
 
 def test_transition_probabilities_sum_to_one():
     df = _build_transition_dataframe()
-    pivot = (
-        df.pivot_table(index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0)
-    )
+    pivot = df.pivot_table(index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0)
     probabilities = pivot.div(pivot.sum(axis=1), axis=0)
     sums = probabilities.sum(axis=1)
     assert np.allclose(sums.values, np.ones_like(sums.values))

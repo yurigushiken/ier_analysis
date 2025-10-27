@@ -12,10 +12,42 @@ def _sample_trial_data() -> pd.DataFrame:
     """Create sample trial-level data."""
     return pd.DataFrame(
         [
-            {"participant_id": "P1", "trial_number": 1, "trial_number_global": 1, "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 500, "is_primary": True},
-            {"participant_id": "P1", "trial_number": 1, "trial_number_global": 1, "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 500, "is_primary": False},
-            {"participant_id": "P1", "trial_number": 2, "trial_number_global": 2, "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 400, "is_primary": True},
-            {"participant_id": "P1", "trial_number": 2, "trial_number_global": 2, "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 600, "is_primary": False},
+            {
+                "participant_id": "P1",
+                "trial_number": 1,
+                "trial_number_global": 1,
+                "condition_name": "GIVE",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 500,
+                "is_primary": True,
+            },
+            {
+                "participant_id": "P1",
+                "trial_number": 1,
+                "trial_number_global": 1,
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 500,
+                "is_primary": False,
+            },
+            {
+                "participant_id": "P1",
+                "trial_number": 2,
+                "trial_number_global": 2,
+                "condition_name": "GIVE",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 400,
+                "is_primary": True,
+            },
+            {
+                "participant_id": "P1",
+                "trial_number": 2,
+                "trial_number_global": 2,
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 600,
+                "is_primary": False,
+            },
         ]
     )
 
@@ -66,11 +98,36 @@ def test_fit_trial_order_model():
     """Test trial-order model fitting."""
     data = pd.DataFrame(
         [
-            {"participant_id": "P1", "trial_order_within_event": 1, "condition_name": "GIVE", "proportion_primary_aois": 0.5},
-            {"participant_id": "P1", "trial_order_within_event": 2, "condition_name": "GIVE", "proportion_primary_aois": 0.45},
-            {"participant_id": "P1", "trial_order_within_event": 3, "condition_name": "GIVE", "proportion_primary_aois": 0.42},
-            {"participant_id": "P2", "trial_order_within_event": 1, "condition_name": "GIVE", "proportion_primary_aois": 0.6},
-            {"participant_id": "P2", "trial_order_within_event": 2, "condition_name": "GIVE", "proportion_primary_aois": 0.58},
+            {
+                "participant_id": "P1",
+                "trial_order_within_event": 1,
+                "condition_name": "GIVE",
+                "proportion_primary_aois": 0.5,
+            },
+            {
+                "participant_id": "P1",
+                "trial_order_within_event": 2,
+                "condition_name": "GIVE",
+                "proportion_primary_aois": 0.45,
+            },
+            {
+                "participant_id": "P1",
+                "trial_order_within_event": 3,
+                "condition_name": "GIVE",
+                "proportion_primary_aois": 0.42,
+            },
+            {
+                "participant_id": "P2",
+                "trial_order_within_event": 1,
+                "condition_name": "GIVE",
+                "proportion_primary_aois": 0.6,
+            },
+            {
+                "participant_id": "P2",
+                "trial_order_within_event": 2,
+                "condition_name": "GIVE",
+                "proportion_primary_aois": 0.58,
+            },
         ]
     )
 
@@ -101,4 +158,3 @@ def test_summarize_by_trial():
     # Trial 1 mean should be 0.55
     trial1 = result[result["trial_order_within_event"] == 1]
     assert pytest.approx(trial1.iloc[0]["mean"], rel=1e-6) == 0.55
-

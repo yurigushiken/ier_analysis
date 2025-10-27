@@ -10,9 +10,9 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 try:
-    from weasyprint import HTML  # type: ignore
+    from weasyprint import HTML
 except ImportError:  # pragma: no cover - platform dependent
-    HTML = None  # type: ignore[assignment]
+    HTML = None
 
 LOGGER = logging.getLogger("ier.reporting.compiler")
 

@@ -151,13 +151,13 @@
         <h4>One-Way ANOVA Results</h4>
         <div class="stat-item">
             <span class="stat-label">F-statistic</span>
-            <span class="stat-value {% if anova_p < alpha %}significant{% else %}not-significant{% endif %}">
+            <span class="stat-value {% if anova_p and anova_p < alpha %}significant{% else %}not-significant{% endif %}">
                 F({{ anova_df1 }}, {{ anova_df2 }}) = {{ anova_f_statistic }}
             </span>
         </div>
         <div class="stat-item">
             <span class="stat-label">p-value</span>
-            <span class="stat-value {% if anova_p < alpha %}significant{% else %}not-significant{% endif %}">
+            <span class="stat-value {% if anova_p and anova_p < alpha %}significant{% else %}not-significant{% endif %}">
                 p = {{ anova_p }}
             </span>
         </div>

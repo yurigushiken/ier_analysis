@@ -209,7 +209,7 @@ def test_compile_final_report_ordering(tmp_path: Path):
 
     # Verify: Order is preserved in HTML
     html_content = output_html.read_text(encoding="utf-8")
-    
+
     # Find positions of each section
     pos_ar4 = html_content.find('id="ar-4"')
     pos_ar2 = html_content.find('id="ar-2"')
@@ -222,7 +222,7 @@ def test_compile_final_report_missing_html_file(tmp_path: Path):
     """Test compilation fails gracefully when a report HTML is missing."""
     # Setup: Create descriptor for non-existent file
     missing_html = tmp_path / "missing" / "report.html"
-    
+
     reports = [
         ReportDescriptor(
             report_id="AR-1",
@@ -418,4 +418,3 @@ def test_compile_final_report_html_special_characters(tmp_path: Path):
     # Verify: PDF renders without errors if WeasyPrint available
     if WEASYPRINT_AVAILABLE:
         assert output_pdf.exists()
-

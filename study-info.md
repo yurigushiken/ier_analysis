@@ -19,13 +19,13 @@ Your work will be crucial in helping us transform this rich dataset into scienti
 
 All the data for this project is stored in the /data/raw/ directory. You will notice it is separated into two subdirectories:
 
-    data/raw/child/: Contains the eye-tracking data for all our infant participants.
+    C:\CascadeProjects\ier_analysis\data\csvs_human_verified_vv\child: Contains the eye-tracking data for all our infant participants.
 
-        Example: C:\CascadeProjects\ier_analysis\data\raw\child\Eight-months-0101-947.csv
+        Example: "C:\CascadeProjects\ier_analysis\data\csvs_human_verified_vv\child\Eight-0101-947gl.csv"
 
-    data/raw/adult/: Contains eye-tracking data for adult participants, which serves as a control or comparison group.
+    C:\CascadeProjects\ier_analysis\data\csvs_human_verified_vv\adult: Contains eye-tracking data for adult participants, which serves as a control or comparison group.
 
-        Example: C:\CascadeProjects\ier_analysis\data\raw\adult\FiftySix-years-0501-1673.csv
+        Example: "C:\CascadeProjects\ier_analysis\data\csvs_human_verified_vv\adult\FiftySix-0501-1673vvv.csv"
 
 Each CSV file represents a single session for a single participant. The filename itself contains useful metadata, such as the participant's age group and a unique identifier.
 3. Decoding the Raw Data Columns

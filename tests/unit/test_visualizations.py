@@ -35,12 +35,14 @@ def test_directed_graph_creates_file(tmp_path: Path):
 
 def test_line_plot_with_error_bars_creates_file(tmp_path: Path):
     """Test line plot with error bars for developmental trajectories."""
-    data = pd.DataFrame({
-        "age_months": [8, 10, 12, 8, 10, 12],
-        "condition_name": ["GIVE", "GIVE", "GIVE", "HUG", "HUG", "HUG"],
-        "mean": [0.5, 0.55, 0.6, 0.3, 0.32, 0.35],
-        "sem": [0.05, 0.04, 0.06, 0.03, 0.04, 0.05],
-    })
+    data = pd.DataFrame(
+        {
+            "age_months": [8, 10, 12, 8, 10, 12],
+            "condition_name": ["GIVE", "GIVE", "GIVE", "HUG", "HUG", "HUG"],
+            "mean": [0.5, 0.55, 0.6, 0.3, 0.32, 0.35],
+            "sem": [0.05, 0.04, 0.06, 0.03, 0.04, 0.05],
+        }
+    )
     output = tmp_path / "dev_trajectory.png"
     result = line_plot_with_error_bars(
         data,
@@ -59,11 +61,13 @@ def test_line_plot_with_error_bars_creates_file(tmp_path: Path):
 
 def test_line_plot_with_error_bars_without_hue(tmp_path: Path):
     """Test line plot with error bars without grouping variable."""
-    data = pd.DataFrame({
-        "trial": [1, 2, 3, 4],
-        "mean": [0.6, 0.55, 0.52, 0.5],
-        "sem": [0.05, 0.04, 0.04, 0.03],
-    })
+    data = pd.DataFrame(
+        {
+            "trial": [1, 2, 3, 4],
+            "mean": [0.6, 0.55, 0.52, 0.5],
+            "sem": [0.05, 0.04, 0.04, 0.03],
+        }
+    )
     output = tmp_path / "habituation.png"
     result = line_plot_with_error_bars(
         data,
@@ -78,11 +82,13 @@ def test_line_plot_with_error_bars_without_hue(tmp_path: Path):
 
 def test_bar_plot_with_hue(tmp_path: Path):
     """Test bar plot with grouping variable."""
-    data = pd.DataFrame({
-        "aoi": ["toy", "face", "toy", "face"],
-        "condition": ["GIVE", "GIVE", "HUG", "HUG"],
-        "value": [0.5, 0.3, 0.4, 0.4],
-    })
+    data = pd.DataFrame(
+        {
+            "aoi": ["toy", "face", "toy", "face"],
+            "condition": ["GIVE", "GIVE", "HUG", "HUG"],
+            "value": [0.5, 0.3, 0.4, 0.4],
+        }
+    )
     output = tmp_path / "grouped_bar.png"
     result = bar_plot(data, x="aoi", y="value", hue="condition", output_path=output)
     assert result == output

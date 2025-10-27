@@ -130,7 +130,9 @@ def compile_reports(descriptors: List[ReportDescriptor], config: dict[str, Any],
         )
     except RuntimeError as exc:
         logger.warning("Final report PDF generation skipped: %s", exc)
-        return CompiledReport(html_path=html_output, pdf_path=pdf_output, included_reports=[d.report_id for d in descriptors])
+        return CompiledReport(
+            html_path=html_output, pdf_path=pdf_output, included_reports=[d.report_id for d in descriptors]
+        )
 
 
 def main() -> None:

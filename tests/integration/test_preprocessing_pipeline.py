@@ -20,7 +20,7 @@ def test_generate_master_log(tmp_path: Path):
     )
 
     assert not df.empty
-    assert ("gaze_duration_frames" in df.columns)
+    assert "gaze_duration_frames" in df.columns
     assert output.exists()
 
 

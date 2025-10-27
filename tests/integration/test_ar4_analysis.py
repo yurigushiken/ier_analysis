@@ -386,9 +386,7 @@ def test_ar4_empty_gaze_events(tmp_path: Path):
     gaze_events_path = processed_dir / "gaze_events_child.csv"
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "condition_name"]).to_csv(
-        gaze_events_path, index=False
-    )
+    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "condition_name"]).to_csv(gaze_events_path, index=False)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)

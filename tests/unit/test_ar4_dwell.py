@@ -67,8 +67,7 @@ def test_calculate_participant_dwell_times_groups_by_condition():
     }
 
     lookup = {
-        (row.participant_id, row.condition_name): row.mean_dwell_time_ms
-        for row in participant_means.itertuples()
+        (row.participant_id, row.condition_name): row.mean_dwell_time_ms for row in participant_means.itertuples()
     }
 
     assert pytest.approx(lookup[("P1", "GIVE_WITH")], rel=1e-6) == 450.0
@@ -112,8 +111,7 @@ def test_calculate_participant_dwell_times_filters_short_gazes():
 
     participant_means = ar4.calculate_participant_dwell_times(df_filtered, min_dwell_time_ms=100)
     lookup = {
-        (row.participant_id, row.condition_name): row.mean_dwell_time_ms
-        for row in participant_means.itertuples()
+        (row.participant_id, row.condition_name): row.mean_dwell_time_ms for row in participant_means.itertuples()
     }
 
     # The 90 ms gaze should be excluded, preserving the 125 ms mean from the baseline data.

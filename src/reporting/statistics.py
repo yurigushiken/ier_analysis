@@ -41,7 +41,9 @@ def cohens_d(sample1: Iterable[float], sample2: Iterable[float]) -> float:
     x2 = np.asarray(list(sample2), dtype=float)
     if x1.size < 2 or x2.size < 2:
         raise ValueError("Each sample must contain at least two values")
-    pooled_std = np.sqrt(((x1.size - 1) * np.var(x1, ddof=1) + (x2.size - 1) * np.var(x2, ddof=1)) / (x1.size + x2.size - 2))
+    pooled_std = np.sqrt(
+        ((x1.size - 1) * np.var(x1, ddof=1) + (x2.size - 1) * np.var(x2, ddof=1)) / (x1.size + x2.size - 2)
+    )
     if pooled_std == 0:
         return 0.0
     return (float(np.mean(x1)) - float(np.mean(x2))) / float(pooled_std)

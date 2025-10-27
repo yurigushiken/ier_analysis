@@ -268,10 +268,34 @@ def test_ar5_calculate_proportion_primary_aois():
     """Test proportion calculation with real-like data structure."""
     gaze_events = pd.DataFrame(
         [
-            {"participant_id": "P1", "age_months": 8, "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 500},
-            {"participant_id": "P1", "age_months": 8, "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 500},
-            {"participant_id": "P2", "age_months": 12, "condition_name": "GIVE", "aoi_category": "man_face", "gaze_duration_ms": 800},
-            {"participant_id": "P2", "age_months": 12, "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 200},
+            {
+                "participant_id": "P1",
+                "age_months": 8,
+                "condition_name": "GIVE",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 500,
+            },
+            {
+                "participant_id": "P1",
+                "age_months": 8,
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 500,
+            },
+            {
+                "participant_id": "P2",
+                "age_months": 12,
+                "condition_name": "GIVE",
+                "aoi_category": "man_face",
+                "gaze_duration_ms": 800,
+            },
+            {
+                "participant_id": "P2",
+                "age_months": 12,
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 200,
+            },
         ]
     )
 
@@ -317,9 +341,7 @@ def test_ar5_empty_gaze_events(tmp_path: Path):
     gaze_events_path = processed_dir / "gaze_events_child.csv"
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "age_months"]).to_csv(
-        gaze_events_path, index=False
-    )
+    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "age_months"]).to_csv(gaze_events_path, index=False)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -338,4 +360,3 @@ def test_ar5_empty_gaze_events(tmp_path: Path):
     assert result["report_id"] == "AR-5"
     assert result["html_path"] == ""
     assert result["pdf_path"] == ""
-

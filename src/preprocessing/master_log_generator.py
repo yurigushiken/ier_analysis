@@ -40,13 +40,14 @@ def _map_age_to_group(age_months: int, config: dict) -> str:
     age_groups = config.get("age_groups", {}).get("infant", [])
     for group in age_groups:
         if group["min_months"] <= age_months <= group["max_months"]:
-            return group["label"]
+            return str(group["label"])
     return "adult" if age_months >= config.get("age_groups", {}).get("adult_threshold_months", 216) else "unknown"
 
 
 def _map_condition_name(code: str, config: dict) -> str:
     mapping = config.get("condition_mapping", {})
-    return mapping.get(code, code)
+    result = mapping.get(code, code)
+    return str(result)
 
 
 __all__ = ["generate_master_log"]

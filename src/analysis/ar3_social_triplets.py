@@ -165,9 +165,7 @@ def _safe_int(value: Any) -> Optional[int]:
 
 def count_triplets_per_trial(triplets: pd.DataFrame) -> pd.DataFrame:
     if triplets.empty:
-        return pd.DataFrame(
-            columns=["participant_id", "trial_number", "condition_name", "age_group", "triplet_count"]
-        )
+        return pd.DataFrame(columns=["participant_id", "trial_number", "condition_name", "age_group", "triplet_count"])
 
     counts = (
         triplets.groupby(["participant_id", "trial_number", "condition_name", "age_group"], as_index=False)
@@ -201,9 +199,7 @@ def summarize_by_condition(counts: pd.DataFrame) -> pd.DataFrame:
 
 def summarize_by_age_group(counts: pd.DataFrame) -> pd.DataFrame:
     if counts.empty:
-        return pd.DataFrame(
-            columns=["age_group", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"]
-        )
+        return pd.DataFrame(columns=["age_group", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"])
 
     rows: List[Dict[str, Any]] = []
     for age_group, age_df in counts.groupby("age_group", sort=True):
@@ -251,12 +247,17 @@ def _build_statistics_table() -> str:
 def _build_methods_text(config: TripletConfig) -> str:
     patterns = ", ".join([" → ".join(pattern) for pattern in config.valid_patterns]) or "No patterns defined"
     max_gap_desc = (
-        f"Maximum of {config.max_gap_frames} frame gaps allowed between gazes." if config.max_gap_frames is not None else "No frame gap limit applied."
+        f"Maximum of {config.max_gap_frames} frame gaps allowed between gazes."
+        if config.max_gap_frames is not None
+        else "No frame gap limit applied."
     )
-    consecutive_desc = "Triplets require consecutive gaze events." if config.require_consecutive else "Triplets may include non-consecutive gaze events."
+    consecutive_desc = (
+        "Triplets require consecutive gaze events."
+        if config.require_consecutive
+        else "Triplets may include non-consecutive gaze events."
+    )
     return (
-        f"Triplets were detected using the following valid patterns: {patterns}. "
-        f"{consecutive_desc} {max_gap_desc}"
+        f"Triplets were detected using the following valid patterns: {patterns}. " f"{consecutive_desc} {max_gap_desc}"
     )
 
 
@@ -432,4 +433,3 @@ __all__ = [
     "summarize_by_age_group",
     "run",
 ]
-

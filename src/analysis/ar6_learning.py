@@ -96,8 +96,12 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Merge with loaded config
     for key, value in analysis_config.items():
-        if key in defaults and isinstance(defaults[key], dict):
-            defaults[key].update(value)
+        if key in defaults:
+            target = defaults[key]
+            if isinstance(target, dict) and isinstance(value, dict):
+                target.update(value)
+            else:
+                defaults[key] = value
         else:
             defaults[key] = value
 
@@ -123,9 +127,7 @@ def calculate_trial_level_metric(
     gaze_events["is_primary"] = gaze_events["aoi_category"].isin(primary_aois)
 
     # Calculate proportion per trial
-    grouped = gaze_events.groupby(
-        ["participant_id", "trial_number", "condition_name"], as_index=False
-    )
+    grouped = gaze_events.groupby(["participant_id", "trial_number", "condition_name"], as_index=False)
 
     results = []
     for (participant, trial, condition), group in grouped:
@@ -297,9 +299,7 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
     has_random_slope = settings.get("statistics", {}).get("random_slope", True)
 
     random_effects_desc = (
-        "random intercepts and random slopes for trial number"
-        if has_random_slope
-        else "random intercepts only"
+        "random intercepts and random slopes for trial number" if has_random_slope else "random intercepts only"
     )
 
     return (
@@ -314,16 +314,12 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
 def _build_statistics_table(model_result: TrialOrderModelResult) -> str:
     """Generate HTML statistics table."""
     if not model_result.fixed_effects.empty:
-        fixed_html = model_result.fixed_effects.to_html(
-            index=False, classes="table table-striped", float_format="%.4f"
-        )
+        fixed_html = model_result.fixed_effects.to_html(index=False, classes="table table-striped", float_format="%.4f")
     else:
         fixed_html = "<p>Fixed effects not available</p>"
 
     # Random effects variance table
-    random_var_data = [
-        {"Component": k, "Variance": v} for k, v in model_result.random_effects_variance.items()
-    ]
+    random_var_data = [{"Component": k, "Variance": v} for k, v in model_result.random_effects_variance.items()]
     if random_var_data:
         random_var_df = pd.DataFrame(random_var_data)
         random_html = random_var_df.to_html(index=False, classes="table table-striped", float_format="%.4f")
@@ -517,4 +513,3 @@ __all__ = [
     "summarize_by_trial",
     "run",
 ]
-

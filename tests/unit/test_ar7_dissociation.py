@@ -12,12 +12,48 @@ def _sample_condition_data() -> pd.DataFrame:
     """Create sample data across multiple conditions."""
     return pd.DataFrame(
         [
-            {"participant_id": "P1", "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 500, "is_primary": True},
-            {"participant_id": "P1", "condition_name": "GIVE", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 500, "is_primary": False},
-            {"participant_id": "P1", "condition_name": "HUG", "aoi_category": "toy_present", "gaze_duration_ms": 300, "is_primary": True},
-            {"participant_id": "P1", "condition_name": "HUG", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 700, "is_primary": False},
-            {"participant_id": "P1", "condition_name": "SHOW", "aoi_category": "toy_present", "gaze_duration_ms": 450, "is_primary": True},
-            {"participant_id": "P1", "condition_name": "SHOW", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 550, "is_primary": False},
+            {
+                "participant_id": "P1",
+                "condition_name": "GIVE",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 500,
+                "is_primary": True,
+            },
+            {
+                "participant_id": "P1",
+                "condition_name": "GIVE",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 500,
+                "is_primary": False,
+            },
+            {
+                "participant_id": "P1",
+                "condition_name": "HUG",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 300,
+                "is_primary": True,
+            },
+            {
+                "participant_id": "P1",
+                "condition_name": "HUG",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 700,
+                "is_primary": False,
+            },
+            {
+                "participant_id": "P1",
+                "condition_name": "SHOW",
+                "aoi_category": "toy_present",
+                "gaze_duration_ms": 450,
+                "is_primary": True,
+            },
+            {
+                "participant_id": "P1",
+                "condition_name": "SHOW",
+                "aoi_category": "screen_nonAOI",
+                "gaze_duration_ms": 550,
+                "is_primary": False,
+            },
         ]
     )
 
@@ -101,4 +137,3 @@ def test_dissociation_pairwise_comparisons():
         assert "comparison" in result.pairwise_comparisons.columns
         assert "p_value" in result.pairwise_comparisons.columns
         assert "cohens_d" in result.pairwise_comparisons.columns
-

@@ -44,7 +44,7 @@ def render_report(
 
     pdf_path: Optional[Path] = None
     try:
-        from weasyprint import HTML  # type: ignore
+        from weasyprint import HTML
 
         HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
         pdf_path = output_pdf

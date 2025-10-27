@@ -264,7 +264,7 @@ Independent Test: Running compiler with existing AR outputs yields integrated fi
 
 - [X] T054 [P] Documentation updates (README, quickstart alignment with actual CLI and paths)
       C:\CascadeProjects\ier_analysis\README.md
-- [ ] T055 Lint/format, small refactors for clarity (no pattern changes)
+- [X] T055 Lint/format, small refactors for clarity (no pattern changes)
       C:\CascadeProjects\ier_analysis\src\
 - [X] T056 [P] Performance pass on slowest AR (profile, simple vectorization)
       C:\CascadeProjects\ier_analysis\src\analysis\

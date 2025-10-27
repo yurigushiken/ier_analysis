@@ -61,7 +61,7 @@ def test_cohens_d_raises_on_insufficient_data():
     """Test that Cohen's d raises error with insufficient data."""
     with pytest.raises(ValueError):
         cohens_d([1], [2, 3])
-    
+
     with pytest.raises(ValueError):
         cohens_d([1, 2], [3])
 

@@ -252,10 +252,7 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
 
 def _build_statistics_table(result: GLMMResult) -> str:
     warnings_html = "".join(f"<li>{warning}</li>" for warning in result.warnings)
-    return (
-        "<p>Linear Mixed Model analysis is not available in the current environment.</p>"
-        f"<ul>{warnings_html}</ul>"
-    )
+    return "<p>Linear Mixed Model analysis is not available in the current environment.</p>" f"<ul>{warnings_html}</ul>"
 
 
 def _generate_outputs(
@@ -306,7 +303,9 @@ def _generate_outputs(
 
     dwell_table_html = condition_summary.to_html(index=False, classes="table table-striped")
     aoi_table_html = (
-        aoi_summary.to_html(index=False, classes="table table-striped") if not aoi_summary.empty else "<p>No AOI summary available.</p>"
+        aoi_summary.to_html(index=False, classes="table table-striped")
+        if not aoi_summary.empty
+        else "<p>No AOI summary available.</p>"
     )
 
     glmm_result = fit_glmm_placeholder()

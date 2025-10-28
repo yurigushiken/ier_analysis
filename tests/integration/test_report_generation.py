@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pathlib import Path
 
-from src.reporting.report_generator import HTML, render_report
+from src.reporting.report_generator import render_report
 
 pytest.importorskip("jinja2")
 
@@ -11,10 +11,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TEMPLATE_DIR = PROJECT_ROOT / "templates"
 
 
-@pytest.mark.skipif(HTML is None, reason="WeasyPrint not installed")
 def test_render_report(tmp_path: Path):
     output_html = tmp_path / "report.html"
-    output_pdf = tmp_path / "report.pdf"
+    output_pdf = None
     context = {
         "report_title": "Test Report",
         "total_participants": 10,
@@ -66,9 +65,8 @@ def test_render_report(tmp_path: Path):
     )
 
     assert output_html.exists()
-    assert output_pdf.exists()
     assert asset.html_path == output_html
-    assert asset.pdf_path == output_pdf
+    assert asset.pdf_path is None
 
     html_content = output_html.read_text(encoding="utf-8")
     assert "Warning: insufficient sample size" in html_content

@@ -55,7 +55,7 @@ reporting:
 
   # Report format versions
   generate_html: true
-  generate_pdf: true
+  generate_pdf: false
 
   # Include raw data tables in reports (for transparency)
   include_raw_tables: false

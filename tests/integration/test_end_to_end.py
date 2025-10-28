@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 pytest.importorskip("pandera")
-pytest.importorskip("weasyprint")
 
 import src.main as pipeline_main  # noqa: E402
 

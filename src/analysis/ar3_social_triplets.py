@@ -8,7 +8,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
-import numpy as np
 import pandas as pd
 
 from src.reporting import visualizations
@@ -49,11 +48,12 @@ def _resolve_dataset_paths(variant_config: Mapping[str, Any], global_config: Map
             }
         ]
 
+    base_dir = Path(global_config.get("paths", {}).get("results", ".")).resolve().parent
     resolved: List[Dict[str, Any]] = []
     for cohort in cohorts:
         data_path = Path(cohort.get("data_path", "")).expanduser()
         if not data_path.is_absolute():
-            data_path = Path(global_config["paths"].get("processed_data", "")).joinpath(data_path)
+            data_path = (base_dir / data_path).resolve()
         resolved.append({**cohort, "data_path": data_path})
     return resolved
 
@@ -62,6 +62,48 @@ def _load_dataset(path: Path) -> pd.DataFrame:
     if not path.exists():
         raise FileNotFoundError(f"Gaze fixation dataset missing: {path}")
     return pd.read_csv(path)
+
+
+def _apply_filters(df: pd.DataFrame, filters: Optional[Dict[str, Sequence[Any]]]) -> pd.DataFrame:
+    if not filters:
+        return df.copy()
+    filtered = df.copy()
+    for column, allowed in filters.items():
+        if column not in filtered.columns:
+            raise KeyError(f"Filter column '{column}' not found in gaze fixations data.")
+        allowed_values = list(allowed)
+        filtered = filtered[filtered[column].isin(allowed_values)]
+    return filtered
+
+
+def _apply_condition_segment_filters(df: pd.DataFrame, variant_config: Mapping[str, Any]) -> pd.DataFrame:
+    result = df.copy()
+
+    conditions_block = variant_config.get("conditions", {})
+    include_conditions = conditions_block.get("include")
+    if include_conditions:
+        result = result[result["condition_name"].isin(include_conditions)]
+
+    segments_block = variant_config.get("segments", {})
+    include_segments = segments_block.get("include")
+    exclude_segments = segments_block.get("exclude")
+    if include_segments:
+        result = result[result["segment"].isin(include_segments)]
+    elif exclude_segments:
+        result = result[~result["segment"].isin(exclude_segments)]
+
+    return result
+
+
+def _cohort_metadata(triplets: pd.DataFrame, counts: pd.DataFrame) -> Dict[str, Any]:
+    participants = triplets["participant_id"].nunique() if not triplets.empty else 0
+    conditions = triplets["condition_name"].unique().tolist() if not triplets.empty else []
+    return {
+        "n_triplets": int(triplets.shape[0]),
+        "n_participants": int(participants),
+        "conditions": conditions,
+        "n_trials": int(counts[["participant_id", "trial_number"]].drop_duplicates().shape[0]) if not counts.empty else 0,
+    }
 
 
 def _load_variant_configuration(config: Mapping[str, Any]) -> Tuple[Dict[str, Any], str, Dict[str, Any]]:
@@ -279,6 +321,48 @@ def summarize_by_age_group(counts: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def compute_directional_bias(triplets: pd.DataFrame) -> pd.DataFrame:
+    if triplets.empty:
+        return pd.DataFrame(columns=["condition_name", "pattern", "count"])
+
+    return (
+        triplets.groupby(["condition_name", "pattern"], as_index=False)
+        .size()
+        .rename(columns={"size": "count"})
+        .sort_values(["condition_name", "pattern"])
+    )
+
+
+def compute_temporal_summary(triplets: pd.DataFrame) -> pd.DataFrame:
+    if triplets.empty:
+        return pd.DataFrame(columns=["condition_name", "first_occurrence", "subsequent_occurrences"])
+
+    def _split_counts(group: pd.DataFrame) -> Tuple[int, int]:
+        first_trials = (
+            group.groupby("participant_id", as_index=False)["trial_number"]
+            .min()
+            .rename(columns={"trial_number": "first_trial"})
+        )
+        merged = group.merge(first_trials, on="participant_id", how="left")
+        first_mask = merged["trial_number"] == merged["first_trial"]
+        first_count = int(first_mask.sum())
+        subsequent_count = int((~first_mask).sum())
+        return first_count, subsequent_count
+
+    records: List[Dict[str, Any]] = []
+    for condition, condition_df in triplets.groupby("condition_name", sort=True):
+        first, subsequent = _split_counts(condition_df)
+        records.append(
+            {
+                "condition_name": condition,
+                "first_occurrence": first,
+                "subsequent_occurrences": subsequent,
+            }
+        )
+
+    return pd.DataFrame(records)
+
+
 def _series_summary(values: pd.Series) -> SummaryStats:
     try:
         return summarize(values.tolist())
@@ -332,6 +416,9 @@ def _generate_outputs(
     summary_age: pd.DataFrame,
     config: TripletConfig,
     global_config: Mapping[str, Any],
+    variant_config: Mapping[str, Any],
+    directional_bias: pd.DataFrame | None = None,
+    temporal_summary: pd.DataFrame | None = None,
 ) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -352,6 +439,19 @@ def _generate_outputs(
     summary_age_csv = output_dir / "triplet_summary_by_age_group.csv"
     summary_age.to_csv(summary_age_csv, index=False)
     tables_to_save.append(summary_age_csv)
+
+    if directional_bias is None:
+        directional_bias = pd.DataFrame(columns=["condition_name", "pattern", "count"])
+    if temporal_summary is None:
+        temporal_summary = pd.DataFrame(columns=["condition_name", "first_occurrence", "subsequent_occurrences"])
+
+    directional_csv = output_dir / "triplet_directional_bias.csv"
+    directional_bias.to_csv(directional_csv, index=False)
+    tables_to_save.append(directional_csv)
+
+    temporal_csv = output_dir / "triplet_temporal_summary.csv"
+    temporal_summary.to_csv(temporal_csv, index=False)
+    tables_to_save.append(temporal_csv)
 
     figure_contexts: List[Dict[str, str]] = []
 
@@ -391,12 +491,16 @@ def _generate_outputs(
 
     frequency_table_html = summary_condition.to_html(index=False, classes="table table-striped")
     age_table_html = summary_age.to_html(index=False, classes="table table-striped")
+    directional_table_html = directional_bias.to_html(index=False, classes="table table-striped")
+    temporal_table_html = temporal_summary.to_html(index=False, classes="table table-striped")
 
     context = {
         "overview_text": _build_overview_text(int(triplets.shape[0])),
         "methods_text": _build_methods_text(config),
         "frequency_table": frequency_table_html,
         "age_group_table": age_table_html,
+        "directional_bias_table": directional_table_html,
+        "temporal_summary_table": temporal_table_html,
         "statistics_table": _build_statistics_table(),
         "interpretation_text": (
             "Interpret findings with caution until formal GLMM modeling is completed. "
@@ -457,9 +561,9 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     variant_key = variant_config.get("variant_key", Path(variant_name).stem)
     output_dir = results_root / variant_key
 
+    resolved_any = False
     all_triplets: List[pd.DataFrame] = []
     all_counts: List[pd.DataFrame] = []
-
     for cohort in cohort_defs:
         data_path: Path = cohort["data_path"]
         try:
@@ -467,6 +571,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         except FileNotFoundError as exc:
             LOGGER.warning("Skipping cohort %s: %s", cohort.get("key"), exc)
             continue
+
+        resolved_any = True
 
         cohort_filters = cohort.get("participant_filters", {})
         filtered = _apply_filters(dataset, cohort_filters)
@@ -497,19 +603,53 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         counts["cohort_label"] = cohort.get("label")
         all_counts.append(counts)
 
+    if not resolved_any:
+        LOGGER.warning("No datasets found for AR-3 variant %s", variant_key)
+        return {
+            "report_id": "AR-3",
+            "title": "Social Gaze Triplet Analysis",
+            "variant_key": None,
+            "html_path": "",
+            "pdf_path": "",
+            "message": "No datasets found",
+        }
+
     if not all_triplets:
         LOGGER.warning("No social gaze triplets detected for variant %s", variant_key)
         output_dir.mkdir(parents=True, exist_ok=True)
+        empty_triplets = pd.DataFrame(
+            columns=[
+                "participant_id",
+                "trial_number",
+                "condition_name",
+                "age_group",
+                "pattern",
+                "gaze_start_frame",
+                "gaze_end_frame",
+            ]
+        )
+        empty_counts = pd.DataFrame(
+            columns=["participant_id", "trial_number", "condition_name", "age_group", "triplet_count"]
+        )
+        empty_summary_condition = pd.DataFrame(
+            columns=["condition_name", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"]
+        )
+        empty_summary_age = pd.DataFrame(
+            columns=["age_group", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"]
+        )
         metadata = _generate_outputs(
             output_dir=output_dir,
-            triplets=pd.DataFrame(),
-            counts=pd.DataFrame(),
-            summary_condition=pd.DataFrame(),
-            summary_age=pd.DataFrame(),
+            triplets=empty_triplets,
+            counts=empty_counts,
+            summary_condition=empty_summary_condition,
+            summary_age=empty_summary_age,
             config=triplet_config,
             global_config=config,
             variant_config=variant_config,
+            directional_bias=pd.DataFrame(columns=["condition_name", "pattern", "count"]),
+            temporal_summary=pd.DataFrame(columns=["condition_name", "first_occurrence", "subsequent_occurrences"]),
         )
+        metadata.update(_cohort_metadata(empty_triplets, empty_counts))
         metadata["variant_key"] = variant_key
         return metadata
 
@@ -518,6 +658,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
     summary_condition = summarize_by_condition(counts_concat)
     summary_age = summarize_by_age_group(counts_concat)
+    directional_bias = compute_directional_bias(triplets_concat)
+    temporal_summary = compute_temporal_summary(triplets_concat)
 
     metadata = _generate_outputs(
         output_dir=output_dir,
@@ -528,7 +670,10 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         config=triplet_config,
         global_config=config,
         variant_config=variant_config,
+        directional_bias=directional_bias,
+        temporal_summary=temporal_summary,
     )
+    metadata.update(_cohort_metadata(triplets_concat, counts_concat))
     metadata["variant_key"] = variant_key
 
     LOGGER.info("AR-3 analysis completed for %s; report generated at %s", variant_key, metadata["html_path"])

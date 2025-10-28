@@ -11,7 +11,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 try:
     from weasyprint import HTML
-except ImportError:  # pragma: no cover - platform dependent
+except (ImportError, OSError):  # pragma: no cover - platform dependent
     HTML = None
 
 LOGGER = logging.getLogger("ier.reporting.compiler")
@@ -36,7 +36,7 @@ class ReportDescriptor:
 @dataclass
 class CompiledReport:
     html_path: Path
-    pdf_path: Path
+    pdf_path: Optional[Path]
     included_reports: List[str]
 
 
@@ -50,7 +50,7 @@ def compile_final_report(
     reports: Sequence[ReportDescriptor],
     *,
     output_html: Path,
-    output_pdf: Path,
+    output_pdf: Path | None,
     template_name: str = DEFAULT_TEMPLATE,
     template_dir: Path | None = None,
     extra_context: Optional[Dict[str, Any]] = None,
@@ -86,15 +86,15 @@ def compile_final_report(
     output_html.parent.mkdir(parents=True, exist_ok=True)
     output_html.write_text(rendered_html, encoding="utf-8")
 
-    pdf_path = output_pdf
-    if HTML is None:
-        LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
-    else:
+    pdf_path: Optional[Path] = None
+    if output_pdf and HTML is not None:
         try:
             HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
+            pdf_path = output_pdf
         except Exception as exc:  # pragma: no cover
             LOGGER.warning("Failed to generate PDF %s: %s", output_pdf, exc)
-            pdf_path = output_html.parent / "report.pdf"  # Placeholder path
+    elif output_pdf:
+        LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
 
     return CompiledReport(
         html_path=output_html,

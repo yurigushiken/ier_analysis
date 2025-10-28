@@ -19,7 +19,13 @@
     <h3>3.2 Age Group Summaries</h3>
     {{ age_group_table | safe }}
 
-    <h3>3.3 Visualizations</h3>
+    <h3>3.3 Directional Bias</h3>
+    {{ directional_bias_table | safe }}
+
+    <h3>3.4 Temporal Summary</h3>
+    {{ temporal_summary_table | safe }}
+
+    <h3>3.5 Visualizations</h3>
     {% for figure in figure_entries %}
         <figure>
             <img src="{{ figure.path }}" alt="{{ figure.caption }}">
@@ -27,7 +33,7 @@
         </figure>
     {% endfor %}
 
-    <h3>3.4 Statistical Tests</h3>
+    <h3>3.6 Statistical Tests</h3>
     {{ statistics_table | safe }}
 </section>
 

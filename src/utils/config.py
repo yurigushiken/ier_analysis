@@ -63,8 +63,12 @@ def load_global_config(root: Path | str = Path(".")) -> Dict[str, Any]:
 
 def load_analysis_config(analysis_name: str, root: Path | str = Path(".")) -> Dict[str, Any]:
     root_path = Path(root).resolve()
-    paths = ConfigPaths.from_root(root_path)
-    analysis_file = paths.analysis_dir / f"{analysis_name}.yaml"
+    candidate = Path(analysis_name)
+    if candidate.is_absolute() and candidate.exists():
+        analysis_file = candidate
+    else:
+        paths = ConfigPaths.from_root(root_path)
+        analysis_file = paths.analysis_dir / f"{analysis_name}.yaml"
     return _read_yaml(analysis_file)
 
 

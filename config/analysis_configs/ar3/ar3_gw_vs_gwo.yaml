@@ -1,0 +1,51 @@
+variant_key: "ar3_gw_vs_gwo"
+variant_label: "gw vs gwo"
+analysis_name: "AR-3: Social Gaze Triplets"
+description: "Counts of social gaze triplets comparing gw vs gwo events"
+report_title: "AR-3: gw vs gwo"
+
+conditions:
+  include:
+    - "GIVE_WITH"
+    - "GIVE_WITHOUT"
+
+segments:
+  include:
+    - "interaction"
+
+triplets:
+  valid_patterns:
+    - ["man_face", "toy_present", "woman_face"]
+    - ["woman_face", "toy_present", "man_face"]
+  require_consecutive: true
+  max_gap_frames: 2
+  toy_absent_mapping:
+    "toy_present": "toy_location"
+
+cohorts:
+  - key: "infant"
+    label: "Infant"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_reports: true
+    participant_filters:
+      participant_type: ["infant"]
+  - key: "adult"
+    label: "Adult"
+    data_path: "data/processed/gaze_fixations_adult.csv"
+    include_in_reports: true
+    participant_filters:
+      participant_type: ["adult"]
+
+reporting:
+  include_directional_bias: true
+  include_temporal_summaries: true
+  show_distribution: true
+
+output:
+  export_triplets: true
+  export_counts_by_trial: true
+  export_summary_by_condition: true
+  export_summary_by_age_group: true
+  export_directional_bias: true
+  export_temporal_summaries: true
+

@@ -32,7 +32,7 @@ def render_report(
     context: Dict[str, Any],
     *,
     output_html: Path,
-    output_pdf: Path,
+    output_pdf: Path | None,
     template_dir: Path | None = None,
 ) -> ReportAsset:
     env = _create_environment(template_dir or TEMPLATE_DIR)
@@ -43,15 +43,16 @@ def render_report(
     output_html.write_text(rendered_html, encoding="utf-8")
 
     pdf_path: Optional[Path] = None
-    try:
-        from weasyprint import HTML
+    if output_pdf:
+        try:
+            from weasyprint import HTML
 
-        HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
-        pdf_path = output_pdf
-    except ImportError:  # pragma: no cover
-        LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
-    except Exception as exc:  # pragma: no cover
-        LOGGER.warning("Failed to generate PDF %s: %s", output_pdf, exc)
+            HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
+            pdf_path = output_pdf
+        except ImportError:  # pragma: no cover
+            LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
+        except Exception as exc:  # pragma: no cover
+            LOGGER.warning("Failed to generate PDF %s: %s", output_pdf, exc)
 
     figures = [Path(p) for p in context.get("figures", [])]
     tables = [Path(p) for p in context.get("tables", [])]

@@ -25,7 +25,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "man_face",
                 "gaze_start_frame": 1,
                 "gaze_end_frame": 3,
@@ -43,7 +43,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "toy_present",
                 "gaze_start_frame": 4,
                 "gaze_end_frame": 6,
@@ -61,7 +61,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "woman_face",
                 "gaze_start_frame": 7,
                 "gaze_end_frame": 9,
@@ -81,7 +81,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 2,
                 "condition": "hw",
                 "condition_name": "HUG_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "woman_face",
                 "gaze_start_frame": 1,
                 "gaze_end_frame": 3,
@@ -99,7 +99,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 2,
                 "condition": "hw",
                 "condition_name": "HUG_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "toy_present",
                 "gaze_start_frame": 4,
                 "gaze_end_frame": 6,
@@ -117,7 +117,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 2,
                 "condition": "hw",
                 "condition_name": "HUG_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "man_face",
                 "gaze_start_frame": 7,
                 "gaze_end_frame": 9,
@@ -137,7 +137,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "man_face",
                 "gaze_start_frame": 1,
                 "gaze_end_frame": 3,
@@ -155,7 +155,7 @@ def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "woman_face",
                 "gaze_start_frame": 4,
                 "gaze_end_frame": 6,
@@ -194,8 +194,20 @@ def test_ar3_analysis_end_to_end(tmp_path: Path):
             },
         },
     }
+    # Point variant cohort paths to the temporary processed dataset by overriding env var
+    variant_path = Path("config/analysis_configs/ar3/ar3_give_vs_hug.yaml")
+    original_yaml = variant_path.read_text(encoding="utf-8")
+    updated_yaml = original_yaml.replace("data/processed/gaze_fixations_child.csv", str(gaze_fixations_path).replace("\\", "/"))
+    updated_yaml = updated_yaml.replace("data/processed/gaze_fixations_adult.csv", str(gaze_fixations_path).replace("\\", "/"))
+    temp_variant_path = tmp_path / "config" / "analysis_configs" / "ar3" / "ar3_variant.yaml"
+    temp_variant_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_variant_path.write_text(updated_yaml, encoding="utf-8")
+
+    monkeypatch_env = pytest.MonkeyPatch()
+    monkeypatch_env.setenv("IER_AR3_CONFIG", str(temp_variant_path.resolve()))
 
     result = ar3.run(config=config)
+    monkeypatch_env.undo()
 
     variant_output_dir = results_dir / "AR3" / "ar3_give_vs_hug"
 
@@ -311,7 +323,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "man_face",
                 "gaze_start_frame": 1,
                 "gaze_end_frame": 3,
@@ -329,7 +341,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
                 "trial_number": 1,
                 "condition": "gw",
                 "condition_name": "GIVE_WITH",
-                "segment": "action",
+                "segment": "interaction",
                 "aoi_category": "woman_body",
                 "gaze_start_frame": 4,
                 "gaze_end_frame": 6,
@@ -362,8 +374,23 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
         },
     }
 
+    variant_path = Path("config/analysis_configs/ar3/ar3_give_vs_hug.yaml")
+    original_yaml = variant_path.read_text(encoding="utf-8")
+    updated_yaml = (
+        original_yaml
+        .replace("data/processed/gaze_fixations_child.csv", str(gaze_fixations_path).replace("\\", "/"))
+        .replace("data/processed/gaze_fixations_adult.csv", str(gaze_fixations_path).replace("\\", "/"))
+    )
+    temp_variant_path = tmp_path / "config" / "analysis_configs" / "ar3" / "ar3_variant.yaml"
+    temp_variant_path.parent.mkdir(parents=True, exist_ok=True)
+    temp_variant_path.write_text(updated_yaml, encoding="utf-8")
+
+    monkeypatch_env = pytest.MonkeyPatch()
+    monkeypatch_env.setenv("IER_AR3_CONFIG", str(temp_variant_path.resolve()))
+
     # Execute: Run AR-3 analysis
     result = ar3.run(config=config)
+    monkeypatch_env.undo()
 
     # Verify: Analysis completes even with no triplets
     assert result["report_id"] == "AR-3"
@@ -371,7 +398,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
     assert html_path.exists()
 
     # Verify: Empty triplets CSV still created
-    ar3_output_dir = results_dir / "AR3_Social_Triplets"
+    ar3_output_dir = Path(result["html_path"]).parent
     triplets_csv = ar3_output_dir / "triplets_detected.csv"
     assert triplets_csv.exists()
     triplets_df = pd.read_csv(triplets_csv)
@@ -406,3 +433,4 @@ def test_ar3_missing_gaze_fixations_file(tmp_path: Path):
     assert result["report_id"] == "AR-3"
     assert result["html_path"] == ""
     assert result["pdf_path"] == ""
+    assert result.get("variant_key") is None

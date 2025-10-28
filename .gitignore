@@ -39,3 +39,7 @@ specify/
 temp/
 .claude/
 nul
+.mypy_cache/
+
+
+

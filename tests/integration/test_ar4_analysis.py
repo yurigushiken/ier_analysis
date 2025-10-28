@@ -209,7 +209,7 @@ def test_ar4_analysis_end_to_end(tmp_path: Path):
         },
         "analysis_specific": {
             "ar4_dwell_times": {
-                "config_name": "ar4/ar4_gw_vs_gwo",
+                "config_name": "AR4_dwell_times/ar4_gw_vs_gwo",
             },
         },
     }
@@ -223,7 +223,7 @@ def test_ar4_analysis_end_to_end(tmp_path: Path):
     assert result["html_path"] != ""
 
     # Verify: Check output files exist
-    ar4_output_dir = results_dir / "AR4_Dwell_Times"
+    ar4_output_dir = results_dir / "AR4_dwell_times"
     assert ar4_output_dir.exists()
 
     # Verify: HTML report exists
@@ -406,7 +406,7 @@ def test_ar4_empty_gaze_fixations(tmp_path: Path):
         },
         "analysis_specific": {
             "ar4_dwell_times": {
-                "config_name": "ar4/ar4_gw_vs_gwo",
+                "config_name": "AR4_dwell_times/ar4_gw_vs_gwo",
             },
         },
     }
@@ -436,7 +436,7 @@ def test_ar4_missing_gaze_fixations_file(tmp_path: Path):
         },
         "analysis_specific": {
             "ar4_dwell_times": {
-                "config_name": "ar4/ar4_gw_vs_gwo",
+                "config_name": "AR4_dwell_times/ar4_gw_vs_gwo",
             },
         },
     }
@@ -519,7 +519,7 @@ def test_ar4_aoi_analysis(tmp_path: Path):
         },
         "analysis_specific": {
             "ar4_dwell_times": {
-                "config_name": "ar4/ar4_gw_vs_gwo",
+                "config_name": "AR4_dwell_times/ar4_gw_vs_gwo",
             },
         },
     }
@@ -528,7 +528,7 @@ def test_ar4_aoi_analysis(tmp_path: Path):
     result = ar4.run(config=config)
 
     # Verify: AOI summary was generated
-    ar4_output_dir = results_dir / "AR4_Dwell_Times"
+    ar4_output_dir = results_dir / "AR4_dwell_times"
     aoi_csv = ar4_output_dir / "aoi_summary.csv"
     assert aoi_csv.exists()
 

@@ -9,11 +9,6 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-try:
-    from weasyprint import HTML
-except (ImportError, OSError):  # pragma: no cover - platform dependent
-    HTML = None
-
 LOGGER = logging.getLogger("ier.reporting.compiler")
 
 TEMPLATE_DIR = Path("templates")
@@ -87,14 +82,8 @@ def compile_final_report(
     output_html.write_text(rendered_html, encoding="utf-8")
 
     pdf_path: Optional[Path] = None
-    if output_pdf and HTML is not None:
-        try:
-            HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
-            pdf_path = output_pdf
-        except Exception as exc:  # pragma: no cover
-            LOGGER.warning("Failed to generate PDF %s: %s", output_pdf, exc)
-    elif output_pdf:
-        LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
+    if output_pdf:
+        LOGGER.info("PDF generation disabled; no compiled PDF created for %s", output_pdf)
 
     return CompiledReport(
         html_path=output_html,

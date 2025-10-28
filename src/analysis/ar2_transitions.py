@@ -43,7 +43,7 @@ class KeyTransitionResult:
 
 def _load_variant_configuration(config: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
     analysis_specific = config.get("analysis_specific", {}).get("ar2_transitions", {})
-    default_variant = str(analysis_specific.get("config_name", "ar2/ar2_gw_vs_gwo")).strip()
+    default_variant = str(analysis_specific.get("config_name", "AR2_gaze_transitions/ar2_gw_vs_gwo")).strip()
     env_variant = os.environ.get("IER_AR2_CONFIG", "").strip()
     variant_name = env_variant or default_variant
 
@@ -524,7 +524,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     if not cohorts_cfg:
         raise ValueError("AR-2 configuration must define at least one cohort.")
 
-    output_dir = Path(config["paths"]["results"]) / "AR2" / variant_key
+    output_dir = Path(config["paths"]["results"]) / "AR2_gaze_transitions" / variant_key
     output_dir.mkdir(parents=True, exist_ok=True)
 
     cohort_contexts: List[Dict[str, Any]] = []

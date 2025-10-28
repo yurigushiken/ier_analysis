@@ -206,11 +206,11 @@ age_groups:
 analysis_specific:
   # AR-1: Gaze Duration Variants
   ar1_gaze_duration:
-    config_name: "ar1/ar1_gw_vs_hw"
+    config_name: "AR1_gaze_duration/ar1_gw_vs_hw"
 
   # AR-2: Transition Analysis
   ar2_transitions:
-    config_name: "ar2/ar2_gw_vs_gwo"
+    config_name: "AR2_gaze_transitions/ar2_gw_vs_gwo"
     # Minimum transition count to include in matrix
     min_transition_count: 1
 

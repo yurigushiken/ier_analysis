@@ -18,7 +18,7 @@ analysis:
   segments:
     include:
       - "interaction"
-  min_transitions_per_participant: 5
+  min_transitions_per_participant: 1
   key_transitions:
     - label: "Man Face → Toy"
       from_aoi: "man_face"

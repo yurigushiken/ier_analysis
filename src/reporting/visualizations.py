@@ -12,6 +12,7 @@ from typing import Mapping
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
+import seaborn as sns
 
 
 def bar_plot(
@@ -262,4 +263,96 @@ def line_plot_with_error_bars(
     return None
 
 
-__all__ = ["bar_plot", "line_plot", "line_plot_with_error_bars", "directed_graph"]
+def violin_plot(
+    data: pd.DataFrame,
+    x: str,
+    y: str,
+    *,
+    hue: str | None = None,
+    title: str | None = None,
+    xlabel: str | None = None,
+    ylabel: str | None = None,
+    output_path: Path | str | None = None,
+    figsize: tuple[float, float] = (10, 6),
+    inner: str = "box",
+    show_points: bool = True,
+) -> Path | None:
+    """
+    Create a violin plot (optionally layered with raw data points) for dwell-time distributions.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Dataset containing the columns to plot.
+    x : str
+        Column name mapped to the categorical axis.
+    y : str
+        Column name mapped to the numeric axis (distribution visualised).
+    hue : str, optional
+        Column name for an additional categorical grouping (split violins).
+    title : str, optional
+        Plot title.
+    xlabel : str, optional
+        Label for the categorical axis.
+    ylabel : str, optional
+        Label for the numeric axis.
+    output_path : Path | str, optional
+        File path used when saving the figure.
+    figsize : tuple[float, float], default=(10, 6)
+        Matplotlib figure size in inches.
+    inner : str, default="box"
+        How the inner representation of the distribution is shown (see seaborn.violinplot).
+    show_points : bool, default=True
+        Whether to overlay individual observations using a strip plot.
+
+    Returns
+    -------
+    Path | None
+        Path where the figure was saved, or None when not saved.
+    """
+    plt.figure(figsize=figsize)
+    ax = sns.violinplot(
+        data=data,
+        x=x,
+        y=y,
+        hue=hue,
+        inner=inner,
+        cut=0,
+        scale="width",
+        linewidth=1.2,
+    )
+
+    if show_points:
+        sns.stripplot(
+            data=data,
+            x=x,
+            y=y,
+            hue=hue if hue is None else None,
+            dodge=hue is None,
+            color="k",
+            alpha=0.3,
+            size=3,
+        )
+
+    if hue:
+        ax.legend_.remove()
+        plt.legend(title=hue)
+    else:
+        plt.legend().remove()
+
+    plt.title(title or "", fontsize=14)
+    plt.xlabel(xlabel or x, fontsize=12)
+    plt.ylabel(ylabel or y, fontsize=12)
+    plt.tight_layout()
+
+    if output_path:
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(path, dpi=300, bbox_inches="tight")
+        plt.close()
+        return path
+
+    return None
+
+
+__all__ = ["bar_plot", "line_plot", "line_plot_with_error_bars", "violin_plot", "directed_graph"]

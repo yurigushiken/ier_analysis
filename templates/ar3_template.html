@@ -28,7 +28,7 @@
     <h3>3.5 Visualizations</h3>
     {% for figure in figure_entries %}
         <figure>
-            <img src="{{ figure.path }}" alt="{{ figure.caption }}">
+            <img src="{{ figure.path }}" alt="{{ figure.caption }}" style="width:50%; height:auto;">
             <figcaption>{{ figure.caption }}</figcaption>
         </figure>
     {% endfor %}

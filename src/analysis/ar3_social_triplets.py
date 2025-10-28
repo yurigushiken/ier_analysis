@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import logging
 import os
 from dataclasses import dataclass, field
@@ -14,12 +15,17 @@ import pandas as pd
 
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
-from src.reporting.statistics import SummaryStats, summarize
+from src.reporting.statistics import (
+    GLMMResult,
+    SummaryStats,
+    fit_generalized_linear_mixed_model,
+    summarize,
+)
 from src.utils.config import ConfigurationError, load_analysis_config
 
 LOGGER = logging.getLogger("ier.analysis.ar3")
 
-OUTPUT_ROOT_DIR = Path("AR3")
+OUTPUT_ROOT_DIR = Path("AR3_social_triplets")
 
 
 TripletPattern = Tuple[str, str, str]
@@ -117,7 +123,7 @@ def _load_variant_configuration(config: Mapping[str, Any]) -> Tuple[Dict[str, An
         base_config = {}
 
     analysis_specific = config.get("analysis_specific", {}).get("ar3_social_triplets", {})
-    default_variant = analysis_specific.get("config_name", "ar3/ar3_give_vs_hug")
+    default_variant = analysis_specific.get("config_name", "AR3_social_triplets/ar3_give_vs_hug")
     env_variant = os.environ.get("IER_AR3_CONFIG", "").strip()
     variant_name = env_variant or default_variant
 
@@ -194,6 +200,188 @@ def _resolve_triplet_config(
     )
 
 
+def _resolve_statistics_config(
+    global_config: Mapping[str, Any],
+    variant_config: Mapping[str, Any],
+    base_config: Mapping[str, Any],
+) -> Dict[str, Any]:
+    defaults: Dict[str, Any] = {
+        "primary_test": "glmm_poisson",
+        "glmm_formula": "triplet_count ~ condition + (1 | participant)",
+        "family": "poisson",
+        "use_offset": True,
+        "offset_variable": "log_trial_count",
+        "random_intercept": True,
+        "check_overdispersion": True,
+        "report_aic_bic": True,
+        "calculate_effect_size": True,
+        "overdispersion_threshold": 1.5,
+    }
+
+    resolved = defaults.copy()
+    base_stats = base_config.get("statistics", {})
+    if isinstance(base_stats, Mapping):
+        resolved.update(base_stats)
+
+    variant_stats = variant_config.get("statistics", {})
+    if isinstance(variant_stats, Mapping):
+        resolved.update(variant_stats)
+
+    global_overrides = (
+        global_config.get("analysis_specific", {})
+        .get("ar3_social_triplets", {})
+        .get("statistics", {})
+    )
+    if isinstance(global_overrides, Mapping):
+        resolved.update(global_overrides)
+
+    return resolved
+
+
+def _prepare_glmm_dataset(counts: pd.DataFrame) -> pd.DataFrame:
+    if counts.empty:
+        return pd.DataFrame(
+            columns=[
+                "participant_id",
+                "condition_name",
+                "trial_number",
+                "triplet_count",
+                "participant",
+                "condition",
+            ]
+        )
+
+    working = counts.copy()
+    working["triplet_count"] = pd.to_numeric(working["triplet_count"], errors="coerce").fillna(0).astype(int)
+    working["participant"] = working["participant_id"].astype(str)
+    working["condition"] = working["condition_name"].astype(str)
+    return working
+
+
+def _parse_glmm_formula(formula: str) -> Tuple[str, str, Optional[str]]:
+    if "~" not in formula:
+        raise ValueError("GLMM formula must include '~' separating response and predictors.")
+    lhs, rhs = formula.split("~", 1)
+    response = lhs.strip()
+    rhs_terms = [term.strip() for term in rhs.split("+")]
+    fixed_terms: List[str] = []
+    group_alias: Optional[str] = None
+
+    for term in rhs_terms:
+        if not term:
+            continue
+        if "|" in term:
+            inner = term.strip()
+            if inner.startswith("(") and inner.endswith(")"):
+                inner = inner[1:-1]
+            pieces = [component.strip() for component in inner.split("|")]
+            if len(pieces) == 2:
+                group_alias = pieces[1]
+        else:
+            fixed_terms.append(term)
+
+    fixed_rhs = " + ".join(fixed_terms) if fixed_terms else "1"
+    return response, fixed_rhs, group_alias
+
+
+def _fit_triplet_glmm(counts: pd.DataFrame, stats_config: Mapping[str, Any]) -> GLMMResult:
+    dataset = _prepare_glmm_dataset(counts)
+    if dataset.empty:
+        return GLMMResult(
+            model_name="GLMM",
+            converged=False,
+            summary="GLMM fitting skipped because the dataset contained no trials.",
+            warnings=["Triplet counts dataset was empty; GLMM not executed."],
+        )
+
+    formula = str(stats_config.get("glmm_formula", "triplet_count ~ condition"))
+    try:
+        response, fixed_rhs, group_alias = _parse_glmm_formula(formula)
+    except ValueError as exc:
+        return GLMMResult(
+            model_name="GLMM",
+            converged=False,
+            summary=f"Invalid GLMM formula: {exc}",
+            warnings=[str(exc)],
+        )
+
+    fixed_formula = f"{response} ~ {fixed_rhs}" if fixed_rhs else f"{response} ~ 1"
+
+    group_column = group_alias or stats_config.get("group_column") or "participant"
+    if group_column not in dataset.columns:
+        if group_column == "participant" and "participant_id" in dataset.columns:
+            dataset["participant"] = dataset["participant_id"].astype(str)
+        else:
+            return GLMMResult(
+                model_name="GLMM",
+                converged=False,
+                summary=f"Grouping column '{group_column}' is not present in GLMM dataset.",
+                warnings=[f"Available columns: {', '.join(dataset.columns)}"],
+            )
+
+    offset_column = None
+    offset_warnings: List[str] = []
+    if stats_config.get("use_offset", False):
+        offset_candidate = stats_config.get("offset_variable", "log_trial_count")
+        if offset_candidate in dataset.columns:
+            offset_column = offset_candidate
+        elif offset_candidate == "log_trial_count" and "trial_count" in dataset.columns:
+            dataset[offset_candidate] = np.log(dataset["trial_count"].astype(float).clip(lower=1.0))
+            offset_column = offset_candidate
+        else:
+            offset_warnings.append(
+                f"Offset column '{offset_candidate}' could not be resolved; continuing without an offset."
+            )
+            offset_column = None
+
+    family = str(stats_config.get("family", "poisson")).lower()
+
+    result = fit_generalized_linear_mixed_model(
+        fixed_formula,
+        dataset,
+        groups_column=group_column,
+        family=family,
+        offset_column=offset_column,
+    )
+
+    if stats_config.get("calculate_effect_size", False) and result.params is not None and not result.params.empty:
+        try:
+            params = result.params.copy()
+            conf_int = result.conf_int if isinstance(result.conf_int, pd.DataFrame) else None
+            pvalues = result.pvalues
+
+            effect_df = pd.DataFrame(
+                {
+                    "Term": params.index,
+                    "Estimate": params.values,
+                    "Rate Ratio": np.exp(params.values),
+                }
+            )
+            if conf_int is not None and not conf_int.empty:
+                lower = np.exp(conf_int.iloc[:, 0].values)
+                upper = np.exp(conf_int.iloc[:, 1].values)
+                effect_df["RR 95% CI Lower"] = lower
+                effect_df["RR 95% CI Upper"] = upper
+            if pvalues is not None:
+                effect_df["p-value"] = pvalues.reindex(params.index).values
+            result.effect_sizes = effect_df
+        except Exception as exc:  # pragma: no cover - defensive
+            result.warnings.append(f"Failed to compute effect sizes: {exc}")
+
+    if stats_config.get("check_overdispersion", False) and result.dispersion is not None:
+        threshold = float(stats_config.get("overdispersion_threshold", 1.5))
+        if result.dispersion > threshold:
+            result.warnings.append(
+                f"Potential overdispersion detected (deviance/df = {result.dispersion:.2f} > {threshold}). "
+                "Consider fitting a negative binomial GLMM."
+            )
+
+    if offset_warnings:
+        result.warnings.extend(offset_warnings)
+
+    return result
+
+
 def detect_triplets(
     gaze_fixations: pd.DataFrame,
     valid_patterns: Sequence[TripletPattern],
@@ -241,20 +429,22 @@ def detect_triplets(
             if pattern not in valid_set:
                 continue
 
-    if require_consecutive and (pattern[0] == pattern[1] or pattern[1] == pattern[2]):
-                continue
+            if require_consecutive:
+                if pattern[0] == pattern[1] or pattern[1] == pattern[2]:
+                    continue
 
             gap_first = _frame_gap(window.iloc[0], window.iloc[1])
             gap_second = _frame_gap(window.iloc[1], window.iloc[2])
 
             if require_consecutive:
-                if consecutive_mode == "strict":
-                    if gap_first > 0 or gap_second > 0:
-                        continue
-                else:
-                    tolerance = max_gap_frames if max_gap_frames is not None else 0
-                    if gap_first > tolerance or gap_second > tolerance:
-                        continue
+                # If max_gap_frames is specified, use that tolerance; otherwise require strict consecutiveness (gap=0)
+                max_allowed_gap = max_gap_frames if max_gap_frames is not None else 0
+                if gap_first > max_allowed_gap or gap_second > max_allowed_gap:
+                    continue
+            elif max_gap_frames is not None:
+                # If not requiring consecutive but max_gap is set, enforce that limit
+                if gap_first > max_gap_frames or gap_second > max_gap_frames:
+                    continue
 
             records.append(
                 {
@@ -448,29 +638,82 @@ def _build_overview_text(total_triplets: int) -> str:
     )
 
 
-def _build_statistics_table() -> str:
+def _build_statistics_table(result: Optional[GLMMResult]) -> str:
+    if result is None:
+        return (
+            "<section class=\"statistics warning\">"
+            "<p>GLMM results are unavailable for this analysis.</p>"
+            "</section>"
+        )
+
+    status_class = "success" if result.converged else "warning"
+
+    meta_rows: List[Tuple[str, str]] = []
+    if result.model_name:
+        meta_rows.append(("Model", result.model_name))
+    if result.aic is not None:
+        meta_rows.append(("AIC", f"{result.aic:.3f}"))
+    if result.bic is not None:
+        meta_rows.append(("BIC", f"{result.bic:.3f}"))
+    if result.dispersion is not None:
+        meta_rows.append(("Dispersion", f"{result.dispersion:.3f}"))
+    meta_rows.append(("Converged", "Yes" if result.converged else "No"))
+
+    meta_table = ""
+    if meta_rows:
+        meta_table = (
+            "<table class=\"table table-striped\">"
+            "<thead><tr><th>Statistic</th><th>Value</th></tr></thead><tbody>"
+            + "".join(f"<tr><td>{html.escape(label)}</td><td>{html.escape(value)}</td></tr>" for label, value in meta_rows)
+            + "</tbody></table>"
+        )
+
+    effect_table = ""
+    if result.effect_sizes is not None and not result.effect_sizes.empty:
+        effect_table = result.effect_sizes.to_html(index=False, classes="table table-striped")
+
+    warnings_html = ""
+    if result.warnings:
+        warnings_html = (
+            "<ul>"
+            + "".join(f"<li>{html.escape(str(item))}</li>" for item in result.warnings)
+            + "</ul>"
+        )
+
+    summary_html = ""
+    if result.summary:
+        summary_html = (
+            "<details>"
+            "<summary>Model summary</summary>"
+            f"<pre>{html.escape(result.summary)}</pre>"
+            "</details>"
+        )
+
     return (
-        "<p>GLMM statistical modeling for AR-3 is pending due to missing dependencies. "
-        "Counts and descriptive summaries are reported for transparency.</p>"
+        f"<section class=\"statistics {status_class}\">"
+        f"{meta_table}"
+        f"{effect_table}"
+        f"{warnings_html}"
+        f"{summary_html}"
+        "</section>"
     )
 
 
 def _build_methods_text(config: TripletConfig) -> str:
-    patterns = ", ".join([" → ".join(pattern) for pattern in config.valid_patterns]) or "No patterns defined"
-    max_gap_desc = (
-        f"Maximum of {config.max_gap_frames} frame gaps allowed between gazes."
-        if config.max_gap_frames is not None
-        else "No frame gap limit applied."
-    )
-    if config.consecutive_mode == "strict":
-        consecutive_desc = "Triplets require consecutive gaze fixations with no intervening frames."
-    elif not config.require_consecutive:
-        consecutive_desc = "Triplets may include non-consecutive gaze fixations."
+    patterns = ", ".join([" -> ".join(pattern) for pattern in config.valid_patterns]) or "No patterns defined"
+
+    if config.require_consecutive:
+        if config.max_gap_frames is not None and config.max_gap_frames > 0:
+            consecutive_desc = f"Triplets require consecutive gaze fixations with up to {config.max_gap_frames} frame gaps allowed between gazes."
+        else:
+            consecutive_desc = "Triplets require strictly consecutive gaze fixations (no frame gaps)."
     else:
-        consecutive_desc = "Triplets allow brief gaps between fixations (gap-tolerant)."
-    return (
-        f"Triplets were detected using the following valid patterns: {patterns}. " f"{consecutive_desc} {max_gap_desc}"
-    )
+        if config.max_gap_frames is not None:
+            consecutive_desc = f"Triplets may include non-consecutive gaze fixations, with maximum of {config.max_gap_frames} frame gaps allowed."
+        else:
+            consecutive_desc = "Triplets may include non-consecutive gaze fixations with no frame gap limit."
+
+    return f"Triplets were detected using the following valid patterns: {patterns}. {consecutive_desc}"
 
 
 def _generate_outputs(
@@ -487,6 +730,7 @@ def _generate_outputs(
     temporal_summary: pd.DataFrame | None = None,
     exposure: pd.DataFrame | None = None,
     metadata: Mapping[str, Any] | None = None,
+    statistics_result: Optional[GLMMResult] = None,
 ) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -523,6 +767,14 @@ def _generate_outputs(
 
     figure_contexts: List[Dict[str, str]] = []
 
+    def _format_report_path(path: Path) -> str:
+        """Return a forward-slash relative path so browsers load assets correctly."""
+        try:
+            rel_path = path.relative_to(output_dir)
+        except ValueError:
+            rel_path = path
+        return rel_path.as_posix()
+
     if not summary_condition.empty:
         condition_figure = output_dir / "triplets_by_condition.png"
         visualizations.bar_plot(
@@ -535,7 +787,7 @@ def _generate_outputs(
         )
         figure_contexts.append(
             {
-                "path": str(condition_figure),
+                "path": _format_report_path(condition_figure),
                 "caption": "Mean social gaze triplets per trial across experimental conditions.",
             }
         )
@@ -552,7 +804,7 @@ def _generate_outputs(
         )
         figure_contexts.append(
             {
-                "path": str(age_figure),
+                "path": _format_report_path(age_figure),
                 "caption": "Mean social gaze triplets per trial across age groups.",
             }
         )
@@ -562,6 +814,18 @@ def _generate_outputs(
     directional_table_html = directional_bias.to_html(index=False, classes="table table-striped")
     temporal_table_html = temporal_summary.to_html(index=False, classes="table table-striped")
 
+    if statistics_result and statistics_result.converged:
+        interpretation_text = (
+            "Interpret the GLMM-derived rate ratios alongside descriptive summaries to understand how "
+            "social gaze triplets differ between conditions. Rate ratios above 1 indicate elevated triplet "
+            "rates relative to the baseline condition."
+        )
+    else:
+        interpretation_text = (
+            "Interpret findings with caution; descriptive summaries are informative, and the statistical "
+            "model output highlights any estimation issues or missing dependencies."
+        )
+
     context: Dict[str, Any] = {
         "overview_text": _build_overview_text(int(triplets.shape[0])),
         "methods_text": _build_methods_text(config),
@@ -569,11 +833,8 @@ def _generate_outputs(
         "age_group_table": age_table_html,
         "directional_bias_table": directional_table_html,
         "temporal_summary_table": temporal_table_html,
-        "statistics_table": _build_statistics_table(),
-        "interpretation_text": (
-            "Interpret findings with caution until formal GLMM modeling is completed. "
-            "Descriptive results can still highlight which conditions elicit coordinated social gaze."
-        ),
+        "statistics_table": _build_statistics_table(statistics_result),
+        "interpretation_text": interpretation_text,
         "figure_entries": figure_contexts,
         "figures": [entry["path"] for entry in figure_contexts],
         "tables": [str(path) for path in tables_to_save],
@@ -617,6 +878,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     triplet_config = _resolve_triplet_config(config, variant_config, base_config)
+    statistics_config = _resolve_statistics_config(config, variant_config, base_config)
 
     cohort_defs = _resolve_dataset_paths(variant_config, config)
     if not cohort_defs:
@@ -718,6 +980,13 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         empty_summary_age = pd.DataFrame(
             columns=["age_group", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"]
         )
+        statistics_placeholder = GLMMResult(
+            model_name="GLMM",
+            converged=False,
+            summary="GLMM not executed because no social gaze triplets were detected.",
+            warnings=["Triplet dataset was empty; statistical model skipped."],
+        )
+
         metadata = _generate_outputs(
             output_dir=output_dir,
             triplets=empty_triplets,
@@ -735,6 +1004,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
                 "analysis_id": "AR-3",
                 "variant_key": variant_key,
             },
+            statistics_result=statistics_placeholder,
         )
         metadata.update(_cohort_metadata(empty_triplets, empty_counts))
         metadata["variant_key"] = variant_key
@@ -748,6 +1018,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     directional_bias = compute_directional_bias(triplets_concat)
     temporal_summary = compute_temporal_summary(triplets_concat)
 
+    statistics_result = _fit_triplet_glmm(counts_concat, statistics_config)
+
     report_metadata = _generate_outputs(
         output_dir=output_dir,
         triplets=triplets_concat,
@@ -759,6 +1031,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         variant_config=variant_config,
         directional_bias=directional_bias,
         temporal_summary=temporal_summary,
+        statistics_result=statistics_result,
         metadata={
             "report_title": variant_config.get("report_title", variant_config.get("analysis_name", "AR-3")),
             "analysis_name": variant_config.get("analysis_name", "AR-3: Social Gaze Triplets"),

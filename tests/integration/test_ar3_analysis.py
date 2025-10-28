@@ -190,12 +190,12 @@ def test_ar3_analysis_end_to_end(tmp_path: Path):
         },
         "analysis_specific": {
             "ar3_social_triplets": {
-                "config_name": "ar3/ar3_give_vs_hug",
+                "config_name": "AR3_social_triplets/ar3_give_vs_hug",
             },
         },
     }
     # Point variant cohort paths to the temporary processed dataset by overriding env var
-    variant_path = Path("config/analysis_configs/ar3/ar3_give_vs_hug.yaml")
+    variant_path = Path("config/analysis_configs/AR3_social_triplets/ar3_give_vs_hug.yaml")
     original_yaml = variant_path.read_text(encoding="utf-8")
     updated_yaml = original_yaml.replace("data/processed/gaze_fixations_child.csv", str(gaze_fixations_path).replace("\\", "/"))
     updated_yaml = updated_yaml.replace("data/processed/gaze_fixations_adult.csv", str(gaze_fixations_path).replace("\\", "/"))
@@ -209,14 +209,14 @@ def test_ar3_analysis_end_to_end(tmp_path: Path):
     result = ar3.run(config=config)
     monkeypatch_env.undo()
 
-    variant_output_dir = results_dir / "AR3" / "ar3_give_vs_hug"
+    variant_output_dir = results_dir / "AR3_social_triplets" / "ar3_give_vs_hug"
 
     # Fail-first expectations: variant metadata and directory structure
     assert result["report_id"] == "AR-3"
     assert result["title"] == "Social Gaze Triplet Analysis"
     assert result.get("variant_key") == "ar3_give_vs_hug"
     assert Path(result["html_path"]).parent == variant_output_dir
-    assert Path(result["pdf_path"]).parent == variant_output_dir
+    assert not result["pdf_path"]
 
     assert variant_output_dir.exists()
 
@@ -374,7 +374,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
         },
     }
 
-    variant_path = Path("config/analysis_configs/ar3/ar3_give_vs_hug.yaml")
+    variant_path = Path("config/analysis_configs/AR3_social_triplets/ar3_give_vs_hug.yaml")
     original_yaml = variant_path.read_text(encoding="utf-8")
     updated_yaml = (
         original_yaml
@@ -434,3 +434,7 @@ def test_ar3_missing_gaze_fixations_file(tmp_path: Path):
     assert result["html_path"] == ""
     assert result["pdf_path"] == ""
     assert result.get("variant_key") is None
+
+
+
+

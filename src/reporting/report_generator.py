@@ -44,18 +44,8 @@ def render_report(
     output_html.write_text(rendered_html, encoding="utf-8")
 
     pdf_path: Optional[Path] = None
-    if render_pdf and output_pdf:
-        try:
-            from weasyprint import HTML
-
-            HTML(string=rendered_html, base_url=str(output_html.parent)).write_pdf(str(output_pdf))
-            pdf_path = output_pdf
-        except ImportError:  # pragma: no cover
-            LOGGER.warning("WeasyPrint not available; PDF report generation skipped for %s", output_pdf)
-        except Exception as exc:  # pragma: no cover
-            LOGGER.warning("Failed to generate PDF %s: %s", output_pdf, exc)
-    elif output_pdf:
-        LOGGER.info("PDF output disabled by configuration; skipping generation for %s", output_pdf)
+    if output_pdf:
+        LOGGER.info("PDF generation is currently disabled; no PDF created for %s", output_pdf)
 
     figures = [Path(p) for p in context.get("figures", [])]
     tables = [Path(p) for p in context.get("tables", [])]

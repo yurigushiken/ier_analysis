@@ -11,12 +11,6 @@ from src.reporting.compiler import CompiledReport, ReportDescriptor, compile_fin
 pytest.importorskip("jinja2")
 
 WEASYPRINT_AVAILABLE = False
-try:
-    from weasyprint import HTML  # type: ignore
-
-    WEASYPRINT_AVAILABLE = True
-except (ImportError, OSError):
-    WEASYPRINT_AVAILABLE = False
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TEMPLATE_DIR = PROJECT_ROOT / "templates"
@@ -59,8 +53,6 @@ def _create_sample_report_html(path: Path, report_id: str, title: str) -> None:
 
 
 def test_compile_final_report_basic(tmp_path: Path):
-    if not WEASYPRINT_AVAILABLE:
-        pytest.skip("WeasyPrint not installed; PDF output skipped")
     """Test basic compilation of multiple reports into final report."""
     # Setup: Create sample individual reports
     ar1_html = tmp_path / "ar1" / "report.html"
@@ -77,13 +69,13 @@ def test_compile_final_report_basic(tmp_path: Path):
             report_id="AR-1",
             title="AR-1: Gaze Duration Analysis",
             html_path=ar1_html,
-            pdf_path=tmp_path / "ar1" / "report.pdf",
+            pdf_path=None,
         ),
         ReportDescriptor(
             report_id="AR-2",
             title="AR-2: Gaze Transitions",
             html_path=ar2_html,
-            pdf_path=tmp_path / "ar2" / "report.pdf",
+            pdf_path=None,
         ),
         ReportDescriptor(
             report_id="AR-3",
@@ -138,15 +130,11 @@ def test_compile_final_report_basic(tmp_path: Path):
     assert 'id="ar-2"' in html_content
     assert 'id="ar-3"' in html_content
 
-    # Verify: PDF output exists if WeasyPrint is available
-    if WEASYPRINT_AVAILABLE and result.pdf_path:
-        assert result.pdf_path.exists()
-        assert result.pdf_path.stat().st_size > 0  # PDF has content
+    # Verify: PDF output disabled
+    assert result.pdf_path is None
 
 
 def test_compile_final_report_with_extra_context(tmp_path: Path):
-    if not WEASYPRINT_AVAILABLE:
-        pytest.skip("WeasyPrint not installed; PDF output skipped")
     """Test compilation with additional context variables."""
     # Setup: Create one sample report
     ar1_html = tmp_path / "ar1" / "report.html"
@@ -184,8 +172,6 @@ def test_compile_final_report_with_extra_context(tmp_path: Path):
 
 
 def test_compile_final_report_ordering(tmp_path: Path):
-    if not WEASYPRINT_AVAILABLE:
-        pytest.skip("WeasyPrint not installed; PDF output skipped")
     """Test that reports are compiled in the order provided."""
     # Setup: Create reports in specific order
     ar4_html = tmp_path / "ar4" / "report.html"

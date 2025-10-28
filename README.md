@@ -1,3 +1,5 @@
+# put data in data\csvs_human_verified_vv
+
 # Infant Event Representation Analysis Pipeline
 
 **A comprehensive eye-tracking analysis system for studying infant cognitive development**
@@ -57,10 +59,10 @@ Run AR-4 using the currently configured variant:
 python -c "from src.utils.config import load_config; from src.analysis import ar4_dwell_times as ar4; cfg = load_config(); ar4.run(config=cfg)"
 ```
 
-Run AR-4 with an explicit YAML override (`ar4/ar4_gw_vs_gwo`):
+Run AR-4 with an explicit YAML override (`AR4_dwell_times/ar4_gw_vs_gwo`):
 
 ```bash
-python -c "from src.utils.config import load_config; from src.analysis import ar4_dwell_times as ar4; cfg = load_config(overrides=['analysis_specific.ar4_dwell_times.config_name=ar4/ar4_gw_vs_gwo']); ar4.run(config=cfg)"
+python -c "from src.utils.config import load_config; from src.analysis import ar4_dwell_times as ar4; cfg = load_config(overrides=['analysis_specific.ar4_dwell_times.config_name=AR4_dwell_times/ar4_gw_vs_gwo']); ar4.run(config=cfg)"
 ```
 
 ### Running the Analysis (after all AR updates)
@@ -84,6 +86,16 @@ python src/main.py
 
 ---
 
+## Current Status & Next Steps
+
+- ✅ **AR-1 – AR-3**: Updated with refreshed configs, batch runners, and reporting (AR-3 now includes GLMM summaries).
+- ⚙️ **AR-4**: Batch runner available; analysis executes but still triggers known visualization warnings (`visualizations.violin_plot` placeholder). Stabilization is the next engineering focus.
+- ⏳ **AR-5 – AR-7**: Legacy implementations remain; work will resume after AR-4 fixes are completed.
+
+These priorities are reflected throughout the README—new instructions target the functioning modules while we continue to triage AR-4 and prepare the remaining analyses for modernization.
+
+---
+
 ## The Seven Analyses (AR-1 through AR-7)
 
 ### **AR-1: Gaze Duration Analysis**
@@ -92,7 +104,7 @@ python src/main.py
 - Calculates proportion of time looking at faces and toy
 - Independent samples t-test comparing GIVE vs HUG
 - Bar charts with error bars
-- Outputs saved to variant-specific folders: `results/AR1/<variant_key>/`
+- Outputs saved to variant-specific folders: `results/AR1_gaze_duration/<variant_key>/`
 - **Key Finding**: Differential attention patterns across event types
 
 ---
@@ -218,22 +230,22 @@ ier_analysis/
 │   └── contract/                    # Schema validation tests
 │
 ├── results/                         # Analysis outputs (generated)
-│   ├── AR1/
-│   ├── AR2_Gaze_Transitions/
-│   └── ... (AR3-AR7)
+│   ├── AR1_gaze_duration/
+│   ├── AR2_gaze_transitions/
+│   ├── AR3_social_triplets/
+│   ├── AR4_dwell_times/
+│   └── ... (AR5-AR7)
 │
 ├── reports/                         # Final compiled reports (generated)
 │   ├── final_report.html
 │   └── final_report.pdf
 │
-├── specs/                           # Project specification
+├── specs/                           # Legacy documentation (kept for reference)
 │   └── 001-infant-event-analysis/
-│       ├── spec.md                  # Feature specification
-│       ├── plan.md                  # Implementation plan
-│       ├── tasks.md                 # Task breakdown
 │       ├── data-model.md            # Data schemas
 │       ├── quickstart.md            # Setup guide
-│       └── research.md              # Technical research notes
+│       ├── research.md              # Technical research notes
+│       └── ...                      # Archived planning docs
 │
 ├── study-info.md                    # Detailed study background
 ├── README.md                        # This file
@@ -315,7 +327,7 @@ You can run any analysis independently after preprocessing:
 python src/preprocessing/master_log_generator.py
 
 # Then run individual analyses
-$env:IER_AR1_CONFIG='ar1/ar1_gw_vs_hw'  # choose AR-1 variant
+$env:IER_AR1_CONFIG='AR1_gaze_duration/ar1_gw_vs_hw'  # choose AR-1 variant
 python -m src.analysis.ar1_gaze_duration
 Remove-Item Env:IER_AR1_CONFIG
 python -m src.analysis.ar2_transitions
@@ -329,9 +341,28 @@ python -m src.analysis.ar7_dissociation
 python -m src.reporting.compiler
 ```
 
-```bash
-# Run all AR-1 variants in sequence
+### Batch-running AR variants
+
+Use the helper scripts in `scripts/` to execute every YAML variant for a given analysis module. Run whichever analysis you need—each script walks through `config/analysis_configs/<arN>/*.yaml`.
+
+```powershell
+conda activate ier_analysis
 python scripts/run_ar1_variants.py
+```
+
+```powershell
+conda activate ier_analysis
+python scripts/run_ar2_variants.py
+```
+
+```powershell
+conda activate ier_analysis
+python scripts/run_ar3_variants.py
+```
+
+```powershell
+conda activate ier_analysis
+python scripts/run_ar4_variants.py
 ```
 
 Each analysis generates:
@@ -439,9 +470,9 @@ pip install -r config/requirements.txt
 - Analysis continues but skips underpowered comparisons
 - Consider collecting more data or combining age groups
 
-**PDF generation fails**
-- HTML reports still work - open in browser and print to PDF
-- Check WeasyPrint installation: `pip install --upgrade weasyprint`
+**PDF exports temporarily disabled**
+- HTML reports still work – open in browser and print if needed
+- PDF generation will return in a future update once the pipeline stabilises
 
 📖 **See [quickstart.md](./specs/001-infant-event-analysis/quickstart.md) for detailed troubleshooting**
 
@@ -496,11 +527,9 @@ If you use this pipeline in your research, please cite:
 
 - 📖 **[Quick Start Guide](./specs/001-infant-event-analysis/quickstart.md)** - Setup and running
 - 📖 **[Data Model](./specs/001-infant-event-analysis/data-model.md)** - Schemas and validation
-- 📖 **[Specification](./specs/001-infant-event-analysis/spec.md)** - Feature requirements
-- 📖 **[Implementation Plan](./specs/001-infant-event-analysis/plan.md)** - Technical architecture
-- 📖 **[Tasks](./specs/001-infant-event-analysis/tasks.md)** - Development roadmap
 - 📖 **[Research Notes](./specs/001-infant-event-analysis/research.md)** - Technical decisions
 - 📖 **[Study Background](./study-info.md)** - Scientific context
+- 📁 Legacy planning documents (spec/plan/tasks) remain archived in `specs/001-infant-event-analysis/` for reference.
 
 ---
 
@@ -523,4 +552,3 @@ This project implements analysis methods based on developmental cognitive scienc
 **Status**: Production Ready ✅
 
 All 7 analyses implemented and tested. Full test coverage. Ready for scientific use.
-

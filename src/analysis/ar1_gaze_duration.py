@@ -629,9 +629,9 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-1 gaze duration analysis")
 
     analysis_specific_cfg = config.get("analysis_specific", {}).get("ar1_gaze_duration", {})
-    default_variant = str(analysis_specific_cfg.get("config_name", "ar1/ar1_gw_vs_hw")).strip()
+    default_variant = str(analysis_specific_cfg.get("config_name", "AR1_gaze_duration/ar1_gw_vs_hw")).strip()
     env_variant = os.environ.get("IER_AR1_CONFIG", "").strip()
-    variant_config_name = env_variant or default_variant or "ar1/ar1_gw_vs_hw"
+    variant_config_name = env_variant or default_variant or "AR1_gaze_duration/ar1_gw_vs_hw"
 
     try:
         analysis_config = load_analysis_config(variant_config_name)
@@ -762,7 +762,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         full_conditions_set.update(primary_conditions)
     full_conditions = sorted(full_conditions_set)
 
-    output_dir = Path(config["paths"]["results"]) / "AR1" / variant_key
+    output_dir = Path(config["paths"]["results"]) / "AR1_gaze_duration" / variant_key
     metadata = _generate_outputs(
         output_dir=output_dir,
         cohort_results=cohort_results,

@@ -40,7 +40,7 @@ def _build_dataset(rows: list[list[object]]) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=columns)
 
 
-@pytest.mark.parametrize("variant", ["ar2/ar2_gw_vs_gwo"])
+@pytest.mark.parametrize("variant", ["AR2_gaze_transitions/ar2_gw_vs_gwo"])
 def test_ar2_analysis_generates_expected_outputs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, variant: str) -> None:
     child_rows = (
         _make_fixation_rows("p7", 7, "GIVE_WITH")

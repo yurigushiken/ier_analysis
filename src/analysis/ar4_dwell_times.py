@@ -17,7 +17,7 @@ from src.utils.config import ConfigurationError, load_analysis_config
 
 LOGGER = logging.getLogger("ier.analysis.ar4")
 
-DEFAULT_OUTPUT_DIR = Path("results/AR4_Dwell_Times")
+DEFAULT_OUTPUT_DIR = Path("results/AR4_dwell_times")
 
 EXCLUDE_AOIS: Iterable[str] = ("screen_nonAOI", "off_screen")
 
@@ -211,7 +211,7 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
         base_config = {}
 
     analysis_specific = config.get("analysis_specific", {}).get("ar4_dwell_times", {})
-    variant_name = analysis_specific.get("config_name", "ar4/ar4_gw_vs_gwo")
+    variant_name = analysis_specific.get("config_name", "AR4_dwell_times/ar4_gw_vs_gwo")
 
     try:
         variant_config = load_analysis_config(variant_name)

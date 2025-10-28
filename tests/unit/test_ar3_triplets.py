@@ -21,7 +21,7 @@ def base_config(tmp_path: Path) -> dict[str, object]:
         },
         "analysis_specific": {
             "ar3_social_triplets": {
-                "config_name": "ar3/ar3_give_vs_hug",
+                "config_name": "AR3_social_triplets/ar3_give_vs_hug",
             }
         },
     }
@@ -30,17 +30,17 @@ def base_config(tmp_path: Path) -> dict[str, object]:
 def test_load_variant_configuration_defaults_to_config(base_config: dict[str, object]):
     variant_config, variant_name, base_config_loaded = ar3._load_variant_configuration(base_config)
 
-    assert variant_name == "ar3/ar3_give_vs_hug"
+    assert variant_name == "AR3_social_triplets/ar3_give_vs_hug"
     assert variant_config["variant_key"] == "ar3_give_vs_hug"
     assert isinstance(base_config_loaded, dict)
 
 
 def test_load_variant_configuration_prefers_env(monkeypatch: pytest.MonkeyPatch, base_config: dict[str, object]):
-    monkeypatch.setenv("IER_AR3_CONFIG", "ar3/ar3_give_vs_give_without")
+    monkeypatch.setenv("IER_AR3_CONFIG", "AR3_social_triplets/ar3_give_vs_give_without")
 
     variant_config, variant_name, base_config_loaded = ar3._load_variant_configuration(base_config)
 
-    assert variant_name == "ar3/ar3_give_vs_give_without"
+    assert variant_name == "AR3_social_triplets/ar3_give_vs_give_without"
     assert variant_config["variant_key"] == "ar3_give_vs_give_without"
     assert isinstance(base_config_loaded, dict)
 

@@ -29,7 +29,7 @@ class TripletConfig:
     valid_patterns: List[TripletPattern]
     require_consecutive: bool = True
     max_gap_frames: Optional[int] = None
-    toy_absent_mapping: Dict[str, str] = field(default_factory=dict)
+    alias_to_canonical: Dict[str, str] = field(default_factory=dict)
 
 
 def _resolve_dataset_paths(variant_config: Mapping[str, Any], global_config: Mapping[str, Any]) -> List[Dict[str, Any]]:
@@ -123,12 +123,15 @@ def _resolve_triplet_config(
             max_gap_frames = None
 
     toy_absent_mapping = triplet_settings.get("toy_absent_mapping", {})
+    alias_to_canonical: Dict[str, str] = {}
+    for canonical, alias in toy_absent_mapping.items():
+        alias_to_canonical[str(alias)] = str(canonical)
 
     return TripletConfig(
         valid_patterns=valid_patterns,
         require_consecutive=require_consecutive,
         max_gap_frames=max_gap_frames,
-        toy_absent_mapping={str(key): str(value) for key, value in toy_absent_mapping.items()},
+        alias_to_canonical=alias_to_canonical,
     )
 
 
@@ -138,6 +141,7 @@ def detect_triplets(
     *,
     require_consecutive: bool = True,
     max_gap_frames: Optional[int] = None,
+    alias_to_canonical: Optional[Dict[str, str]] = None,
 ) -> pd.DataFrame:
     """Identify social gaze triplets in the gaze fixations DataFrame."""
 
@@ -168,7 +172,12 @@ def detect_triplets(
         trial_df = trial_df.reset_index(drop=True)
         for idx in range(len(trial_df) - 2):
             window = trial_df.iloc[idx : idx + 3]
-            pattern = tuple(window["aoi_category"].tolist())
+            categories = []
+            for value in window["aoi_category"].tolist():
+                canonical = alias_to_canonical.get(value, value) if alias_to_canonical else value
+                categories.append(canonical)
+
+            pattern = tuple(categories)
             if pattern not in valid_set:
                 continue
 
@@ -420,62 +429,109 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-3 social triplet analysis")
 
     try:
-        gaze_fixations = _load_gaze_fixations(config)
-    except FileNotFoundError as exc:
+        variant_config, variant_name, base_config = _load_variant_configuration(config)
+    except ConfigurationError as exc:
         LOGGER.warning("Skipping AR-3 analysis: %s", exc)
         return {
             "report_id": "AR-3",
             "title": "Social Gaze Triplet Analysis",
+            "variant_key": None,
             "html_path": "",
             "pdf_path": "",
         }
 
-    if gaze_fixations.empty:
-        LOGGER.warning("Gaze fixations file is empty; skipping AR-3 analysis")
+    triplet_config = _resolve_triplet_config(config, variant_config, base_config)
+
+    cohort_defs = _resolve_dataset_paths(variant_config, config)
+    if not cohort_defs:
+        LOGGER.warning("No cohorts resolved for AR-3 analysis")
         return {
             "report_id": "AR-3",
             "title": "Social Gaze Triplet Analysis",
+            "variant_key": variant_config.get("variant_key"),
             "html_path": "",
             "pdf_path": "",
         }
 
-    triplet_config = _resolve_triplet_config(config)
-    if not triplet_config.valid_patterns:
-        LOGGER.warning("No valid triplet patterns defined; skipping AR-3 analysis")
-        return {
-            "report_id": "AR-3",
-            "title": "Social Gaze Triplet Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    results_root = Path(config["paths"]["results"]) / OUTPUT_ROOT_DIR
+    variant_key = variant_config.get("variant_key", Path(variant_name).stem)
+    output_dir = results_root / variant_key
 
-    triplets = detect_triplets(
-        gaze_fixations,
-        triplet_config.valid_patterns,
-        require_consecutive=triplet_config.require_consecutive,
-        max_gap_frames=triplet_config.max_gap_frames,
-    )
+    all_triplets: List[pd.DataFrame] = []
+    all_counts: List[pd.DataFrame] = []
 
-    counts = count_triplets_per_trial(triplets)
-    summary_condition = summarize_by_condition(counts)
-    summary_age = summarize_by_age_group(counts)
+    for cohort in cohort_defs:
+        data_path: Path = cohort["data_path"]
+        try:
+            dataset = _load_dataset(data_path)
+        except FileNotFoundError as exc:
+            LOGGER.warning("Skipping cohort %s: %s", cohort.get("key"), exc)
+            continue
 
-    output_dir = Path(config["paths"]["results"]) / DEFAULT_OUTPUT_DIR.name
+        cohort_filters = cohort.get("participant_filters", {})
+        filtered = _apply_filters(dataset, cohort_filters)
+        filtered = _apply_condition_segment_filters(filtered, variant_config)
 
-    if triplets.empty:
-        LOGGER.warning("No social gaze triplets detected; generating descriptive report with zero counts")
+        if filtered.empty:
+            LOGGER.info("Cohort %s yielded no gaze fixations after filtering", cohort.get("key"))
+            continue
+
+        triplets = detect_triplets(
+            filtered,
+            triplet_config.valid_patterns,
+            require_consecutive=triplet_config.require_consecutive,
+            max_gap_frames=triplet_config.max_gap_frames,
+            alias_to_canonical=triplet_config.alias_to_canonical,
+        )
+
+        if triplets.empty:
+            LOGGER.info("No triplets detected for cohort %s", cohort.get("key"))
+            continue
+
+        triplets["cohort_key"] = cohort.get("key")
+        triplets["cohort_label"] = cohort.get("label")
+        all_triplets.append(triplets)
+
+        counts = count_triplets_per_trial(triplets)
+        counts["cohort_key"] = cohort.get("key")
+        counts["cohort_label"] = cohort.get("label")
+        all_counts.append(counts)
+
+    if not all_triplets:
+        LOGGER.warning("No social gaze triplets detected for variant %s", variant_key)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        metadata = _generate_outputs(
+            output_dir=output_dir,
+            triplets=pd.DataFrame(),
+            counts=pd.DataFrame(),
+            summary_condition=pd.DataFrame(),
+            summary_age=pd.DataFrame(),
+            config=triplet_config,
+            global_config=config,
+            variant_config=variant_config,
+        )
+        metadata["variant_key"] = variant_key
+        return metadata
+
+    triplets_concat = pd.concat(all_triplets, ignore_index=True)
+    counts_concat = pd.concat(all_counts, ignore_index=True)
+
+    summary_condition = summarize_by_condition(counts_concat)
+    summary_age = summarize_by_age_group(counts_concat)
 
     metadata = _generate_outputs(
         output_dir=output_dir,
-        triplets=triplets,
-        counts=counts,
+        triplets=triplets_concat,
+        counts=counts_concat,
         summary_condition=summary_condition,
         summary_age=summary_age,
         config=triplet_config,
         global_config=config,
+        variant_config=variant_config,
     )
+    metadata["variant_key"] = variant_key
 
-    LOGGER.info("AR-3 analysis completed; report generated at %s", metadata["html_path"])
+    LOGGER.info("AR-3 analysis completed for %s; report generated at %s", variant_key, metadata["html_path"])
     return metadata
 
 

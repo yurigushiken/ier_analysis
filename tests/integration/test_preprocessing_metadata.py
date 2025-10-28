@@ -15,7 +15,7 @@ from src.utils.config import load_config
 def test_metadata_preservation(tmp_path: Path):
     config = load_config()
     contract_path = Path("specs/001-infant-event-analysis/contracts/raw_data_schema.json")
-    output_path = tmp_path / "gaze_events.csv"
+    output_path = tmp_path / "gaze_fixations.csv"
 
     generate_master_log(
         raw_directories=[tmp_path],

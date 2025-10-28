@@ -96,7 +96,7 @@ ISSUE 2: TERMINOLOGY - 'GAZE EVENT' vs ALTERNATIVES
 
 1. CURRENT TERMINOLOGY:
 
-   Term: "gaze event"
+   Term: "gaze fixation"
    Definition: 3+ consecutive frames looking at same AOI
    Count in data: 26,560 (combined child + adult)
 

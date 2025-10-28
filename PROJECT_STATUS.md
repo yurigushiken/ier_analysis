@@ -103,7 +103,7 @@ The Infant Event Representation Analysis pipeline is **complete and production-r
 ✅ **Preprocessing** (4 modules)
 - CSV loader with schema validation
 - AOI mapper (What+Where → category)
-- Gaze event detector (3+ frame rule)
+- Gaze fixation detector (3+ frame rule)
 - Master log generator
 
 ✅ **Analysis** (7 modules)
@@ -268,7 +268,7 @@ The Infant Event Representation Analysis pipeline is **complete and production-r
 
 ### What You Get
 
-- ✅ `data/processed/gaze_events_child.csv` - Master gaze event log
+- ✅ `data/processed/gaze_fixations_child.csv` - Master gaze fixation log
 - ✅ `results/AR1_*/` through `results/AR7_*/` - Individual reports
 - ✅ `reports/final_report.html` - Compiled comprehensive report
 - ✅ Publication-ready figures (300 DPI PNG)

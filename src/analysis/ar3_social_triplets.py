@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+import os
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
@@ -17,7 +18,7 @@ from src.utils.config import ConfigurationError, load_analysis_config
 
 LOGGER = logging.getLogger("ier.analysis.ar3")
 
-DEFAULT_OUTPUT_DIR = Path("results/AR3_Social_Triplets")
+OUTPUT_ROOT_DIR = Path("AR3")
 
 
 TripletPattern = Tuple[str, str, str]
@@ -28,43 +29,92 @@ class TripletConfig:
     valid_patterns: List[TripletPattern]
     require_consecutive: bool = True
     max_gap_frames: Optional[int] = None
+    toy_absent_mapping: Dict[str, str] = field(default_factory=dict)
 
 
-def _load_gaze_events(config: Mapping[str, Any]) -> pd.DataFrame:
-    processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+def _resolve_dataset_paths(variant_config: Mapping[str, Any], global_config: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    cohorts = variant_config.get("cohorts", [])
+    if not cohorts:
+        processed_dir = Path(global_config["paths"]["processed_data"])
+        default_path = processed_dir / "gaze_fixations.csv"
+        if not default_path.exists():
+            raise FileNotFoundError("No cohorts defined and gaze_fixations.csv missing")
+        return [
+            {
+                "key": "all",
+                "label": "All Participants",
+                "data_path": default_path,
+                "include_in_reports": True,
+                "participant_filters": {},
+            }
+        ]
 
-    if default_path.exists():
-        path = default_path
-    elif child_path.exists():
-        path = default_path
-    else:
-        raise FileNotFoundError("No gaze events file found for AR-3 analysis")
+    resolved: List[Dict[str, Any]] = []
+    for cohort in cohorts:
+        data_path = Path(cohort.get("data_path", "")).expanduser()
+        if not data_path.is_absolute():
+            data_path = Path(global_config["paths"].get("processed_data", "")).joinpath(data_path)
+        resolved.append({**cohort, "data_path": data_path})
+    return resolved
 
-    LOGGER.info("Loading gaze events from %s", path)
+
+def _load_dataset(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        raise FileNotFoundError(f"Gaze fixation dataset missing: {path}")
     return pd.read_csv(path)
 
 
-def _resolve_triplet_config(config: Mapping[str, Any]) -> TripletConfig:
+def _load_variant_configuration(config: Mapping[str, Any]) -> Tuple[Dict[str, Any], str, Dict[str, Any]]:
     try:
-        analysis_config = load_analysis_config("ar3_config")
+        base_config = load_analysis_config("ar3_config")
     except ConfigurationError:
-        analysis_config = {}
+        base_config = {}
 
-    triplet_settings = analysis_config.get("triplet_definition", {})
+    analysis_specific = config.get("analysis_specific", {}).get("ar3_social_triplets", {})
+    default_variant = analysis_specific.get("config_name", "ar3/ar3_give_vs_hug")
+    env_variant = os.environ.get("IER_AR3_CONFIG", "").strip()
+    variant_name = env_variant or default_variant
+
+    try:
+        variant_config = load_analysis_config(variant_name)
+    except ConfigurationError as exc:
+        raise ConfigurationError(f"Failed to load AR-3 variant configuration '{variant_name}': {exc}") from exc
+
+    return variant_config, variant_name, base_config
+
+
+def _resolve_triplet_config(
+    global_config: Mapping[str, Any],
+    variant_config: Mapping[str, Any],
+    base_config: Mapping[str, Any],
+) -> TripletConfig:
+    triplet_settings = variant_config.get("triplets") or base_config.get("triplet_definition", {})
 
     valid_patterns: List[TripletPattern] = []
-    for pattern in triplet_settings.get("valid_patterns", []):
+    patterns_source = triplet_settings.get("valid_patterns") or base_config.get("triplet_definition", {}).get("valid_patterns", [])
+    if not patterns_source:
+        patterns_source = (
+            global_config.get("analysis_specific", {})
+            .get("ar3_social_triplets", {})
+            .get("valid_patterns", [])
+        )
+    for pattern in patterns_source:
         if len(pattern) == 3:
             valid_patterns.append(tuple(pattern))
 
     if not valid_patterns:
-        fallback = config.get("analysis_specific", {}).get("ar3_social_triplets", {}).get("valid_patterns", [])
-        valid_patterns = [tuple(pattern) for pattern in fallback if len(pattern) == 3]
+        raise ConfigurationError("No valid triplet patterns defined for AR-3 analysis.")
 
-    require_consecutive = bool(triplet_settings.get("require_consecutive", True))
-    max_gap_frames = triplet_settings.get("max_gap_frames")
+    require_consecutive = bool(
+        triplet_settings.get(
+            "require_consecutive",
+            base_config.get("triplet_definition", {}).get("require_consecutive", True),
+        )
+    )
+    max_gap_frames = triplet_settings.get(
+        "max_gap_frames",
+        base_config.get("triplet_definition", {}).get("max_gap_frames"),
+    )
     if max_gap_frames is not None:
         try:
             max_gap_frames = int(max_gap_frames)
@@ -72,21 +122,24 @@ def _resolve_triplet_config(config: Mapping[str, Any]) -> TripletConfig:
             LOGGER.warning("Invalid max_gap_frames value %s; ignoring.", max_gap_frames)
             max_gap_frames = None
 
+    toy_absent_mapping = triplet_settings.get("toy_absent_mapping", {})
+
     return TripletConfig(
         valid_patterns=valid_patterns,
         require_consecutive=require_consecutive,
         max_gap_frames=max_gap_frames,
+        toy_absent_mapping={str(key): str(value) for key, value in toy_absent_mapping.items()},
     )
 
 
 def detect_triplets(
-    gaze_events: pd.DataFrame,
+    gaze_fixations: pd.DataFrame,
     valid_patterns: Sequence[TripletPattern],
     *,
     require_consecutive: bool = True,
     max_gap_frames: Optional[int] = None,
 ) -> pd.DataFrame:
-    """Identify social gaze triplets in the gaze events DataFrame."""
+    """Identify social gaze triplets in the gaze fixations DataFrame."""
 
     columns = [
         "participant_id",
@@ -98,13 +151,13 @@ def detect_triplets(
         "gaze_end_frame",
     ]
 
-    if gaze_events.empty or not valid_patterns:
+    if gaze_fixations.empty or not valid_patterns:
         return pd.DataFrame(columns=columns)
 
     valid_set = {tuple(pattern) for pattern in valid_patterns if len(pattern) == 3}
     records: List[Dict[str, Any]] = []
 
-    sorted_events = gaze_events.sort_values(
+    sorted_events = gaze_fixations.sort_values(
         ["participant_id", "trial_number", "gaze_onset_time", "gaze_start_frame"],
         kind="stable",
     )
@@ -228,7 +281,7 @@ def _build_overview_text(total_triplets: int) -> str:
     if total_triplets == 0:
         return (
             "No social gaze triplets were detected in the processed dataset. "
-            "Review AOI labeling and gaze event definitions before interpreting results."
+            "Review AOI labeling and gaze fixation definitions before interpreting results."
         )
 
     return (
@@ -252,9 +305,9 @@ def _build_methods_text(config: TripletConfig) -> str:
         else "No frame gap limit applied."
     )
     consecutive_desc = (
-        "Triplets require consecutive gaze events."
+        "Triplets require consecutive gaze fixations."
         if config.require_consecutive
-        else "Triplets may include non-consecutive gaze events."
+        else "Triplets may include non-consecutive gaze fixations."
     )
     return (
         f"Triplets were detected using the following valid patterns: {patterns}. " f"{consecutive_desc} {max_gap_desc}"
@@ -367,7 +420,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-3 social triplet analysis")
 
     try:
-        gaze_events = _load_gaze_events(config)
+        gaze_fixations = _load_gaze_fixations(config)
     except FileNotFoundError as exc:
         LOGGER.warning("Skipping AR-3 analysis: %s", exc)
         return {
@@ -377,8 +430,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             "pdf_path": "",
         }
 
-    if gaze_events.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-3 analysis")
+    if gaze_fixations.empty:
+        LOGGER.warning("Gaze fixations file is empty; skipping AR-3 analysis")
         return {
             "report_id": "AR-3",
             "title": "Social Gaze Triplet Analysis",
@@ -397,7 +450,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     triplets = detect_triplets(
-        gaze_events,
+        gaze_fixations,
         triplet_config.valid_patterns,
         require_consecutive=triplet_config.require_consecutive,
         max_gap_frames=triplet_config.max_gap_frames,

@@ -95,7 +95,7 @@ Edit `config/pipeline_config.yaml` to customize analysis parameters:
 ```yaml
 analysis:
   alpha: 0.05                    # Statistical significance threshold
-  min_gaze_frames: 3             # Minimum frames for gaze event
+  min_gaze_frames: 3             # Minimum frames for gaze fixation
   min_statistical_n: 3           # Minimum sample size for tests
 
 edge_cases:
@@ -140,8 +140,8 @@ python src/main.py
 [2025-10-25 14:32:15] [INFO] Loading configuration from config/pipeline_config.yaml
 [2025-10-25 14:32:16] [INFO] Phase 1: Preprocessing
 [2025-10-25 14:32:16] [INFO] Loaded 89 CSV files from data/csvs_human_verified_vv/child/
-[2025-10-25 14:32:18] [INFO] Detected 15,432 gaze events
-[2025-10-25 14:32:18] [INFO] Saved gaze_events.csv to data/processed/
+[2025-10-25 14:32:18] [INFO] Detected 15,432 gaze fixations
+[2025-10-25 14:32:18] [INFO] Saved gaze_fixations.csv to data/processed/
 [2025-10-25 14:32:19] [INFO] Phase 2: Individual Analyses
 [2025-10-25 14:32:45] [INFO] AR-1 (Gaze Duration) complete
 [2025-10-25 14:33:12] [INFO] AR-2 (Transitions) complete
@@ -159,7 +159,7 @@ python src/main.py
 python src/preprocessing/master_log_generator.py
 ```
 
-**Output**: `data/processed/gaze_events.csv`
+**Output**: `data/processed/gaze_fixations.csv`
 
 #### Individual Analyses
 
@@ -208,7 +208,7 @@ ier_analysis/
 │   │   ├── child/
 │   │   └── adult/
 │   └── processed/
-│       └── gaze_events.csv     # ✓ Master gaze event log
+│       └── gaze_fixations.csv     # ✓ Master gaze fixation log
 │
 ├── results/
 │   ├── AR1_Gaze_Duration/
@@ -233,7 +233,7 @@ ier_analysis/
 
 ### Key Outputs
 
-1. **gaze_events.csv**: Master log of all detected gaze events
+1. **gaze_fixations.csv**: Master log of all detected gaze fixations
    - 16 columns describing each gaze (participant, trial, AOI, duration, etc.)
    - Can be opened in Excel or any CSV viewer for inspection
 
@@ -311,7 +311,7 @@ All statistical tests follow this format:
 - Verify column names match exactly (case-sensitive)
 - See [contracts/raw_data_schema.json](./contracts/raw_data_schema.json) for full schema
 
-#### 2. "No gaze events detected for participant X"
+#### 2. "No gaze fixations detected for participant X"
 
 **Problem**: Insufficient consecutive frames on same AOI
 
@@ -380,11 +380,11 @@ filters:
 
 ### Exporting Data for External Analysis
 
-The master `gaze_events.csv` and summary CSV tables can be imported into:
-- **R**: `read.csv("data/processed/gaze_events.csv")`
+The master `gaze_fixations.csv` and summary CSV tables can be imported into:
+- **R**: `read.csv("data/processed/gaze_fixations.csv")`
 - **SPSS**: File → Import Data → CSV
 - **Excel**: Open directly or import as external data
-- **Python/pandas**: `pd.read_csv("data/processed/gaze_events.csv")`
+- **Python/pandas**: `pd.read_csv("data/processed/gaze_fixations.csv")`
 
 ### Running Tests
 
@@ -470,7 +470,7 @@ find . -type f -name "*.pyc" -delete
 
 1. **Review Results**: Open `reports/final_report.html` in your web browser
 2. **Validate Findings**: Check that results align with research hypotheses
-3. **Explore Data**: Inspect `gaze_events.csv` and summary tables
+3. **Explore Data**: Inspect `gaze_fixations.csv` and summary tables
 4. **Run Additional Tests**: Modify configuration for exploratory analyses
 5. **Share Results**: Distribute reports to collaborators
 

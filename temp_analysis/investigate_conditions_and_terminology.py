@@ -8,7 +8,7 @@ print("INVESTIGATION: AR1 CONDITION FILTERING & TERMINOLOGY")
 print("="*80)
 
 # Load data
-df = pd.read_csv('data/processed/gaze_events.csv')
+df = pd.read_csv('data/processed/gaze_fixations.csv')
 
 print("\n" + "="*80)
 print("ISSUE 1: UPSIDE_DOWN VARIANTS IN GIVE vs HUG COMPARISON")
@@ -104,7 +104,7 @@ print("="*80)
 
 print("\n1. CURRENT TERMINOLOGY:")
 print("""
-   Term: "gaze event"
+   Term: "gaze fixation"
    Definition: 3+ consecutive frames looking at same AOI
    Count in data: 26,560 (combined child + adult)
 """)
@@ -213,13 +213,13 @@ print("""
       - Define: "A gaze bout was defined as 3+ consecutive
                  frames on the same AOI"
 
-   AVOID: Keeping 'gaze_event' - too confusing with stimulus events
+   AVOID: Keeping 'gaze_fixation' - too confusing with stimulus events
 """)
 
 print("\n6. DATA STRUCTURE WITH NEW TERMINOLOGY:")
 print("""
    Current (CONFUSING):
-   - Stimulus event (gw, hw) → contains many gaze events
+   - Stimulus event (gw, hw) → contains many gaze fixations
 
    Proposed (CLEAR):
    - Stimulus event (gw, hw) → contains many gaze fixations
@@ -238,15 +238,15 @@ print("""
    If changing terminology, need to update:
 
    Files to rename:
-   - gaze_events.csv → gaze_fixations.csv (or other term)
+   - gaze_fixations.csv → gaze_fixations.csv (or other term)
 
    Variables to rename:
-   - gaze_event_id → gaze_fixation_id
-   - detect_gaze_events() → detect_gaze_fixations()
+   - gaze_fixation_id → gaze_fixation_id
+   - detect_gaze_fixations() → detect_gaze_fixations()
    - _extract_events_from_group() → _extract_fixations_from_group()
 
    Documentation to update:
-   - All docstrings mentioning "gaze event"
+   - All docstrings mentioning "gaze fixation"
    - MENTORSHIP_DATA_FLOW.md
    - README.md
    - Report templates
@@ -282,7 +282,7 @@ print("""
 
 print("\n2. TERMINOLOGY ISSUE:")
 print("""
-   YES - 'gaze_event' is problematic and confusing
+   YES - 'gaze_fixation' is problematic and confusing
 
    Best replacement: 'gaze_fixation'
    - Standard in eye-tracking research

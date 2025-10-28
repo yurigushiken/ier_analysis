@@ -151,7 +151,7 @@ def _compute_statistics(participant_means, summary, config):
 
 ---
 
-## ISSUE 2: "Gaze Event" Terminology is Confusing
+## ISSUE 2: "Gaze Fixation" Terminology is Confusing
 
 ### Why It's Problematic
 
@@ -166,17 +166,17 @@ def _compute_statistics(participant_means, summary, config):
    - Each time participant sees a stimulus event
    - ~1,916 trials in child data
 
-3. **Gaze event** (CURRENT USAGE - the problem)
+3. **Gaze fixation** (CURRENT USAGE - the problem)
    - 3+ consecutive frames on same AOI
    - ~26,560 in combined data
    - Unit of analysis detected by preprocessing
 
-**When you say "4,266 toy gaze events"** it's ambiguous:
+**When you say "4,266 toy gaze fixations"** it's ambiguous:
 - Does this mean 4,266 stimulus events? NO
 - Does this mean 4,266 trials? NO
 - Does this mean 4,266 instances of 3+ frame gazes? YES
 
-**For publication:** Reviewers will be confused by "gaze event" when you're also talking about "GIVE event" and "HUG event"
+**For publication:** Reviewers will be confused by "gaze fixation" when you're also talking about "GIVE event" and "HUG event"
 
 ---
 
@@ -281,28 +281,28 @@ def _compute_statistics(participant_means, summary, config):
 **Files/Variables to Rename:**
 
 **Data files:**
-- `gaze_events.csv` → `gaze_fixations.csv`
-- `gaze_events_child.csv` → `gaze_fixations_child.csv`
-- `gaze_events_adult.csv` → `gaze_fixations_adult.csv`
+- `gaze_fixations.csv` → `gaze_fixations.csv`
+- `gaze_fixations_child.csv` → `gaze_fixations_child.csv`
+- `gaze_fixations_adult.csv` → `gaze_fixations_adult.csv`
 
 **Python modules:**
 - `src/preprocessing/gaze_detector.py` → `gaze_fixation_detector.py` (or keep filename, rename functions)
 
 **Function names:**
-- `detect_gaze_events()` → `detect_gaze_fixations()`
+- `detect_gaze_fixations()` → `detect_gaze_fixations()`
 - `_extract_events_from_group()` → `_extract_fixations_from_group()`
 - `_finalize_event()` → `_finalize_fixation()`
 
 **Variable names:**
-- `gaze_event_id` → `gaze_fixation_id`
-- `GazeEvent` dataclass → `GazeFixation`
+- `gaze_fixation_id` → `gaze_fixation_id`
+- `GazeFixation` dataclass → `GazeFixation`
 
 **Column names:**
 - Keep column names (gaze_start_frame, gaze_duration_ms) - these are fine
 - Only rename references to "event" in comments/docs
 
 **Documentation:**
-- All docstrings mentioning "gaze event"
+- All docstrings mentioning "gaze fixation"
 - `MENTORSHIP_DATA_FLOW.md`
 - `README.md`
 - Report templates (`templates/ar1_template.html`, etc.)
@@ -338,9 +338,9 @@ comparisons:
 
 ---
 
-### Issue 2: "Gaze Event" Terminology
+### Issue 2: "Gaze Fixation" Terminology
 
-**Finding:** YES, "gaze_event" is confusing given overloaded use of "event"
+**Finding:** YES, "gaze_fixation" is confusing given overloaded use of "event"
 
 **Problem:** Ambiguous whether referring to stimulus event vs gaze instance
 

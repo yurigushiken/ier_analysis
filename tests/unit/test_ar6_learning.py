@@ -54,8 +54,8 @@ def _sample_trial_data() -> pd.DataFrame:
 
 def test_calculate_trial_level_metric():
     """Test trial-level metric calculation."""
-    gaze_events = _sample_trial_data()
-    result = ar6.calculate_trial_level_metric(gaze_events, "proportion_primary_aois")
+    gaze_fixations = _sample_trial_data()
+    result = ar6.calculate_trial_level_metric(gaze_fixations, "proportion_primary_aois")
 
     assert not result.empty
     assert "proportion_primary_aois" in result.columns

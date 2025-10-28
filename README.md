@@ -22,7 +22,7 @@ The system processes raw eye-tracking CSV files and produces:
 - ✅ **7 Statistical Analyses** (AR-1 through AR-7) examining different cognitive dimensions
 - ✅ **Individual HTML/PDF Reports** for each analysis with visualizations and interpretations
 - ✅ **Compiled Final Report** integrating all findings with table of contents
-- ✅ **Master Gaze Event Log** for further analysis in external tools (R, SPSS, etc.)
+- ✅ **Master Gaze Fixation Log** for further analysis in external tools (R, SPSS, etc.)
 - ✅ **Statistical Tables & Figures** ready for publication
 
 ---
@@ -54,7 +54,7 @@ python src/main.py
 ```
 
 **Output**: 
-- `data/processed/gaze_events_child.csv` - Master gaze event log
+- `data/processed/gaze_fixations_child.csv` - Master gaze fixation log
 - `results/AR*/` - Individual analysis reports and figures
 - `reports/final_report.html` - Comprehensive compiled report
 
@@ -70,6 +70,7 @@ python src/main.py
 - Calculates proportion of time looking at faces and toy
 - Independent samples t-test comparing GIVE vs HUG
 - Bar charts with error bars
+- Outputs saved to variant-specific folders: `results/AR1/<variant_key>/`
 - **Key Finding**: Differential attention patterns across event types
 
 ---
@@ -95,7 +96,7 @@ python src/main.py
 ---
 
 ### **AR-4: Dwell Time Analysis**
-**Question**: *How long do infants fixate on each AOI in a single gaze event?*
+**Question**: *How long do infants fixate on each AOI in a single gaze fixation?*
 
 - Calculates mean dwell time per AOI category
 - Linear Mixed Models (LMM) with random effects for participants
@@ -153,14 +154,14 @@ ier_analysis/
 │   │   ├── child/                   # Verified infant data
 │   │   └── adult/                   # Verified adult data
 │   └── processed/
-│       └── gaze_events_child.csv    # Master gaze event log (generated)
+│       └── gaze_fixations_child.csv    # Master gaze fixation log (generated)
 │
 ├── src/                             # Source code
 │   ├── preprocessing/               # Data loading and gaze detection
 │   │   ├── csv_loader.py            # Load and validate CSVs
 │   │   ├── aoi_mapper.py            # Map What+Where to AOI categories
-│   │   ├── gaze_detector.py         # Detect 3+ frame gaze events
-│   │   └── master_log_generator.py  # Generate master gaze event log
+│   │   ├── gaze_detector.py         # Detect 3+ frame gaze fixations
+│   │   └── master_log_generator.py  # Generate master gaze fixation log
 │   │
 │   ├── analysis/                    # Analysis modules (AR-1 to AR-7)
 │   │   ├── ar1_gaze_duration.py     # Gaze duration analysis
@@ -195,7 +196,7 @@ ier_analysis/
 │   └── contract/                    # Schema validation tests
 │
 ├── results/                         # Analysis outputs (generated)
-│   ├── AR1_Gaze_Duration/
+│   ├── AR1/
 │   ├── AR2_Gaze_Transitions/
 │   └── ... (AR3-AR7)
 │
@@ -269,9 +270,9 @@ Raw CSV files must contain these columns:
 
 📖 **See [data-model.md](./specs/001-infant-event-analysis/data-model.md) for complete schema**
 
-### Gaze Event Detection Rules
+### Gaze Fixation Detection Rules
 
-A **gaze event** is defined as:
+A **gaze fixation** is defined as:
 - ✅ **3+ consecutive frames** looking at the same AOI (Area of Interest)
 - ✅ AOI determined by `What`+`Where` combination
 - ✅ Examples: `"man_face"`, `"toy_present"`, `"woman_body"`
@@ -288,11 +289,13 @@ A **gaze event** is defined as:
 You can run any analysis independently after preprocessing:
 
 ```bash
-# First, generate master gaze events file
+# First, generate master gaze fixations file
 python src/preprocessing/master_log_generator.py
 
 # Then run individual analyses
+$env:IER_AR1_CONFIG='ar1/ar1_gw_vs_hw'  # choose AR-1 variant
 python -m src.analysis.ar1_gaze_duration
+Remove-Item Env:IER_AR1_CONFIG
 python -m src.analysis.ar2_transitions
 python -m src.analysis.ar3_social_triplets
 python -m src.analysis.ar4_dwell_times
@@ -302,6 +305,11 @@ python -m src.analysis.ar7_dissociation
 
 # Finally, compile into final report
 python -m src.reporting.compiler
+```
+
+```bash
+# Run all AR-1 variants in sequence
+python scripts/run_ar1_variants.py
 ```
 
 Each analysis generates:
@@ -351,7 +359,7 @@ open htmlcov/index.html
 
 - **Contract Tests**: Schema validation
   - Raw CSV validation
-  - Gaze events schema
+  - Gaze fixations schema
   - Report output structure
 
 ---
@@ -363,7 +371,7 @@ open htmlcov/index.html
 ```yaml
 analysis:
   alpha: 0.05                        # Statistical significance threshold
-  min_gaze_frames: 3                 # Minimum frames for gaze event
+  min_gaze_frames: 3                 # Minimum frames for gaze fixation
   min_statistical_n: 3               # Minimum sample size
 
 edge_cases:
@@ -399,7 +407,7 @@ conda activate ier_analysis
 pip install -r config/requirements.txt
 ```
 
-**"No gaze events detected"**
+**"No gaze fixations detected"**
 - Check that raw CSVs have correct column names
 - Verify `What`+`Where` combinations are valid
 - Review `logs/pipeline.log` for details

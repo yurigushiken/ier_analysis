@@ -7,10 +7,10 @@ print("="*80)
 print("AUDIT: AR1 GAZE DURATION ANALYSIS LOGIC")
 print("="*80)
 
-# Load gaze events
-df = pd.read_csv('data/processed/gaze_events_child.csv')
+# Load gaze fixations
+df = pd.read_csv('data/processed/gaze_fixations_child.csv')
 print(f"\n1. LOADED DATA")
-print(f"   Total gaze events: {len(df)}")
+print(f"   Total gaze fixations: {len(df)}")
 print(f"   Participants: {df['participant_id'].nunique()}")
 print(f"   Columns: {list(df.columns)}")
 
@@ -32,13 +32,13 @@ print(f"   Toy AOIs defined: {TOY_AOIS}")
 print(f"   Excluded from denominator: {ONSCREEN_EXCLUDE}")
 
 df_filtered = df[~df['aoi_category'].isin(ONSCREEN_EXCLUDE)].copy()
-print(f"   Total gaze events: {len(df)}")
+print(f"   Total gaze fixations: {len(df)}")
 print(f"   After excluding off_screen: {len(df_filtered)}")
 print(f"   Percentage on-screen: {len(df_filtered)/len(df)*100:.1f}%")
 
 df_filtered['is_toy'] = df_filtered['aoi_category'].isin(TOY_AOIS)
-print(f"   Gaze events on toy AOIs: {df_filtered['is_toy'].sum()}")
-print(f"   Toy gaze events breakdown:")
+print(f"   Gaze fixations on toy AOIs: {df_filtered['is_toy'].sum()}")
+print(f"   Toy gaze fixations breakdown:")
 for aoi in TOY_AOIS:
     count = (df_filtered['aoi_category'] == aoi).sum()
     print(f"      {aoi}: {count}")
@@ -53,10 +53,10 @@ sample_trial = df[df['participant_id'] == sample_participant]['trial_number'].il
 sample_data = df[(df['participant_id'] == sample_participant) & (df['trial_number'] == sample_trial)]
 
 print(f"\n   Example: {sample_participant}, trial {sample_trial}")
-print(f"   Total gaze events in trial: {len(sample_data)}")
+print(f"   Total gaze fixations in trial: {len(sample_data)}")
 
 sample_filtered = sample_data[~sample_data['aoi_category'].isin(ONSCREEN_EXCLUDE)]
-print(f"   On-screen gaze events: {len(sample_filtered)}")
+print(f"   On-screen gaze fixations: {len(sample_filtered)}")
 
 total_duration = sample_filtered['gaze_duration_ms'].sum()
 toy_duration = sample_filtered[sample_filtered['aoi_category'].isin(TOY_AOIS)]['gaze_duration_ms'].sum()

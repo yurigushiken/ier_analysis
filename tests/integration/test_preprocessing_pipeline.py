@@ -12,7 +12,7 @@ CONTRACT_PATH = PROJECT_ROOT / "specs" / "001-infant-event-analysis" / "contract
 
 
 def test_generate_master_log(tmp_path: Path):
-    output = tmp_path / "gaze_events.csv"
+    output = tmp_path / "gaze_fixations.csv"
     df = generate_master_log(
         raw_directories=[FIXTURE_DIR],
         contract_path=CONTRACT_PATH,

@@ -226,7 +226,7 @@ for row in sample_rows_sorted:
     if aoi == current_aoi:
         current_duration += 1
     else:
-        if current_duration >= 3:  # 3+ frames = gaze event
+        if current_duration >= 3:  # 3+ frames = gaze fixation
             gaze_durations.append(current_duration)
         current_aoi = aoi
         current_duration = 1
@@ -237,7 +237,7 @@ if current_duration >= 3:
 
 print(f"\nSample participant: {sample_participant_id}")
 print(f"  Total frames: {len(sample_rows)}")
-print(f"  Detected gaze events (3+ frames): {len(gaze_durations)}")
+print(f"  Detected gaze fixations (3+ frames): {len(gaze_durations)}")
 if gaze_durations:
     print(f"  Mean gaze duration: {sum(gaze_durations) / len(gaze_durations):.1f} frames")
     print(f"  Min gaze duration: {min(gaze_durations)} frames")
@@ -310,8 +310,8 @@ else:
     print(f"   - ⚠ Missing values present - strict validation will catch")
 
 print(f"\n6. GAZE EVENTS:")
-print(f"   - Example participant: {len(gaze_durations)} gaze events from {len(sample_rows)} frames")
-print(f"   - → Multiple gaze events per trial → nested structure")
+print(f"   - Example participant: {len(gaze_durations)} gaze fixations from {len(sample_rows)} frames")
+print(f"   - → Multiple gaze fixations per trial → nested structure")
 
 print("\n" + "=" * 80)
 print("RECOMMENDATIONS:")

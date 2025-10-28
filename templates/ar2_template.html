@@ -3,38 +3,148 @@
 {% block content %}
 <section id="overview">
     <h2>1. Overview</h2>
-    <p>{{ summary_text }}</p>
+    <p><strong>{{ report_title }}</strong></p>
+    {% if variant_description %}
+        <p>{{ variant_description }}</p>
+    {% endif %}
+    <p><strong>Variant Key:</strong> {{ variant_key }}</p>
     <p><strong>Conditions:</strong> {{ conditions | join(', ') }}</p>
-    <p><strong>Age groups:</strong> {{ age_groups | join(', ') }}</p>
+    {% if key_transitions %}
+        <p><strong>Key Transitions:</strong> {{ key_transitions | join(', ') }}</p>
+    {% endif %}
 </section>
 
 <section id="methods">
-    <h2>2. Methods</h2>
-    <p>{{ methods_text }}</p>
+    <h2>2. Methods Summary</h2>
+    <ul>
+        <li>Minimum fixation duration: {{ min_fixation_ms }} ms</li>
+        <li>Repeated AOIs collapsed: {{ 'Yes' if collapse_repeats else 'No' }}</li>
+        <li>Minimum transitions per participant: {{ min_transitions_required }}</li>
+        {% if segments_included %}
+            <li>Included segments: {{ segments_included | join(', ') }}</li>
+        {% endif %}
+    </ul>
 </section>
 
-<section id="results">
-    <h2>3. Results</h2>
-    <h3>3.1 Transition Matrices</h3>
-    {% for table in transition_tables %}
-        <h4>{{ table.title }}</h4>
-        {{ table.html | safe }}
-    {% endfor %}
+<section id="cohort-summary">
+    <h2>3. Cohort Summary</h2>
+    {% if cohort_summaries %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Cohort</th>
+                    <th>Participants</th>
+                    <th>Total Transitions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in cohort_summaries %}
+                    <tr>
+                        <td>{{ row.cohort }}</td>
+                        <td>{{ row.participants }}</td>
+                        <td>{{ row.total_transitions }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No cohorts contained valid gaze transitions for this configuration.</p>
+    {% endif %}
+</section>
 
-    <h3>3.2 Directed Graphs</h3>
-    {% for figure in graph_figures %}
-        <figure>
-            <img src="{{ figure.path }}" alt="{{ figure.caption }}">
-            <figcaption>{{ figure.caption }}</figcaption>
-        </figure>
-    {% endfor %}
+<section id="cohort-details">
+    <h2>4. Cohort Results</h2>
+    {% for cohort in cohort_contexts %}
+        <article class="cohort-section">
+            <h3>{{ cohort.label }}</h3>
+            <p><strong>Participants:</strong> {{ cohort.n_participants }}</p>
+            <p><strong>Total transitions:</strong> {{ cohort.total_transitions }}</p>
 
-    <h3>3.3 Statistical Tests</h3>
-    {{ statistics_table | safe }}
+            {% if cohort.participants_per_condition %}
+                <p><strong>Participants per Condition:</strong>
+                    {% for cond, count in cohort.participants_per_condition.items() %}
+                        {{ cond }} (N={{ count }}){% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            {% endif %}
+
+            {% if cohort.transition_tables %}
+                <h4>Transition Probability Matrices</h4>
+                {% for table in cohort.transition_tables %}
+                    <h5>{{ table.condition }}</h5>
+                    {{ table.html | safe }}
+                {% endfor %}
+            {% endif %}
+
+            {% if cohort.heatmaps %}
+                <h4>Heatmaps</h4>
+                {% for heatmap in cohort.heatmaps %}
+                    <figure>
+                        <img src="{{ heatmap.path }}" alt="{{ heatmap.caption }}">
+                        <figcaption>{{ heatmap.caption }}</figcaption>
+                    </figure>
+                {% endfor %}
+            {% endif %}
+
+            {% if cohort.graphs %}
+                <h4>Directed Graphs</h4>
+                {% for graph in cohort.graphs %}
+                    <figure>
+                        <img src="{{ graph.path }}" alt="{{ graph.caption }}">
+                        <figcaption>{{ graph.caption }}</figcaption>
+                    </figure>
+                {% endfor %}
+            {% endif %}
+
+            {% if cohort.key_transition_stats %}
+                <h4>Key Transition Comparisons</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Transition</th>
+                            <th>{{ cohort.key_transition_stats[0].condition_a_transition }}</th>
+                            <th>{{ cohort.key_transition_stats[0].condition_b_transition }}</th>
+                            <th>T-statistic</th>
+                            <th>df</th>
+                            <th>p-value</th>
+                            <th>95% CI (Î")</th>
+                            <th>Cohen's d</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in cohort.key_transition_stats %}
+                            <tr>
+                                <td>{{ stat.label }}</td>
+                                <td>{% if stat.mean_a %}{{ stat.mean_a }}{% else %}N/A{% endif %} (N={{ stat.n_a }})</td>
+                                <td>{% if stat.mean_b %}{{ stat.mean_b }}{% else %}N/A{% endif %} (N={{ stat.n_b }})</td>
+                                <td>{{ stat.t_stat or 'N/A' }}</td>
+                                <td>{{ stat.df or 'N/A' }}</td>
+                                <td>{{ stat.p_value or 'N/A' }}</td>
+                                <td>{{ stat.ci or 'N/A' }}</td>
+                                <td>{{ stat.cohens_d or 'N/A' }}</td>
+                                <td>{{ stat.note or '' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No key transition statistics available for this cohort.</p>
+            {% endif %}
+        </article>
+    {% endfor %}
 </section>
 
 <section id="interpretation">
-    <h2>4. Interpretation</h2>
-    <p>{{ interpretation_text }}</p>
+    <h2>5. Interpretation</h2>
+    <p>
+        Cohort-level comparisons illustrate how gaze transitions between agents and the toy differ when the toy
+        is present versus absent. Adult control data offer a benchmark for interpreting infant strategies.
+        Refer to the key transition tables for quantitative contrasts.
+    </p>
 </section>
+{% endblock %}
+
+{% block footer_config %}
+Configuration: Min fixation = {{ min_fixation_ms }}ms, Segments = {{ segments_included | join(', ') if segments_included else 'all' }}, Collapse repeats = {{ 'Yes' if collapse_repeats else 'No' }}, Min transitions/participant = {{ min_transitions_required }}
 {% endblock %}

@@ -6,7 +6,7 @@ import pytest
 from src.analysis import ar4_dwell_times as ar4
 
 
-def _sample_gaze_events() -> pd.DataFrame:
+def _sample_gaze_fixations() -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
@@ -56,14 +56,14 @@ def _sample_gaze_events() -> pd.DataFrame:
 
 
 def test_calculate_participant_dwell_times_groups_by_condition():
-    df = _sample_gaze_events()
+    df = _sample_gaze_fixations()
     participant_means = ar4.calculate_participant_dwell_times(df, min_dwell_time_ms=0)
 
     assert set(participant_means.columns) >= {
         "participant_id",
         "condition_name",
         "mean_dwell_time_ms",
-        "gaze_event_count",
+        "gaze_fixation_count",
     }
 
     lookup = {
@@ -77,7 +77,7 @@ def test_calculate_participant_dwell_times_groups_by_condition():
 
 
 def test_summarize_by_condition_averages_participant_means():
-    participant_means = ar4.calculate_participant_dwell_times(_sample_gaze_events(), min_dwell_time_ms=0)
+    participant_means = ar4.calculate_participant_dwell_times(_sample_gaze_fixations(), min_dwell_time_ms=0)
     summary = ar4.summarize_by_condition(participant_means)
 
     assert set(summary.columns) >= {"condition_name", "mean_dwell_time_ms", "n_participants"}
@@ -90,7 +90,7 @@ def test_summarize_by_condition_averages_participant_means():
 
 
 def test_calculate_participant_dwell_times_filters_short_gazes():
-    df = _sample_gaze_events()
+    df = _sample_gaze_fixations()
     df_filtered = pd.concat(
         [
             df,

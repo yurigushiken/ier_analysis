@@ -41,7 +41,7 @@ f     = FLOATING (control)
 ```
 Level 3: Participant (N = 36)
   └─ Level 2: Event Presentation (N ≈ 12 per participant, ~432 total)
-      └─ Level 1: Gaze Event (N ≈ 10-30 per presentation, derived from 3+ frames)
+      └─ Level 1: Gaze Fixation (N ≈ 10-30 per presentation, derived from 3+ frames)
           └─ Level 0: Frame (aggregated, not modeled directly)
 ```
 
@@ -53,7 +53,7 @@ Level 3: Participant (N = 36)
 **Now we know**:
 - 11 unique event types (always the same)
 - ~12 total presentations (events repeated)
-- 3-level nesting: participants → presentations → gaze events
+- 3-level nesting: participants → presentations → gaze fixations
 
 **Statistical Impact**:
 ✅ **~12 presentations per participant** → Excellent for random intercepts
@@ -91,7 +91,7 @@ Three new documents in `temp_analysis/`:
 **[DATA_STRUCTURE_DOCUMENTATION.md](DATA_STRUCTURE_DOCUMENTATION.md)**:
 - Complete event catalog with meanings
 - Nesting structure diagrams
-- Data transformation pipeline (frames → gaze events → event-level → models)
+- Data transformation pipeline (frames → gaze fixations → event-level → models)
 - Statistical implications
 - Critical clarifications (presentation order, duration variability, offsets needed)
 
@@ -117,10 +117,10 @@ Three new documents in `temp_analysis/`:
 
 **Implication**: Use **nested random effects** (not crossed):
 ```python
-# Gaze events nested within presentations nested within participants
+# Gaze fixations nested within presentations nested within participants
 model = MixedLM.from_formula(
     'dwell_time_ms ~ condition * aoi + (1 | participant) + (1 | participant:event)',
-    data=gaze_event_data
+    data=gaze_fixation_data
 )
 ```
 
@@ -137,11 +137,11 @@ model = MixedLM.from_formula(
 ```python
 # Level 3: Participant
 # Level 2: Event presentation (within participant)
-# Level 1: Gaze event (within presentation)
+# Level 1: Gaze fixation (within presentation)
 
 model = MixedLM.from_formula(
     'dwell_time_ms ~ condition * aoi + (1 | participant) + (1 | participant:event)',
-    data=gaze_event_data
+    data=gaze_fixation_data
 )
 ```
 
@@ -235,7 +235,7 @@ if len(excluded) > 0:
 
 **Critical finding**: Presentations range from 150 to 1,000+ frames
 
-**Why this matters**: Longer presentations → more opportunities for gaze events and triplets
+**Why this matters**: Longer presentations → more opportunities for gaze fixations and triplets
 
 **Solution for count models (AR-3)**:
 ```python
@@ -324,7 +324,7 @@ This will generate the implementation task list based on all the planning docume
 ### **2. During Implementation**:
 
 **Preprocessing**:
-- Detect consecutive frames → gaze events (3+ frames on same AOI)
+- Detect consecutive frames → gaze fixations (3+ frames on same AOI)
 - Create unique event_presentation_id for each video showing
 - Calculate presentation_order within participant
 - Add duration_frames and log_duration for offsets

@@ -122,7 +122,7 @@ HTML('results/AR1/report.html').write_pdf('results/AR1/report.pdf')
 **Dwell Time Analysis (AR-4)**:
 - **Method**: Linear Mixed Model
 - **Formula**: `dwell_time_ms ~ condition + (1 | participant)`
-- **Uses gaze event-level data** (not aggregated means)
+- **Uses gaze fixation-level data** (not aggregated means)
 - **Can extend**: `dwell_time_ms ~ condition * aoi_category + (1 | participant)` for AOI-specific analysis
 - **Implementation**: `statsmodels.regression.mixed_linear_model.MixedLM`
 
@@ -223,7 +223,7 @@ plt.savefig('results/AR1/duration_plot.png', dpi=300)
 - Use pandera for DataFrame schema validation (integrates naturally with pandas)
 - Define schemas for:
   - Raw CSV structure (current 18-column dataset schema with types)
-  - gaze_events.csv schema (master log structure)
+  - gaze_fixations.csv schema (master log structure)
   - AOI category enumeration (10 valid What+Where pairs)
   - Experimental condition enumeration (GIVE, HUG, SHOW variants)
 
@@ -251,17 +251,17 @@ plt.savefig('results/AR1/duration_plot.png', dpi=300)
 
 **Test Organization**:
 - **Unit tests**: Test individual functions in isolation
-  - Gaze event detection logic (3+ frame threshold)
+  - Gaze fixation detection logic (3+ frame threshold)
   - AOI mapping (What+Where → category)
   - Statistical functions (ensure correct scipy/statsmodels usage)
   - Visualization functions (check figure creation, no errors)
 - **Integration tests**: Test component interactions
-  - Preprocessing pipeline (CSV → gaze_events.csv)
-  - Individual analysis modules (gaze_events.csv → reports)
+  - Preprocessing pipeline (CSV → gaze_fixations.csv)
+  - Individual analysis modules (gaze_fixations.csv → reports)
   - Report compilation (individual reports → final report)
 - **Contract tests**: Validate data schemas
   - Raw CSV structure matches spec
-  - gaze_events.csv has required columns
+  - gaze_fixations.csv has required columns
   - Report outputs exist in expected locations
 
 **TDD Workflow** (per constitution):
@@ -277,7 +277,7 @@ plt.savefig('results/AR1/duration_plot.png', dpi=300)
 
 **Fixtures**:
 - Sample raw CSV with known AOI patterns
-- Expected gaze_events.csv output for comparison
+- Expected gaze_fixations.csv output for comparison
 - Mock data for testing statistical edge cases (n=2, n=3, all same value)
 
 **References**:
@@ -292,7 +292,7 @@ plt.savefig('results/AR1/duration_plot.png', dpi=300)
 ```yaml
 analysis:
   alpha: 0.05  # Statistical significance threshold
-  min_gaze_frames: 3  # Minimum frames for gaze event
+  min_gaze_frames: 3  # Minimum frames for gaze fixation
   min_statistical_n: 3  # Minimum sample size for tests
 
 edge_cases:
@@ -357,7 +357,7 @@ output:
 - Validate config structure on load (required keys present)
 
 ```python
-def run_ar2_transitions(gaze_events_path):
+def run_ar2_transitions(gaze_fixations_path):
     global_config = load_config('config/pipeline_config.yaml')
     ar2_config = load_config('config/analysis_configs/ar2_config.yaml')
     config = {**global_config, **ar2_config}  # Merge
@@ -394,9 +394,9 @@ def run_ar2_transitions(gaze_events_path):
 
 ## Best Practices Research
 
-### Best Practice 1: Gaze Event Detection
+### Best Practice 1: Gaze Fixation Detection
 
-**Research Question**: What are standard practices for defining gaze events in infant eye-tracking research?
+**Research Question**: What are standard practices for defining gaze fixations in infant eye-tracking research?
 
 **Findings**:
 - **Minimum Duration**: 3-5 frames is standard for infant research (accounts for infant gaze instability)
@@ -493,12 +493,12 @@ def main():
     setup_logging(config)
 
     # Phase 1: Preprocessing
-    gaze_events_path = run_preprocessing(config)
+    gaze_fixations_path = run_preprocessing(config)
 
     # Phase 2: Individual Analyses (can run in parallel)
     ar_results = []
     for ar_func in [run_ar1_duration, run_ar2_transitions, ...]:
-        result = ar_func(gaze_events_path, config)
+        result = ar_func(gaze_fixations_path, config)
         ar_results.append(result)
 
     # Phase 3: Compile Final Report
@@ -541,7 +541,7 @@ except ValidationError as e:
 ## Parameters
 ```python
 # Parameters cell (tagged with 'parameters')
-gaze_events_path = "data/processed/gaze_events.csv"
+gaze_fixations_path = "data/processed/gaze_fixations.csv"
 output_dir = "results/AR1_Gaze_Duration"
 config_path = "config/pipeline_config.yaml"
 ```
@@ -582,8 +582,8 @@ HTML('results/AR1_Gaze_Duration/report.html').write_pdf('results/AR1_Gaze_Durati
 ### Phase 1 (Preprocessing - Week 2)
 1. CSV loader (with structural validation)
 2. AOI mapper (What+Where → categories)
-3. Gaze event detector (3+ frame rule)
-4. Master log generator (gaze_events.csv)
+3. Gaze fixation detector (3+ frame rule)
+4. Master log generator (gaze_fixations.csv)
 5. Comprehensive preprocessing tests
 
 ### Phase 2 (Core Analyses - Week 3-4)

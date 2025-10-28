@@ -39,20 +39,20 @@ class TrialOrderModelResult:
     warnings: List[str]
 
 
-def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
-    """Load gaze events from processed data directory."""
+def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
+    """Load gaze fixations from processed data directory."""
     processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+    default_path = processed_dir / "gaze_fixations.csv"
+    child_path = processed_dir / "gaze_fixations_child.csv"
 
     if default_path.exists():
         path = default_path
     elif child_path.exists():
         path = default_path
     else:
-        raise FileNotFoundError("No gaze events file found for AR-6 analysis")
+        raise FileNotFoundError("No gaze fixations file found for AR-6 analysis")
 
-    LOGGER.info("Loading gaze events from %s", path)
+    LOGGER.info("Loading gaze fixations from %s", path)
     return pd.read_csv(path)
 
 
@@ -109,7 +109,7 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def calculate_trial_level_metric(
-    gaze_events: pd.DataFrame,
+    gaze_fixations: pd.DataFrame,
     metric_name: str = "proportion_primary_aois",
 ) -> pd.DataFrame:
     """
@@ -117,17 +117,17 @@ def calculate_trial_level_metric(
 
     For AR-6, we need trial-level data (not participant-level aggregates).
     """
-    if gaze_events.empty:
+    if gaze_fixations.empty:
         return pd.DataFrame(
             columns=["participant_id", "trial_number", "trial_number_global", "condition_name", metric_name]
         )
 
     # Define primary AOIs
     primary_aois = ["man_face", "woman_face", "toy_present"]
-    gaze_events["is_primary"] = gaze_events["aoi_category"].isin(primary_aois)
+    gaze_fixations["is_primary"] = gaze_fixations["aoi_category"].isin(primary_aois)
 
     # Calculate proportion per trial
-    grouped = gaze_events.groupby(["participant_id", "trial_number", "condition_name"], as_index=False)
+    grouped = gaze_fixations.groupby(["participant_id", "trial_number", "condition_name"], as_index=False)
 
     results = []
     for (participant, trial, condition), group in grouped:
@@ -444,7 +444,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-6 trial-order effects analysis")
 
     try:
-        gaze_events = _load_gaze_events(config)
+        gaze_fixations = _load_gaze_fixations(config)
     except FileNotFoundError as exc:
         LOGGER.warning("Skipping AR-6 analysis: %s", exc)
         return {
@@ -454,8 +454,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             "pdf_path": "",
         }
 
-    if gaze_events.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-6 analysis")
+    if gaze_fixations.empty:
+        LOGGER.warning("Gaze fixations file is empty; skipping AR-6 analysis")
         return {
             "report_id": "AR-6",
             "title": "Trial-Order Effects Analysis",
@@ -467,7 +467,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Calculate trial-level metric
     dependent_var = "proportion_primary_aois"
-    trial_data = calculate_trial_level_metric(gaze_events, dependent_var)
+    trial_data = calculate_trial_level_metric(gaze_fixations, dependent_var)
 
     if trial_data.empty:
         LOGGER.warning("No valid trial data for AR-6 analysis")

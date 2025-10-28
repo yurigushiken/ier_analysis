@@ -12,7 +12,7 @@
 ```
 Participant (Level 3)
   └─ Event Presentation (Level 2) - Video clip shown to infant
-      └─ Gaze Event (Level 1) - 3+ consecutive frames on same AOI
+      └─ Gaze Fixation (Level 1) - 3+ consecutive frames on same AOI
           └─ Frame (Level 0) - Individual frame (aggregated, not modeled)
 ```
 
@@ -92,9 +92,9 @@ Level 2 (Event Presentation):
   ~12 presentations per participant
   Total: 36 × 12 = ~432 event presentations
 
-Level 1 (Gaze Event):
-  Estimated ~10-30 gaze events per presentation
-  Total: ~4,320 - 12,960 gaze events
+Level 1 (Gaze Fixation):
+  Estimated ~10-30 gaze fixations per presentation
+  Total: ~4,320 - 12,960 gaze fixations
 ```
 
 ### **Adequacy for Statistical Modeling**
@@ -157,7 +157,7 @@ Eight-0101  | gw    | 3          | woman | face  | ...
 ```
 **Size**: ~8,000 rows per participant
 
-### **Step 2: Gaze Event Detection**
+### **Step 2: Gaze Fixation Detection**
 **Identify sequences of 3+ consecutive frames on same AOI**
 ```
 participant | event | gaze_id | aoi        | duration_frames | duration_ms
@@ -165,10 +165,10 @@ Eight-0101  | gw    | 1       | toy,other  | 5               | 167
 Eight-0101  | gw    | 2       | woman,face | 8               | 267
 Eight-0101  | gw    | 3       | toy,other  | 12              | 400
 ```
-**Size**: ~10-30 gaze events per presentation × 12 presentations = ~120-360 per participant
+**Size**: ~10-30 gaze fixations per presentation × 12 presentations = ~120-360 per participant
 
 ### **Step 3: Event-Level Aggregation** (for AR-1, AR-3, AR-6)
-**Aggregate gaze events to presentation level**
+**Aggregate gaze fixations to presentation level**
 ```
 participant | event | presentation_num | proportion_core | triplet_count | age_months
 Eight-0101  | gw    | 1               | 0.45            | 2             | 8.2
@@ -205,12 +205,12 @@ model = GLMM.from_formula(
 
 **AR-4 (Dwell Time) - LMM with Nested Random Effects**:
 ```python
-# Unit of analysis: Gaze event
-# Each row: one gaze event (3+ frames)
+# Unit of analysis: Gaze fixation
+# Each row: one gaze fixation (3+ frames)
 
 model = MixedLM.from_formula(
     'dwell_time_ms ~ condition * aoi_category + (1 | participant) + (1 | participant:event)',
-    data=gaze_event_data,  # ~4,320-12,960 rows
+    data=gaze_fixation_data,  # ~4,320-12,960 rows
     groups='participant'
 )
 ```
@@ -290,7 +290,7 @@ model = MixedLM.from_formula(
 **Important**: Event presentations vary in duration (150-1,000+ frames)
 
 **Implication**:
-- Longer presentations → more opportunities for gaze events
+- Longer presentations → more opportunities for gaze fixations
 - Need to **normalize by duration** when counting events
 
 **Solution**: Use **offset in GLMM** for count outcomes
@@ -334,7 +334,7 @@ Before analysis, verify:
 ```
 Participant (N=36)
   └─ Event Presentation (N≈12 per participant)
-      └─ Gaze Event (N≈10-30 per presentation)
+      └─ Gaze Fixation (N≈10-30 per presentation)
           └─ Frame (N≈150-1,000 per presentation, aggregated)
 ```
 

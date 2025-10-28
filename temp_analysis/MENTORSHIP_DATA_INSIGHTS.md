@@ -90,8 +90,8 @@ Participant (Level 3)
 
 **Statistical Implication**:
 ✓ **Clear categorical AOI structure**
-✓ **Multiple AOIs per trial → many gaze events per trial**
-✓ **Repeated gaze events within trials → nested data**
+✓ **Multiple AOIs per trial → many gaze fixations per trial**
+✓ **Repeated gaze fixations within trials → nested data**
 
 ---
 
@@ -119,8 +119,8 @@ Based on the data structure, here's why LMM/GLMM is essential:
      - Total N = 36
 
    Reality in our data:
-     - Participant 1: 10 trials × 15 gaze events = 150 observations
-     - Participant 2: 12 trials × 18 gaze events = 216 observations
+     - Participant 1: 10 trials × 15 gaze fixations = 150 observations
+     - Participant 2: 12 trials × 18 gaze fixations = 216 observations
      - ...
      - Total N = thousands of non-independent observations
    ```
@@ -228,9 +228,9 @@ triplet_count ~ condition + offset(log(trial_duration)) + (1 | participant)
 ### **AR-4: Dwell Time**
 
 **Data Structure**:
-- **Unit of analysis**: Individual gaze events
-- **Nesting**: Gaze events within trials within participants
-- **Outcome**: Duration of each gaze event (continuous, milliseconds)
+- **Unit of analysis**: Individual gaze fixations
+- **Nesting**: Gaze fixations within trials within participants
+- **Outcome**: Duration of each gaze fixation (continuous, milliseconds)
 
 **Model**: LMM with nested random effects
 ```
@@ -238,7 +238,7 @@ dwell_time_ms ~ condition * aoi_category + (1 | participant) + (1 | participant:
 ```
 
 **Why this structure**:
-- **Three levels of nesting**: Gaze events → Trials → Participants
+- **Three levels of nesting**: Gaze fixations → Trials → Participants
 - **Random intercept for participant**: Some infants dwell longer overall
 - **Random intercept for participant:trial**: Some trials elicit longer dwells
 - **Interaction**: Condition effect may differ by AOI
@@ -392,7 +392,7 @@ if dispersion_ratio > 1.5:
 2. **Calculate descriptive statistics**:
    - Trials per participant (mean, range, distribution)
    - Age distribution (mean, range, spread)
-   - Gaze events per trial
+   - Gaze fixations per trial
    - Social triplet counts distribution (check for zeros)
 3. **Check data quality**:
    - Missing values

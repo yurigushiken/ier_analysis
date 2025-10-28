@@ -183,10 +183,10 @@ Level 3: Participant
             ├─ Unique ID: participant_event_trial_number_global
             └─ Duration: variable frames per presentation
                  │
-                 └─ Level 1: Gaze Event
+                 └─ Level 1: Gaze Fixation
                       ├─ N ≈ 10-30 per presentation
                       ├─ Defined as 3+ consecutive frames on same AOI
-                      └─ Total ≈ 25,680-77,040 gaze events (estimate)
+                      └─ Total ≈ 25,680-77,040 gaze fixations (estimate)
                            │
                            └─ Level 0: Frame
                                 ├─ Variable frames per participant (5,000-8,500)

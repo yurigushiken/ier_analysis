@@ -1,19 +1,19 @@
-"""Comprehensive inventory of 'gaze event' terminology throughout codebase."""
+"""Comprehensive inventory of 'gaze fixation' terminology throughout codebase."""
 
 import subprocess
 from pathlib import Path
 from collections import defaultdict
 
 print("="*80)
-print("TERMINOLOGY INVENTORY: 'gaze event' → 'gaze fixation'")
+print("TERMINOLOGY INVENTORY: 'gaze fixation' → 'gaze fixation'")
 print("="*80)
 
 # Define search patterns
 patterns = [
     "gaze.event",
-    "gaze_event",
+    "gaze_fixation",
     "gazeEvent",
-    "GazeEvent",
+    "GazeFixation",
 ]
 
 # Define file types to search
@@ -113,15 +113,15 @@ print("\n5. SPECIFIC TERMS TO REPLACE")
 print("="*80)
 
 term_map = {
-    "gaze_event": "gaze_fixation",
-    "gaze event": "gaze fixation",
-    "Gaze Event": "Gaze Fixation",
-    "GazeEvent": "GazeFixation",
+    "gaze_fixation": "gaze_fixation",
+    "gaze fixation": "gaze fixation",
+    "Gaze Fixation": "Gaze Fixation",
+    "GazeFixation": "GazeFixation",
     "gazeEvent": "gazeFixation",
     "gaze-event": "gaze-fixation",
-    "gaze_events": "gaze_fixations",
-    "gaze events": "gaze fixations",
-    "Gaze Events": "Gaze Fixations",
+    "gaze_fixations": "gaze_fixations",
+    "gaze fixations": "gaze fixations",
+    "Gaze Fixations": "Gaze Fixations",
 }
 
 print("\nTerm mapping:")
@@ -132,9 +132,9 @@ print("\n6. FILES TO RENAME")
 print("="*80)
 
 files_to_rename = [
-    ("data/processed/gaze_events.csv", "data/processed/gaze_fixations.csv"),
-    ("data/processed/gaze_events_child.csv", "data/processed/gaze_fixations_child.csv"),
-    ("data/processed/gaze_events_adult.csv", "data/processed/gaze_fixations_adult.csv"),
+    ("data/processed/gaze_fixations.csv", "data/processed/gaze_fixations.csv"),
+    ("data/processed/gaze_fixations_child.csv", "data/processed/gaze_fixations_child.csv"),
+    ("data/processed/gaze_fixations_adult.csv", "data/processed/gaze_fixations_adult.csv"),
     ("src/preprocessing/gaze_detector.py", "src/preprocessing/gaze_fixation_detector.py"),
 ]
 

@@ -13,12 +13,12 @@ from src.utils.validation import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SPEC_DIR = PROJECT_ROOT / "specs" / "001-infant-event-analysis"
-CONTRACT_PATH = SPEC_DIR / "contracts" / "gaze_events_schema.json"
+CONTRACT_PATH = SPEC_DIR / "contracts" / "gaze_fixations_schema.json"
 
 
 def _build_valid_dataframe() -> pd.DataFrame:
     data = {
-        "gaze_event_id": [1],
+        "gaze_fixation_id": [1],
         "participant_id": ["Eight-0101-947"],
         "participant_type": ["infant"],
         "age_months": [8],
@@ -38,14 +38,14 @@ def _build_valid_dataframe() -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def test_gaze_events_contract_accepts_valid_dataframe():
+def test_gaze_fixations_contract_accepts_valid_dataframe():
     contract = load_contract(CONTRACT_PATH)
     df = _build_valid_dataframe()
 
     validate_dataframe_against_contract(df, contract)
 
 
-def test_gaze_events_contract_rejects_invalid_aoi_category():
+def test_gaze_fixations_contract_rejects_invalid_aoi_category():
     contract = load_contract(CONTRACT_PATH)
     df = _build_valid_dataframe()
     df.loc[0, "aoi_category"] = "invalid_aoi"
@@ -54,7 +54,7 @@ def test_gaze_events_contract_rejects_invalid_aoi_category():
         validate_dataframe_against_contract(df, contract)
 
 
-def test_gaze_events_contract_rejects_duration_shorter_than_three_frames():
+def test_gaze_fixations_contract_rejects_duration_shorter_than_three_frames():
     contract = load_contract(CONTRACT_PATH)
     df = _build_valid_dataframe()
     df.loc[0, "gaze_duration_frames"] = 2

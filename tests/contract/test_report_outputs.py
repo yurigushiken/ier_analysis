@@ -71,7 +71,7 @@ def _build_valid_dataframe() -> pd.DataFrame:
         ],
         "metadata": [
             {
-                "data_source": "data/processed/gaze_events.csv",
+                "data_source": "data/processed/gaze_fixations.csv",
                 "config_version": "1.0.0",
                 "participants_included": 40,
                 "participants_excluded": 2,

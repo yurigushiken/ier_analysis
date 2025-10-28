@@ -3,131 +3,487 @@
 from __future__ import annotations
 
 import logging
-from collections import defaultdict
+import math
+import os
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterable, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from scipy import stats
 
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
+from src.utils.config import load_analysis_config
 
 LOGGER = logging.getLogger("ier.analysis.ar2")
 
-ONSCREEN_EXCLUDE: Iterable[str] = ("off_screen",)
-RESULT_DIR = Path("results/AR2_Gaze_Transitions")
+
+@dataclass
+class KeyTransitionResult:
+    label: str
+    condition_a: str
+    condition_a_transition: str
+    condition_b: str
+    condition_b_transition: str
+    mean_a: float
+    mean_b: float
+    t_stat: Optional[float]
+    p_value: Optional[float]
+    df: Optional[float]
+    ci_lower: Optional[float]
+    ci_upper: Optional[float]
+    cohens_d: Optional[float]
+    n_a: int
+    n_b: int
+    note: Optional[str] = None
 
 
-def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
-    processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+def _load_variant_configuration(config: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
+    analysis_specific = config.get("analysis_specific", {}).get("ar2_transitions", {})
+    default_variant = str(analysis_specific.get("config_name", "ar2/ar2_gw_vs_gwo")).strip()
+    env_variant = os.environ.get("IER_AR2_CONFIG", "").strip()
+    variant_name = env_variant or default_variant
 
-    if default_path.exists():
-        path = default_path
-    elif child_path.exists():
-        path = default_path
-    else:
-        raise FileNotFoundError("No gaze events file found for AR-2 analysis")
+    try:
+        variant_config = load_analysis_config(variant_name)
+    except Exception as exc:  # pragma: no cover - defensive
+        LOGGER.error("Failed to load AR-2 variant configuration '%s': %s", variant_name, exc)
+        raise
 
-    LOGGER.info("Loading gaze events from %s", path)
+    return variant_config, variant_name
+
+
+def _load_dataset(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        raise FileNotFoundError(f"Gaze fixation dataset missing: {path}")
     return pd.read_csv(path)
 
 
-def _filter_valid_gaze_events(df: pd.DataFrame) -> pd.DataFrame:
-    return df[~df["aoi_category"].isin(ONSCREEN_EXCLUDE)].copy()
+def _apply_filters(df: pd.DataFrame, filters: Optional[Dict[str, Sequence[Any]]]) -> pd.DataFrame:
+    if not filters:
+        return df.copy()
+    filtered = df.copy()
+    for column, allowed in filters.items():
+        if column not in filtered.columns:
+            raise KeyError(f"Filter column '{column}' not found in gaze fixations data.")
+        allowed_values = list(allowed)
+        filtered = filtered[filtered[column].isin(allowed_values)]
+    return filtered
+
+
+def _filter_by_conditions(df: pd.DataFrame, conditions_include: Sequence[str]) -> pd.DataFrame:
+    if not conditions_include:
+        return df
+    return df[df["condition_name"].isin(conditions_include)].copy()
+
+
+def _filter_by_segments(df: pd.DataFrame, segments: Optional[Dict[str, Any]]) -> pd.DataFrame:
+    if not segments:
+        return df
+    include = segments.get("include")
+    if include:
+        return df[df["segment"].isin(include)].copy()
+    exclude = segments.get("exclude")
+    if exclude:
+        return df[~df["segment"].isin(exclude)].copy()
+    return df
+
+
+def _filter_by_fixation_duration(df: pd.DataFrame, min_duration_ms: int) -> pd.DataFrame:
+    if min_duration_ms <= 0:
+        return df
+    return df[df["gaze_duration_ms"] >= min_duration_ms].copy()
+
+
+def _collapse_repeated_aois(df: pd.DataFrame) -> pd.DataFrame:
+    df_sorted = df.sort_values(["participant_id", "trial_number", "gaze_onset_time"])
+    mask = (
+        (df_sorted["participant_id"] == df_sorted["participant_id"].shift(1))
+        & (df_sorted["trial_number"] == df_sorted["trial_number"].shift(1))
+        & (df_sorted["aoi_category"] == df_sorted["aoi_category"].shift(1))
+    )
+    return df_sorted[~mask].copy()
 
 
 def _compute_transitions(df: pd.DataFrame) -> pd.DataFrame:
-    df_sorted = df.sort_values(["participant_id", "trial_number", "gaze_onset_time"])
-    transitions = []
+    records: List[Dict[str, Any]] = []
 
-    for (participant, trial), group in df_sorted.groupby(["participant_id", "trial_number"], sort=False):
-        prev_row = None
-        for _, row in group.iterrows():
-            if prev_row is not None and prev_row["aoi_category"] != row["aoi_category"]:
-                transitions.append(
+    for (participant, trial, condition), group in df.groupby(
+        ["participant_id", "trial_number", "condition_name"], sort=False
+    ):
+        ordered = group.sort_values("gaze_onset_time").reset_index(drop=True)
+        if ordered.shape[0] < 2:
+            continue
+        previous = ordered.iloc[0]
+        for idx in range(1, ordered.shape[0]):
+            current = ordered.iloc[idx]
+            if previous["aoi_category"] != current["aoi_category"]:
+                records.append(
                     {
                         "participant_id": participant,
                         "trial_number": trial,
-                        "condition": row["condition_name"],
-                        "age_group": row.get("age_group", "unknown"),
-                        "from_aoi": prev_row["aoi_category"],
-                        "to_aoi": row["aoi_category"],
+                        "condition_name": condition,
+                        "age_months": previous.get("age_months"),
+                        "age_group": previous.get("age_group", "unknown"),
+                        "from_aoi": previous["aoi_category"],
+                        "to_aoi": current["aoi_category"],
                     }
                 )
-            prev_row = row
+            previous = current
 
-    return pd.DataFrame(transitions)
+    return pd.DataFrame(records)
 
 
-def _build_probability_tables(transitions: pd.DataFrame) -> Tuple[pd.DataFrame, Dict[str, pd.DataFrame]]:
-    overall_counts = (
-        transitions.groupby(["from_aoi", "to_aoi"], as_index=False).size().rename(columns={"size": "count"})
+def _participant_transition_matrix(transitions: pd.DataFrame) -> pd.DataFrame:
+    if transitions.empty:
+        return pd.DataFrame()
+    counts = (
+        transitions.groupby(
+            ["participant_id", "condition_name", "from_aoi", "to_aoi"], as_index=False
+        )
+        .size()
+        .rename(columns={"size": "count"})
     )
-    overall_pivot = overall_counts.pivot_table(
-        index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0
+    return counts
+
+
+def _aggregate_probabilities(
+    counts: pd.DataFrame,
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    if counts.empty:
+        return pd.DataFrame(), pd.DataFrame()
+
+    totals = (
+        counts.groupby(["participant_id", "condition_name", "from_aoi"], as_index=False)["count"].sum()
     )
-    overall_probs = overall_pivot.div(overall_pivot.sum(axis=1), axis=0).fillna(0)
+    merged = pd.merge(counts, totals, on=["participant_id", "condition_name", "from_aoi"], suffixes=("", "_total"))
+    merged["probability"] = merged["count"] / merged["count_total"].replace(0, np.nan)
+    merged = merged.dropna(subset=["probability"])
 
-    by_condition: Dict[str, pd.DataFrame] = {}
-    for condition, subset in transitions.groupby("condition"):
-        counts = subset.groupby(["from_aoi", "to_aoi"], as_index=False).size().rename(columns={"size": "count"})
-        pivot = counts.pivot_table(index="from_aoi", columns="to_aoi", values="count", aggfunc="sum", fill_value=0)
-        probs = pivot.div(pivot.sum(axis=1), axis=0).fillna(0)
-        by_condition[condition] = probs
+    participant_summary = merged[["participant_id", "condition_name", "from_aoi", "to_aoi", "probability"]]
 
-    return overall_probs, by_condition
-
-
-def _save_tables(overall: pd.DataFrame, by_condition: Dict[str, pd.DataFrame], output_dir: Path) -> Dict[str, Any]:
-    tables_context = []
-
-    overall_csv = output_dir / "transition_matrix_overall.csv"
-    overall.to_csv(overall_csv)
-    tables_context.append(
-        {
-            "title": "Overall Transition Probabilities",
-            "html": overall.to_html(classes="table table-striped", float_format="{:.3f}".format),
-        }
+    condition_summary = (
+        merged.groupby(["condition_name", "from_aoi", "to_aoi"])
+        .agg(
+            mean_probability=("probability", "mean"),
+            sd_probability=("probability", "std"),
+            n_participants=("participant_id", "nunique"),
+        )
+        .reset_index()
     )
 
-    for condition, matrix in by_condition.items():
-        file_path = output_dir / f"transition_matrix_{condition}.csv"
-        matrix.to_csv(file_path)
-        tables_context.append(
-            {
-                "title": f"Transition Probabilities – {condition}",
-                "html": matrix.to_html(classes="table table-striped", float_format="{:.3f}".format),
-            }
+    condition_summary["sem_probability"] = condition_summary.apply(
+        lambda row: row["sd_probability"] / math.sqrt(row["n_participants"])
+        if row["n_participants"] and row["n_participants"] > 1 and not math.isnan(row["sd_probability"])
+        else float("nan"),
+        axis=1,
+    )
+
+    return participant_summary, condition_summary
+
+
+def _matrix_to_html(matrix: pd.DataFrame) -> str:
+    return matrix.to_html(classes="table table-striped", float_format="%.3f")
+
+
+def _build_condition_matrices(condition_summary: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+    matrices: Dict[str, pd.DataFrame] = {}
+    if condition_summary.empty:
+        return matrices
+    for condition, subset in condition_summary.groupby("condition_name"):
+        pivot = subset.pivot_table(
+            index="from_aoi",
+            columns="to_aoi",
+            values="mean_probability",
+            aggfunc="mean",
+            fill_value=0.0,
+        )
+        matrices[condition] = pivot
+    return matrices
+
+
+def _save_heatmap(matrix: pd.DataFrame, path: Path, title: str) -> None:
+    plt.figure(figsize=(8, 6))
+    plt.imshow(matrix, cmap="YlOrRd", interpolation="nearest")
+    plt.colorbar(label="Mean Transition Probability")
+    plt.xticks(range(len(matrix.columns)), matrix.columns, rotation=45, ha="right")
+    plt.yticks(range(len(matrix.index)), matrix.index)
+    plt.title(title)
+    plt.tight_layout()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(path, dpi=300)
+    plt.close()
+
+
+def _resolve_aoi_spec(spec_value: Any, condition: str) -> Optional[str]:
+    if spec_value is None:
+        return None
+    if isinstance(spec_value, dict):
+        if condition in spec_value:
+            return spec_value[condition]
+        return spec_value.get("default")
+    return spec_value
+
+
+def _compute_key_transition_stats(
+    participant_probs: pd.DataFrame,
+    key_transitions: Sequence[Dict[str, Any]],
+    conditions: Sequence[str],
+) -> List[KeyTransitionResult]:
+    """Compute statistical comparisons for key transitions between conditions.
+
+    Validates sample size and variance before conducting t-tests to prevent
+    invalid statistical inference.
+    """
+    results: List[KeyTransitionResult] = []
+    if len(conditions) < 2 or participant_probs.empty:
+        return results
+
+    condition_a, condition_b = conditions[0], conditions[1]
+
+    # Constants for statistical validity
+    MIN_SAMPLE_SIZE = 2
+    MIN_VARIANCE = 1e-10
+
+    for spec in key_transitions:
+        label = spec.get("label")
+        from_spec = spec.get("from_aoi", spec.get("from"))
+        to_spec = spec.get("to_aoi", spec.get("to"))
+
+        from_a = _resolve_aoi_spec(from_spec, condition_a)
+        to_a = _resolve_aoi_spec(to_spec, condition_a)
+        from_b = _resolve_aoi_spec(from_spec, condition_b)
+        to_b = _resolve_aoi_spec(to_spec, condition_b)
+
+        if not from_a or not to_a or not from_b or not to_b:
+            continue
+
+        if not label:
+            label = f"{from_a} -> {to_a}"
+
+        group_a = participant_probs[
+            (participant_probs["condition_name"] == condition_a)
+            & (participant_probs["from_aoi"] == from_a)
+            & (participant_probs["to_aoi"] == to_a)
+        ]["probability"].dropna()
+
+        group_b = participant_probs[
+            (participant_probs["condition_name"] == condition_b)
+            & (participant_probs["from_aoi"] == from_b)
+            & (participant_probs["to_aoi"] == to_b)
+        ]["probability"].dropna()
+
+        condition_a_transition = f"{condition_a} ({from_a} -> {to_a})"
+        condition_b_transition = f"{condition_b} ({from_b} -> {to_b})"
+
+        if group_a.empty or group_b.empty:
+            results.append(
+                KeyTransitionResult(
+                    label=label,
+                    condition_a=condition_a,
+                    condition_a_transition=condition_a_transition,
+                    condition_b=condition_b,
+                    condition_b_transition=condition_b_transition,
+                    mean_a=float(group_a.mean()) if not group_a.empty else float('nan'),
+                    mean_b=float(group_b.mean()) if not group_b.empty else float('nan'),
+                    t_stat=None,
+                    p_value=None,
+                    df=None,
+                    ci_lower=None,
+                    ci_upper=None,
+                    cohens_d=None,
+                    n_a=len(group_a),
+                    n_b=len(group_b),
+                )
+            )
+            continue
+
+        mean_a = float(group_a.mean())
+        mean_b = float(group_b.mean())
+
+        # Validate statistical requirements before conducting t-test
+        var_a = group_a.var(ddof=1)
+        var_b = group_b.var(ddof=1)
+
+        insufficient_sample = len(group_a) < MIN_SAMPLE_SIZE or len(group_b) < MIN_SAMPLE_SIZE
+        insufficient_variance = var_a <= MIN_VARIANCE or var_b <= MIN_VARIANCE
+
+        if insufficient_sample or insufficient_variance:
+            # Descriptive statistics only - cannot conduct valid inference
+            results.append(
+                KeyTransitionResult(
+                    label=label,
+                    condition_a=condition_a,
+                    condition_a_transition=condition_a_transition,
+                    condition_b=condition_b,
+                    condition_b_transition=condition_b_transition,
+                    mean_a=mean_a,
+                    mean_b=mean_b,
+                    t_stat=None,
+                    p_value=None,
+                    df=None,
+                    ci_lower=None,
+                    ci_upper=None,
+                    cohens_d=None,
+                    n_a=len(group_a),
+                    n_b=len(group_b),
+                    note="Descriptive only - insufficient variance or sample size",
+                )
+            )
+            continue
+
+        t_result = stats.ttest_ind(group_a, group_b, equal_var=False)
+        t_stat = float(t_result.statistic)
+        p_value = float(t_result.pvalue)
+
+        # Compute Welch-Satterthwaite degrees of freedom
+        df = ((var_a / len(group_a)) + (var_b / len(group_b))) ** 2
+        df /= (
+            (var_a ** 2) / ((len(group_a) ** 2) * (len(group_a) - 1))
+            + (var_b ** 2) / ((len(group_b) ** 2) * (len(group_b) - 1))
         )
 
-    return {
-        "tables": tables_context,
-        "csv_paths": [overall_csv] + [output_dir / f"transition_matrix_{c}.csv" for c in by_condition.keys()],
-    }
+        diff = mean_a - mean_b
+        se = math.sqrt(var_a / len(group_a) + var_b / len(group_b))
+        if se and math.isfinite(se):
+            df_for_ci = max(df, 1)
+            t_crit = stats.t.ppf(0.975, df_for_ci)
+            ci_lower = diff - t_crit * se
+            ci_upper = diff + t_crit * se
+        else:
+            ci_lower = ci_upper = None
+
+        # Compute Cohen's d effect size
+        pooled_sd = math.sqrt(
+            ((len(group_a) - 1) * var_a + (len(group_b) - 1) * var_b)
+            / (len(group_a) + len(group_b) - 2)
+        )
+        cohens_d = diff / pooled_sd if pooled_sd else None
+
+        results.append(
+            KeyTransitionResult(
+                label=label,
+                condition_a=condition_a,
+                condition_a_transition=condition_a_transition,
+                condition_b=condition_b,
+                condition_b_transition=condition_b_transition,
+                mean_a=mean_a,
+                mean_b=mean_b,
+                t_stat=t_stat,
+                p_value=p_value,
+                df=df,
+                ci_lower=ci_lower,
+                ci_upper=ci_upper,
+                cohens_d=cohens_d,
+                n_a=len(group_a),
+                n_b=len(group_b),
+            )
+        )
+
+    return results
+
+def _format_key_transition_stats(results: List[KeyTransitionResult]) -> List[Dict[str, Any]]:
+    formatted: List[Dict[str, Any]] = []
+    for res in results:
+        formatted.append(
+            {
+                "label": res.label,
+                "condition_a": res.condition_a,
+                "condition_a_transition": res.condition_a_transition,
+                "condition_b": res.condition_b,
+                "condition_b_transition": res.condition_b_transition,
+                "mean_a": None if math.isnan(res.mean_a) else f"{res.mean_a:.3f}",
+                "mean_b": None if math.isnan(res.mean_b) else f"{res.mean_b:.3f}",
+                "n_a": res.n_a,
+                "n_b": res.n_b,
+                "t_stat": None if res.t_stat is None else f"{res.t_stat:.2f}",
+                "df": None if res.df is None or not math.isfinite(res.df) else f"{res.df:.1f}",
+                "p_value": None if res.p_value is None else f"{res.p_value:.3f}",
+                "ci": None if res.ci_lower is None or res.ci_upper is None else f"[{res.ci_lower:.3f}, {res.ci_upper:.3f}]",
+                "cohens_d": None if res.cohens_d is None else f"{res.cohens_d:.2f}",
+                "note": res.note,
+            }
+        )
+    return formatted
 
 
-def _generate_graphs(overall: pd.DataFrame, output_dir: Path) -> Dict[str, Any]:
-    transitions_mapping: Dict[Tuple[str, str], float] = {}
-    node_durations: Dict[str, float] = defaultdict(float)
 
-    for from_aoi in overall.index:
-        for to_aoi in overall.columns:
-            weight = float(overall.loc[from_aoi, to_aoi])
-            if weight > 0:
-                transitions_mapping[(from_aoi, to_aoi)] = weight
-        node_durations[from_aoi] += overall.loc[from_aoi].sum()
+def _prepare_context_for_cohort(
+    *,
+    cohort_cfg: Dict[str, Any],
+    transitions: pd.DataFrame,
+    participant_probs: pd.DataFrame,
+    condition_summary: pd.DataFrame,
+    key_transition_results: List[KeyTransitionResult],
+    condition_matrices: Dict[str, pd.DataFrame],
+    figures_dir: Path,
+) -> Dict[str, Any]:
+    cohort_key = cohort_cfg["key"]
+    label = cohort_cfg.get("label", cohort_key)
+    include_plots = bool(cohort_cfg.get("include_in_plots", True))
 
-    figure_path = output_dir / "transition_graph_overall.png"
-    visualizations.directed_graph(
-        transitions_mapping,
-        node_durations,
-        title="Gaze Transition Graph (Overall)",
-        output_path=figure_path,
+    participants_per_condition = (
+        participant_probs.groupby("condition_name")["participant_id"].nunique().to_dict()
+        if not participant_probs.empty
+        else {}
     )
 
-    return {"graph_figures": [{"path": str(figure_path), "caption": "Overall transition probabilities"}]}
+    tables: List[Dict[str, Any]] = []
+    heatmaps: List[Dict[str, Any]] = []
+    graphs: List[Dict[str, Any]] = []
+
+    if include_plots and condition_matrices:
+        figures_dir.mkdir(parents=True, exist_ok=True)
+        for condition_name, matrix in condition_matrices.items():
+            cohort_n_condition = participants_per_condition.get(condition_name, 0)
+            legend_label = f"{label} (N={cohort_n_condition})" if cohort_n_condition else label
+
+            tables.append(
+                {
+                    "condition": condition_name,
+                    "html": _matrix_to_html(matrix),
+                }
+            )
+
+            heatmap_path = figures_dir / f"{cohort_key}_heatmap_{condition_name}.png"
+            _save_heatmap(matrix, heatmap_path, f"{legend_label} - {condition_name}")
+            heatmaps.append({"path": f"figures/{heatmap_path.name}", "caption": f"{legend_label} - {condition_name}"})
+
+            directed_graph_path = figures_dir / f"{cohort_key}_graph_{condition_name}.png"
+            transitions_mapping: Dict[Tuple[str, str], float] = {}
+            node_weights: Dict[str, float] = {}
+            for from_aoi in matrix.index:
+                row_sum = matrix.loc[from_aoi].sum()
+                node_weights[from_aoi] = float(row_sum)
+                for to_aoi in matrix.columns:
+                    weight = float(matrix.loc[from_aoi, to_aoi])
+                    if weight > 0:
+                        transitions_mapping[(from_aoi, to_aoi)] = weight
+
+            visualizations.directed_graph(
+                transitions_mapping,
+                node_weights,
+                title=f"{legend_label} - {condition_name}",
+                output_path=directed_graph_path,
+            )
+            graphs.append({"path": f"figures/{directed_graph_path.name}", "caption": f"{legend_label} - {condition_name}"})
+
+    cohort_context = {
+        "key": cohort_key,
+        "label": label,
+        "participants_per_condition": participants_per_condition,
+        "transition_tables": tables,
+        "heatmaps": heatmaps,
+        "graphs": graphs,
+        "key_transition_stats": _format_key_transition_stats(key_transition_results),
+        "total_transitions": int(len(transitions)),
+        "n_participants": int(participant_probs["participant_id"].nunique()) if not participant_probs.empty else 0,
+    }
+    return cohort_context
+
 
 
 def _render_report(context: Dict[str, Any], output_dir: Path) -> Dict[str, Any]:
@@ -141,7 +497,7 @@ def _render_report(context: Dict[str, Any], output_dir: Path) -> Dict[str, Any]:
     )
     return {
         "report_id": "AR-2",
-        "title": "Gaze Transition Analysis",
+        "title": context.get("report_title", "Gaze Transition Analysis"),
         "html_path": str(html_path),
         "pdf_path": str(pdf_path),
     }
@@ -150,57 +506,172 @@ def _render_report(context: Dict[str, Any], output_dir: Path) -> Dict[str, Any]:
 def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-2 gaze transition analysis")
 
-    try:
-        df = _load_gaze_events(config)
-    except FileNotFoundError as exc:
-        LOGGER.warning("Skipping AR-2 analysis: %s", exc)
-        return {
-            "report_id": "AR-2",
-            "title": "Gaze Transition Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    variant_config, variant_name = _load_variant_configuration(config)
+    variant_key = variant_config.get("variant_key", Path(variant_name).stem)
+    variant_label = variant_config.get("variant_label", variant_key)
+    report_title = variant_config.get("report_title", "AR-2: Gaze Transition Analysis")
+    description = variant_config.get("description", "")
 
-    if df.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-2 analysis")
-        return {
-            "report_id": "AR-2",
-            "title": "Gaze Transition Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    include_conditions = variant_config.get("conditions", {}).get("include", [])
+    analysis_cfg = variant_config.get("analysis", {})
+    key_transitions_cfg = analysis_cfg.get("key_transitions", [])
+    min_fixation_ms = int(analysis_cfg.get("min_fixation_duration_ms", 0))
+    collapse_repeats = bool(analysis_cfg.get("collapse_repeated_aois", True))
+    segments_cfg = analysis_cfg.get("segments")
+    min_transitions_required = int(analysis_cfg.get("min_transitions_per_participant", 1))
 
-    valid_df = _filter_valid_gaze_events(df)
-    transitions = _compute_transitions(valid_df)
-    if transitions.empty:
-        LOGGER.warning("No transitions detected; skipping AR-2 report generation")
-        return {
-            "report_id": "AR-2",
-            "title": "Gaze Transition Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    cohorts_cfg = variant_config.get("cohorts", [])
+    if not cohorts_cfg:
+        raise ValueError("AR-2 configuration must define at least one cohort.")
 
-    overall_probs, condition_probs = _build_probability_tables(transitions)
-
-    output_dir = Path(config["paths"]["results"]) / "AR2_Gaze_Transitions"
+    output_dir = Path(config["paths"]["results"]) / "AR2" / variant_key
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    tables_context = _save_tables(overall_probs, condition_probs, output_dir)
-    figures_context = _generate_graphs(overall_probs, output_dir)
+    cohort_contexts: List[Dict[str, Any]] = []
+    cohort_summaries: List[Dict[str, Any]] = []
+
+    for cohort_cfg in cohorts_cfg:
+        data_path = Path(cohort_cfg.get("data_path", ""))
+        if not data_path:
+            raise ValueError(f"Cohort '{cohort_cfg}' missing data_path.")
+
+        LOGGER.info("Processing AR-2 cohort '%s' using %s", cohort_cfg.get("label", cohort_cfg["key"]), data_path)
+        df = _load_dataset(data_path)
+        df = _apply_filters(df, cohort_cfg.get("participant_filters"))
+        df = _filter_by_conditions(df, include_conditions)
+        df = _filter_by_segments(df, segments_cfg)
+        df = _filter_by_fixation_duration(df, min_fixation_ms)
+        if collapse_repeats:
+            df = _collapse_repeated_aois(df)
+
+        if df.empty:
+            LOGGER.warning("Cohort '%s' has no gaze fixations after filtering; skipping.", cohort_cfg["key"])
+            cohort_contexts.append(
+                {
+                    "key": cohort_cfg["key"],
+                    "label": cohort_cfg.get("label", cohort_cfg["key"]),
+                    "participants_per_condition": {},
+                    "transition_tables": [],
+                    "heatmaps": [],
+                    "graphs": [],
+                    "key_transition_stats": [],
+                    "total_transitions": 0,
+                    "n_participants": 0,
+                }
+            )
+            continue
+
+        transitions = _compute_transitions(df)
+        if transitions.empty:
+            LOGGER.warning("Cohort '%s' has no transitions after processing; skipping.", cohort_cfg["key"])
+            cohort_contexts.append(
+                {
+                    "key": cohort_cfg["key"],
+                    "label": cohort_cfg.get("label", cohort_cfg["key"]),
+                    "participants_per_condition": {},
+                    "transition_tables": [],
+                    "heatmaps": [],
+                    "graphs": [],
+                    "key_transition_stats": [],
+                    "total_transitions": 0,
+                    "n_participants": 0,
+                }
+            )
+            continue
+
+        participant_counts = _participant_transition_matrix(transitions)
+        transitions_per_participant = (
+            participant_counts.groupby(["participant_id", "condition_name"])["count"].sum().reset_index()
+        )
+        valid_participants = transitions_per_participant[
+            transitions_per_participant["count"] >= min_transitions_required
+        ]["participant_id"].unique()
+
+        participant_counts = participant_counts[participant_counts["participant_id"].isin(valid_participants)]
+        transitions = transitions[transitions["participant_id"].isin(valid_participants)]
+
+        participant_probs, condition_summary = _aggregate_probabilities(participant_counts)
+        condition_matrices = _build_condition_matrices(condition_summary)
+        key_transition_results = _compute_key_transition_stats(
+            participant_probs,
+            key_transitions_cfg,
+            include_conditions,
+        )
+
+        figures_dir = output_dir / "figures"
+
+        cohort_context = _prepare_context_for_cohort(
+            cohort_cfg=cohort_cfg,
+            transitions=transitions,
+            participant_probs=participant_probs,
+            condition_summary=condition_summary,
+            key_transition_results=key_transition_results,
+            condition_matrices=condition_matrices,
+            figures_dir=figures_dir,
+        )
+        cohort_contexts.append(cohort_context)
+
+        cohort_summaries.append(
+            {
+                "cohort": cohort_context["label"],
+                "participants": cohort_context["n_participants"],
+                "total_transitions": cohort_context["total_transitions"],
+            }
+        )
+
+    key_transition_labels: List[str] = []
+    for spec in key_transitions_cfg:
+        label = spec.get("label")
+        if label:
+            key_transition_labels.append(label)
+            continue
+        from_spec = spec.get("from_aoi", spec.get("from"))
+        to_spec = spec.get("to_aoi", spec.get("to"))
+        if include_conditions:
+            default_condition = include_conditions[0]
+            from_default = _resolve_aoi_spec(from_spec, default_condition)
+            to_default = _resolve_aoi_spec(to_spec, default_condition)
+            if from_default and to_default:
+                key_transition_labels.append(f"{from_default} -> {to_default}")
+        elif label:
+            key_transition_labels.append(str(label))
+
+    method_notes = [
+        f"Minimum fixation duration: {min_fixation_ms} ms",
+        f"Repeated AOIs collapsed: {'Yes' if collapse_repeats else 'No'}",
+        f"Minimum transitions per participant: {min_transitions_required}",
+    ]
+    if segments_cfg:
+        if segments_cfg.get("include"):
+            method_notes.append("Included segments: " + ", ".join(segments_cfg["include"]))
+        elif segments_cfg.get("exclude"):
+            method_notes.append("Excluded segments: " + ", ".join(segments_cfg["exclude"]))
+    method_notes.append("Screen AOIs retained (screen_nonAOI included in analyses).")
 
     context = {
-        "summary_text": "Transition probabilities between AOIs aggregated across conditions.",
-        "methods_text": "Transitions derived from consecutive gaze events within trials; probabilities computed per source AOI.",
-        "transition_tables": tables_context["tables"],
-        "graph_figures": figures_context["graph_figures"],
-        "statistics_table": "<p>Statistical tests not yet implemented.</p>",
-        "interpretation_text": "Transitions highlight common gaze paths between faces and objects.",
-        "conditions": sorted(condition_probs.keys()),
-        "age_groups": sorted(transitions["age_group"].dropna().unique()),
+        "report_title": report_title,
+        "variant_label": variant_label,
+        "variant_key": variant_key,
+        "variant_description": description,
+        "cohort_summaries": cohort_summaries,
+        "cohort_contexts": cohort_contexts,
+        "conditions": include_conditions,
+        "key_transitions": key_transition_labels,
+        "method_notes": method_notes,
+        "min_fixation_ms": min_fixation_ms,
+        "min_transitions_required": min_transitions_required,
+        "collapse_repeats": collapse_repeats,
+        "segments_included": segments_cfg.get("include") if segments_cfg else [],
     }
 
-    metadata = _render_report(context, output_dir)
 
+    metadata = _render_report(context, output_dir)
     LOGGER.info("AR-2 analysis completed; report generated at %s", metadata["html_path"])
+    metadata.update(
+        {
+            "variant_key": variant_key,
+            "variant_label": variant_label,
+            "config_name": variant_name,
+        }
+    )
     return metadata

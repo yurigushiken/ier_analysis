@@ -28,8 +28,8 @@ Complete implementation of all 7 analytical requirements for infant eye-tracking
 #### Preprocessing
 - CSV loader with strict schema validation
 - AOI mapper (What+Where → category)
-- Gaze event detector (3+ frame rule)
-- Master log generator for consolidated gaze events
+- Gaze fixation detector (3+ frame rule)
+- Master log generator for consolidated gaze fixations
 
 #### Reporting
 - HTML report generation with Jinja2 templates
@@ -111,7 +111,7 @@ Complete implementation of all 7 analytical requirements for infant eye-tracking
 
 ### Scientific Contributions
 
-- Frame-by-frame gaze event analysis beyond aggregate looking time
+- Frame-by-frame gaze fixation analysis beyond aggregate looking time
 - Systematic gaze transition modeling revealing scanning strategies
 - Social gaze triplet quantification (referential attention patterns)
 - Developmental trajectory modeling with interaction effects

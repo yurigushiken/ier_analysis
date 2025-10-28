@@ -1,4 +1,4 @@
-"""Combine child and adult gaze event files."""
+"""Combine child and adult gaze fixation files."""
 
 import pandas as pd
 from pathlib import Path
@@ -8,8 +8,8 @@ print("COMBINING CHILD AND ADULT GAZE EVENT DATA")
 print("="*80)
 
 # Load both files
-child_path = Path('data/processed/gaze_events_child.csv')
-adult_path = Path('data/processed/gaze_events_adult.csv')
+child_path = Path('data/processed/gaze_fixations_child.csv')
+adult_path = Path('data/processed/gaze_fixations_adult.csv')
 
 print(f"\nLoading files...")
 child = pd.read_csv(child_path)
@@ -30,7 +30,7 @@ else:
 combined = pd.concat([child, adult], ignore_index=True)
 
 # Save combined file
-output_path = Path('data/processed/gaze_events.csv')
+output_path = Path('data/processed/gaze_fixations.csv')
 combined.to_csv(output_path, index=False)
 
 print(f"\n{'='*80}")

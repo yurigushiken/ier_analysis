@@ -1,0 +1,82 @@
+# AR-1 Variant: GIVE_WITHOUT vs HUG_WITHOUT
+# Purpose: Compare toy-absent GIVE gestures with toy-absent HUG events.
+
+variant_key: "ar1_gwo_vs_hwo"
+variant_label: "GIVE_WITHOUT vs HUG_WITHOUT"
+analysis_name: "AR-1: Gaze Duration Analysis"
+description: "Assess toy-looking when the toy is absent across GIVE and HUG structures."
+report_title: "AR-1: GIVE_WITHOUT vs HUG_WITHOUT"
+
+statistics:
+  primary_test: "linear_mixed_model"
+  lmm_formula: "proportion_primary_aois ~ condition + (1 | participant)"
+  random_intercept: true
+  random_slope: false
+  calculate_effect_size: true
+  report_aic_bic: true
+  check_residuals: true
+  report_confidence_intervals: true
+
+visualization:
+  plot_type: "bar_with_error_bars"
+  error_bar_type: "sem"
+  colors:
+    - "#2ca02c"
+    - "#8c564b"
+  figure_width: 8
+  figure_height: 6
+  xlabel: "Experimental Condition"
+  ylabel: "Proportion of Looking Time"
+  ylim_min: 0
+  ylim_max: null
+  show_individual_points: true
+  point_alpha: 0.3
+
+comparisons:
+  primary:
+    name: "GIVE_WITHOUT vs HUG_WITHOUT"
+    description: "Toy-absent GIVE gesture versus toy-absent HUG."
+    give_conditions:
+      - "GIVE_WITHOUT"
+    hug_conditions:
+      - "HUG_WITHOUT"
+
+active_comparison: "primary"
+report_all_comparisons: false
+
+primary_cohort: "infant"
+cohorts:
+  - key: "infant"
+    label: "Infant Cohort"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_primary_plot: true
+    participant_filters:
+      participant_type:
+        - "infant"
+  - key: "adult"
+    label: "Adult Control Cohort"
+    data_path: "data/processed/gaze_fixations_adult.csv"
+    include_in_primary_plot: true
+    participant_filters:
+      participant_type:
+        - "adult"
+
+aoi_categories:
+  primary_aois:
+    - "man_face"
+    - "woman_face"
+    - "toy_present"
+  peripheral:
+    - "man_body"
+    - "woman_body"
+    - "man_hands"
+    - "woman_hands"
+    - "screen_nonAOI"
+
+output:
+  export_summary_stats: true
+  export_participant_data: true
+  generate_diagnostic_plots: true
+  include_methods_section: true
+  include_interpretation: true
+  include_limitations: true

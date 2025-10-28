@@ -3,7 +3,7 @@
 **Feature Branch**: `001-infant-event-analysis`
 **Created**: 2025-10-25
 **Status**: Draft
-**Input**: User description: "Create a specification for a comprehensive analysis of infant event representation, building on the work of Gordon (2003). We have data inside of data dir and subdirs in the root. We will be processing this annotated data into a single, master 'gaze_events.csv' log, where a 'gaze' is formally defined as three or more consecutive frames on a single Area of Interest. This master log will be the foundation for seven core analytical requirements (ARs) designed to probe infant cognition."
+**Input**: User description: "Create a specification for a comprehensive analysis of infant event representation, building on the work of Gordon (2003). We have data inside of data dir and subdirs in the root. We will be processing this annotated data into a single, master 'gaze_fixations.csv' log, where a 'gaze' is formally defined as three or more consecutive frames on a single Area of Interest. This master log will be the foundation for seven core analytical requirements (ARs) designed to probe infant cognition."
 
 ## Clarifications
 
@@ -12,7 +12,7 @@
 - Q: When the system encounters edge cases (e.g., participant with missing trials, insufficient data for statistical tests), how should it behave? → A: HALT on missing required data (validation failure). Analysis-level insufficiency (e.g., n < 3 for a specific comparison) is reported within that analysis and the comparison is skipped.
 - Q: When data validation detects issues during preprocessing, which issues should stop the pipeline entirely (critical errors) versus which should log warnings and continue? → A: HALT on both structural errors and data quality issues. No partial results are produced until data are corrected.
 - Q: What is the expected structure of the raw annotated CSV files? → A: Every participant CSV has columns exactly: Participant, Frame Number, Time, What, Where, Onset, Offset, Blue Dot Center, event_verified, frame_count_event, trial_number, trial_number_global, frame_count_trial_number, segment, frame_count_segment, participant_type, participant_age_months, participant_age_years. Data are CSV files in `data/csvs_human_verified_vv/child/` and `data/csvs_human_verified_vv/adult/`.
-- Q: How should the "Where" column values be mapped to the analytical AOI categories? → A: AOI categories are defined by What+Where pairs: screen/other (on-screen non-AOI), woman/face, man/face, toy/other (toy present in "with" trials), toy2/other (toy location in "without" trials), man/body, woman/body, man/hands, woman/hands. Off-screen (no/signal) is excluded from gaze events and denominators.
+- Q: How should the "Where" column values be mapped to the analytical AOI categories? → A: AOI categories are defined by What+Where pairs: screen/other (on-screen non-AOI), woman/face, man/face, toy/other (toy present in "with" trials), toy2/other (toy location in "without" trials), man/body, woman/body, man/hands, woman/hands. Off-screen (no/signal) is excluded from gaze fixations and denominators.
 - Q: For the Social Gaze Triplet pattern, should it specifically be man/face → toy/other → woman/face (or reverse), or should it also include sequences like man/face → toy/other → man/face (same person)? → A: Must be different people (man/face → toy/other → woman/face OR woman/face → toy/other → man/face only)
 
 ### Session 2025-10-26 - Data Structure Clarification
@@ -21,13 +21,13 @@
 
 - **Q: What do the event codes mean?** → A: **Event codes**: gw=GIVE WITH toy, gwo=GIVE WITHOUT toy, hw=HUG WITH toy, hwo=HUG WITHOUT toy, sw=SHOW WITH toy, swo=SHOW WITHOUT toy, ugw/ugwo/uhw/uhwo=UPSIDE-DOWN variants (control for biomechanical motion), f=FLOATING (control). Design is 3 Actions (GIVE/HUG/SHOW) × 2 Toy Presence (WITH/WITHOUT) × 2 Orientations (NORMAL/UPSIDE-DOWN) + 1 Control.
 
-- **Q: What is the nesting structure for statistical modeling?** → A: **3-level hierarchy**: Participant (N=51) → Event Presentation (N≈50 per participant, 2,568 total) → Gaze Event (N≈10-30 per presentation, derived from 3+ consecutive frames on same AOI) → Frame (aggregated, not modeled). This structure requires **Linear Mixed Models (LMM) and Generalized Linear Mixed Models (GLMM)** to properly account for repeated measures and nesting.
+- **Q: What is the nesting structure for statistical modeling?** → A: **3-level hierarchy**: Participant (N=51) → Event Presentation (N≈50 per participant, 2,568 total) → Gaze Fixation (N≈10-30 per presentation, derived from 3+ consecutive frames on same AOI) → Frame (aggregated, not modeled). This structure requires **Linear Mixed Models (LMM) and Generalized Linear Mixed Models (GLMM)** to properly account for repeated measures and nesting.
 
 - **Q: What does AR-6 analyze? Is this a habituation study?** → A: **No, this is NOT a habituation study**. AR-6 analyzes **trial-order effects**: whether looking patterns change across **repeated presentations of the same event type**. Uses the `trial_number_global` column (1st presentation of "gw", 2nd presentation of "gw", 3rd presentation of "gw"). Each event type is shown **3-9 times** per participant (mean ~4-5 repetitions). Tests if looking patterns systematically increase (learning), decrease (adaptation/fatigue), or stay stable across these repetitions. This is analyzed **within event type**, not across the entire session.
 
 - **Q: What does AR-7 compare? Is there a GIVE-TO-SELF condition?** → A: **No GIVE-TO-SELF condition exists**. AR-7 compares **GIVE vs HUG vs SHOW** to demonstrate dissociation between visual attention and event understanding. Key hypothesis: SHOW elicits high toy attention (like GIVE) but different social gaze patterns, demonstrating that "seeing is not giving."
 
-- **Q: How should off-screen frames (no,signal AOI) be handled in gaze event detection?** → A: **Exclude and break sequences**. Off-screen frames (no,signal) break gaze event sequences. Only count consecutive frames where infant is looking at valid on-screen AOIs. This ensures gaze events represent active visual engagement with the stimulus.
+- **Q: How should off-screen frames (no,signal AOI) be handled in gaze fixation detection?** → A: **Exclude and break sequences**. Off-screen frames (no,signal) break gaze fixation sequences. Only count consecutive frames where infant is looking at valid on-screen AOIs. This ensures gaze fixations represent active visual engagement with the stimulus.
 
 - **Q: What about adult control data?** → A: **Process separately, keep separate reports**. Adult data (N=15 participants in `data/csvs_human_verified_vv/adult/`) will be processed with the same pipeline but kept in separate reports. Not included in primary child analyses. May be used for comparison in later analyses or publications.
 
@@ -39,13 +39,13 @@ As a developmental psychology researcher, I want to determine whether infants se
 
 **Why this priority**: This is the foundational research question of the entire study. Without this analysis, the core hypothesis cannot be validated. It represents the primary deliverable and is independently valuable even if no other analyses are performed.
 
-**Independent Test**: Can be fully tested by processing gaze event data and generating a complete statistical report showing mean gaze durations across experimental conditions with appropriate visualizations and hypothesis test results.
+**Independent Test**: Can be fully tested by processing gaze fixation data and generating a complete statistical report showing mean gaze durations across experimental conditions with appropriate visualizations and hypothesis test results.
 
 **Acceptance Scenarios**:
 
-1. **Given** the processed gaze events log, **When** the researcher executes AR-1 analysis, **Then** the system generates both HTML and PDF reports containing bar charts of mean looking time at the toy by condition, summary statistics tables, and statistical test results (t-test and ANOVA)
+1. **Given** the processed gaze fixations log, **When** the researcher executes AR-1 analysis, **Then** the system generates both HTML and PDF reports containing bar charts of mean looking time at the toy by condition, summary statistics tables, and statistical test results (t-test and ANOVA)
 2. **Given** multiple experimental conditions in the dataset, **When** AR-1 analysis completes, **Then** the report clearly states whether infants looked significantly longer at the toy in the GIVE condition compared to HUG condition with exact statistical values (t-statistic, degrees of freedom, p-value)
-3. **Given** the raw annotated frame-by-frame data files, **When** the preprocessing pipeline executes, **Then** a single master gaze_events.csv file is created defining gazes as 3+ consecutive frames on the same AOI
+3. **Given** the raw annotated frame-by-frame data files, **When** the preprocessing pipeline executes, **Then** a single master gaze_fixations.csv file is created defining gazes as 3+ consecutive frames on the same AOI
 
 ---
 
@@ -55,11 +55,11 @@ As a researcher studying infant attention patterns, I want to analyze how infant
 
 **Why this priority**: This provides critical insights into the cognitive processes underlying the primary findings. It helps explain HOW infants arrive at their understanding, not just what they attend to. It builds on P1 by adding mechanistic depth.
 
-**Independent Test**: Can be fully tested by analyzing transition probabilities from gaze events and producing complete transition matrices and visualizations for each age group and condition.
+**Independent Test**: Can be fully tested by analyzing transition probabilities from gaze fixations and producing complete transition matrices and visualizations for each age group and condition.
 
 **Acceptance Scenarios**:
 
-1. **Given** the gaze events log, **When** AR-2 analysis executes, **Then** the system produces transition probability matrices showing the likelihood of moving from each AOI to every other AOI
+1. **Given** the gaze fixations log, **When** AR-2 analysis executes, **Then** the system produces transition probability matrices showing the likelihood of moving from each AOI to every other AOI
 2. **Given** transition probabilities for each condition, **When** the analysis completes, **Then** directed graph visualizations are generated with arrow thickness representing transition probability
 3. **Given** observed transition frequencies, **When** statistical validation runs, **Then** Chi-squared test results compare observed vs. expected frequencies with full statistical reporting
 
@@ -75,7 +75,7 @@ As a social cognition researcher, I want to identify specific "Social Gaze Tripl
 
 **Acceptance Scenarios**:
 
-1. **Given** sequential gaze event data, **When** AR-3 analysis executes, **Then** the system identifies and counts all instances of Person A → Toy → Person B gaze sequences per trial
+1. **Given** sequential gaze fixation data, **When** AR-3 analysis executes, **Then** the system identifies and counts all instances of Person A → Toy → Person B gaze sequences per trial
 2. **Given** triplet counts across conditions, **When** statistical analysis completes, **Then** reports show mean frequencies with bar charts and statistical comparisons (t-test/ANOVA) between experimental conditions
 3. **Given** age group differences in the data, **When** AR-3 completes, **Then** the report includes developmental comparisons showing how social gaze patterns change with infant age
 
@@ -123,7 +123,7 @@ As a learning researcher, I want to analyze trial-by-trial changes in looking be
 
 **Acceptance Scenarios**:
 
-1. **Given** trial-numbered gaze events, **When** AR-6 analysis runs, **Then** line graphs plot social gaze triplet frequency (or other metrics) across sequential trials
+1. **Given** trial-numbered gaze fixations, **When** AR-6 analysis runs, **Then** line graphs plot social gaze triplet frequency (or other metrics) across sequential trials
 2. **Given** trial-by-trial data, **When** regression analysis executes, **Then** the system tests whether trial number significantly predicts looking metrics
 3. **Given** multiple conditions, **When** analysis completes, **Then** the report compares learning slopes between conditions and presents full regression statistics (coefficients, R-squared, p-values)
 
@@ -167,10 +167,10 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 - **Missing participant data**: If a participant has missing data for certain trials or conditions (e.g., fussy infant, technical failure), exclude that participant from analyses requiring those specific trials/conditions while retaining them for other analyses where data is complete
 - **Zero AOI fixations**: If an infant never looks at a particular AOI during a trial, record zero duration/frequency for that AOI and include in statistical analyses (valid data point)
-- **Insufficient gaze length**: Gaze sequences shorter than the 3-frame minimum are not recorded as gaze events in the master log (filtered during preprocessing)
-- **Ambiguous frames**: Frames where gaze spans exactly between two AOIs are excluded from gaze event detection (conservative approach to ensure data quality)
+- **Insufficient gaze length**: Gaze sequences shorter than the 3-frame minimum are not recorded as gaze fixations in the master log (filtered during preprocessing)
+- **Ambiguous frames**: Frames where gaze spans exactly between two AOIs are excluded from gaze fixation detection (conservative approach to ensure data quality)
 - **Insufficient statistical power**: If there are too few data points in an age group or condition to perform valid statistical tests (n < 3), skip that specific comparison, log a warning in the report, and note the limitation
-- **Outlier trials**: Trials with excessive off-screen time are flagged in the report; off-screen frames are excluded entirely from gaze events and denominators
+- **Outlier trials**: Trials with excessive off-screen time are flagged in the report; off-screen frames are excluded entirely from gaze fixations and denominators
 - **Missing SHOW condition**: If SHOW condition data is missing or insufficient for AR-7 analysis, skip AR-7 entirely, log a warning, and proceed with AR-1 through AR-6 analyses
 
 ## Requirements *(mandatory)*
@@ -180,9 +180,9 @@ As a principal investigator, I want to generate a single comprehensive report th
 #### Data Processing & Preparation
 
 - **FR-001**: System MUST read all annotated frame-by-frame CSV files from the data directory and subdirectories
-- **FR-002**: System MUST identify gaze events by detecting sequences of 3 or more consecutive frames on the same Area of Interest (AOI), where AOI is determined by the combination of "What" and "Where" column values
-- **FR-003**: System MUST generate a master gaze_events.csv file containing all identified gaze events with fields including: participant_id, trial_number, condition, event_segment, AOI, gaze_start_frame, gaze_end_frame, gaze_duration, age_group
-- **FR-004**: System MUST preserve all relevant metadata from raw data files (participant demographics, experimental conditions, trial information) in the master gaze events log
+- **FR-002**: System MUST identify gaze fixations by detecting sequences of 3 or more consecutive frames on the same Area of Interest (AOI), where AOI is determined by the combination of "What" and "Where" column values
+- **FR-003**: System MUST generate a master gaze_fixations.csv file containing all identified gaze fixations with fields including: participant_id, trial_number, condition, event_segment, AOI, gaze_start_frame, gaze_end_frame, gaze_duration, age_group
+- **FR-004**: System MUST preserve all relevant metadata from raw data files (participant demographics, experimental conditions, trial information) in the master gaze fixations log
 - **FR-005**: System MUST validate data integrity by checking for required fields and flagging missing or malformed data
 - **FR-005a**: System MUST halt pipeline execution with an error message when structural validation fails (missing required columns per current dataset schema; unparseable CSV files; incorrect file format)
 - **FR-005b**: System MUST halt pipeline execution when data quality issues are detected (missing required values, out-of-range values, invalid AOI combinations). No analyses may proceed until corrected
@@ -199,7 +199,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 #### AR-2: Gaze Transition Analysis
 
-- **FR-012**: System MUST identify all gaze-to-gaze transitions (when one gaze event ends and another begins on a different on-screen AOI; off-screen frames do not form gaze events)
+- **FR-012**: System MUST identify all gaze-to-gaze transitions (when one gaze fixation ends and another begins on a different on-screen AOI; off-screen frames do not form gaze fixations)
 - **FR-013**: System MUST calculate transition probability matrices showing P(AOI_j | AOI_i) for all AOI pairs
 - **FR-014**: System MUST compute transition matrices separately for each experimental condition and age group
 - **FR-015**: System MUST use GLMMs for transition counts where applicable (e.g., Poisson/Negative Binomial with participant random effects); only fall back to Chi-squared tests if GLMMs are infeasible
@@ -217,7 +217,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 #### AR-4: Dwell Time Analysis
 
-- **FR-024**: System MUST calculate the average duration of individual gaze events (dwell time) for each AOI using onset/offset times in milliseconds
+- **FR-024**: System MUST calculate the average duration of individual gaze fixations (dwell time) for each AOI using onset/offset times in milliseconds
 - **FR-025**: System MUST compute mean dwell times separately by participant, condition, and AOI
 - **FR-026**: System MUST use LMMs to compare mean dwell times (e.g., dwell_time_ms ~ condition + (1 | participant)), with AOI-specific models as needed
 - **FR-027**: System MUST generate bar charts visualizing mean dwell times by AOI and condition
@@ -233,7 +233,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 #### AR-6: Learning/Habituation Analysis
 
-- **FR-034**: System MUST order gaze events and derived metrics by trial number within each participant session
+- **FR-034**: System MUST order gaze fixations and derived metrics by trial number within each participant session
 - **FR-035**: System MUST fit LMMs with random intercepts and random slopes for trial number to test whether trial_number_global predicts looking metrics (e.g., social gaze triplet frequency)
 - **FR-036**: System MUST test whether learning slopes (trial_number_global coefficients) differ between experimental conditions (interaction term)
 - **FR-037**: System MUST generate line graphs plotting key metrics across sequential trials
@@ -254,19 +254,19 @@ As a principal investigator, I want to generate a single comprehensive report th
 - **FR-046**: System MUST generate the final compiled report in both HTML and PDF formats
 - **FR-047**: System MUST include a table of contents with hyperlinks to each analysis section in the final report
 - **FR-048**: System MUST ensure all visualizations, tables, and statistical results are properly formatted and rendered in both output formats
-- **FR-049**: System MUST include a methods section documenting the gaze event definition, statistical approaches, and analysis pipeline
+- **FR-049**: System MUST include a methods section documenting the gaze fixation definition, statistical approaches, and analysis pipeline
 
 #### Reproducibility & Automation
 
 - **FR-050**: System MUST provide a single automated pipeline that runs the complete analysis from raw data to final report without manual intervention
 - **FR-051**: System MUST organize all code in a modular structure separating preprocessing, individual analyses, and reporting functions
-- **FR-052**: System MUST save all intermediate results (gaze_events.csv, individual analysis outputs) to clearly defined directories
+- **FR-052**: System MUST save all intermediate results (gaze_fixations.csv, individual analysis outputs) to clearly defined directories
 - **FR-053**: System MUST log all analysis steps and any data quality warnings or errors encountered during processing
 - **FR-054**: System MUST be executable via a single command or script that orchestrates the entire workflow
 
 ### Key Entities *(include if feature involves data)*
 
-- **Gaze Event**: A continuous sequence of 3 or more frames where an infant's gaze remains on the same on-screen Area of Interest (off-screen excluded). Key attributes: participant identifier, trial number, experimental condition, AOI label, start frame, end frame, duration in frames/milliseconds, event segment (e.g., pre-action, action, post-action).
+- **Gaze Fixation**: A continuous sequence of 3 or more frames where an infant's gaze remains on the same on-screen Area of Interest (off-screen excluded). Key attributes: participant identifier, trial number, experimental condition, AOI label, start frame, end frame, duration in frames/milliseconds, event segment (e.g., pre-action, action, post-action).
 
 - **Area of Interest (AOI)**: A defined region of the visual stimulus that can be tracked, determined by the combination of "What" and "Where" columns. Valid AOI categories: no/signal (off-screen/no gaze detected), screen/other (on-screen but no specific AOI), woman/face, man/face, toy/other (toy present in "with" trials), toy2/other (toy location in "without" trials where no physical toy exists), man/body, woman/body, man/hands, woman/hands. Attributes: AOI category, experimental relevance to event meaning.
 
@@ -278,7 +278,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 - **Social Gaze Triplet**: A specific sequence pattern of three consecutive gazes indicating joint attention between two different social agents. Valid patterns: (1) man/face → toy/other → woman/face, or (2) woman/face → toy/other → man/face. Patterns involving the same person (e.g., man/face → toy/other → man/face) are NOT counted as social gaze triplets. Attributes: trial number, participant identifier, frame range of the complete sequence, triplet pattern type.
 
-- **Transition**: A change from one gaze event to another. Attributes: source AOI, target AOI, participant identifier, trial number, transition timestamp.
+- **Transition**: A change from one gaze fixation to another. Attributes: source AOI, target AOI, participant identifier, trial number, transition timestamp.
 
 - **Analysis Report**: A self-contained output document for one analytical requirement. Attributes: AR identifier (AR-1 through AR-7), analysis type (e.g., "Gaze Duration Analysis"), generation timestamp, file format (HTML/PDF), file path. Contains: visualizations, statistical tables, narrative interpretation.
 
@@ -288,7 +288,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 ### Measurable Outcomes
 
-- **SC-001**: Researchers can transform raw annotated data into a validated master gaze events log without manual data manipulation
+- **SC-001**: Researchers can transform raw annotated data into a validated master gaze fixations log without manual data manipulation
 
 - **SC-002**: Each of the seven analytical requirements (AR-1 through AR-7) produces a complete, self-contained report in both HTML and PDF formats containing all required visualizations, statistical tables, and narrative interpretations
 
@@ -310,7 +310,7 @@ As a principal investigator, I want to generate a single comprehensive report th
 
 - **SC-011**: The system handles datasets with varying numbers of participants, trials, and conditions without requiring code modifications
 
-- **SC-012**: All intermediate data files (especially gaze_events.csv) are saved in documented, human-readable formats that can be inspected and validated independently
+- **SC-012**: All intermediate data files (especially gaze_fixations.csv) are saved in documented, human-readable formats that can be inspected and validated independently
 
 ## Assumptions
 

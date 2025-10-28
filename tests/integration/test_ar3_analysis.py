@@ -10,14 +10,14 @@ import pytest
 from src.analysis import ar3_social_triplets as ar3
 
 
-def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
-    """Create sample gaze events data with triplet patterns."""
+def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
+    """Create sample gaze fixations data with triplet patterns."""
     data = pd.DataFrame(
         [
             # Participant P1, Trial 1 - GIVE_WITH condition
             # Pattern: man_face -> toy_present -> woman_face (valid triplet)
             {
-                "gaze_event_id": 1,
+                "gaze_fixation_id": 1,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -35,7 +35,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.1,
             },
             {
-                "gaze_event_id": 2,
+                "gaze_fixation_id": 2,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -53,7 +53,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.2,
             },
             {
-                "gaze_event_id": 3,
+                "gaze_fixation_id": 3,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -73,7 +73,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             # Participant P1, Trial 2 - HUG_WITH condition
             # Pattern: woman_face -> toy_present -> man_face (valid triplet, reverse order)
             {
-                "gaze_event_id": 4,
+                "gaze_fixation_id": 4,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -91,7 +91,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.1,
             },
             {
-                "gaze_event_id": 5,
+                "gaze_fixation_id": 5,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -109,7 +109,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.2,
             },
             {
-                "gaze_event_id": 6,
+                "gaze_fixation_id": 6,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -129,7 +129,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             # Participant P2, Trial 1 - GIVE_WITH condition
             # Pattern with no triplet (just faces, no toy)
             {
-                "gaze_event_id": 7,
+                "gaze_fixation_id": 7,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -147,7 +147,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.1,
             },
             {
-                "gaze_event_id": 8,
+                "gaze_fixation_id": 8,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -174,17 +174,15 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
 
 
 def test_ar3_analysis_end_to_end(tmp_path: Path):
-    """Test AR-3 analysis from gaze events to report generation."""
-    # Setup: Create sample gaze events
-    processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
-    _create_sample_gaze_events(gaze_events_path)
+    """Fail-first: AR-3 should honor variant configs and export directional summaries."""
 
-    # Setup: Create results directory
+    processed_dir = tmp_path / "data" / "processed"
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
+    _create_sample_gaze_fixations(gaze_fixations_path)
+
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
 
-    # Setup: Create config
     config = {
         "paths": {
             "processed_data": str(processed_dir),
@@ -192,73 +190,66 @@ def test_ar3_analysis_end_to_end(tmp_path: Path):
         },
         "analysis_specific": {
             "ar3_social_triplets": {
-                "valid_patterns": [
-                    ["man_face", "toy_present", "woman_face"],
-                    ["woman_face", "toy_present", "man_face"],
-                ],
+                "config_name": "ar3/ar3_give_vs_hug",
             },
         },
     }
 
-    # Execute: Run AR-3 analysis
     result = ar3.run(config=config)
 
-    # Verify: Check metadata
+    variant_output_dir = results_dir / "AR3" / "ar3_give_vs_hug"
+
+    # Fail-first expectations: variant metadata and directory structure
     assert result["report_id"] == "AR-3"
     assert result["title"] == "Social Gaze Triplet Analysis"
-    assert result["html_path"] != ""
-    assert result["pdf_path"] != ""
+    assert result.get("variant_key") == "ar3_give_vs_hug"
+    assert Path(result["html_path"]).parent == variant_output_dir
+    assert Path(result["pdf_path"]).parent == variant_output_dir
 
-    # Verify: Check output files exist
-    ar3_output_dir = results_dir / "AR3_Social_Triplets"
-    assert ar3_output_dir.exists()
+    assert variant_output_dir.exists()
 
-    # Verify: HTML report exists
-    html_path = Path(result["html_path"])
-    assert html_path.exists()
-    assert html_path.suffix == ".html"
+    triplets_csv = variant_output_dir / "triplets_detected.csv"
+    counts_csv = variant_output_dir / "triplet_counts_by_trial.csv"
+    summary_condition_csv = variant_output_dir / "triplet_summary_by_condition.csv"
+    summary_age_csv = variant_output_dir / "triplet_summary_by_age_group.csv"
+    directional_bias_csv = variant_output_dir / "triplet_directional_bias.csv"
+    temporal_summary_csv = variant_output_dir / "triplet_temporal_summary.csv"
 
-    # Verify: CSV outputs exist
-    triplets_csv = ar3_output_dir / "triplets_detected.csv"
-    assert triplets_csv.exists()
+    for required in [
+        triplets_csv,
+        counts_csv,
+        summary_condition_csv,
+        summary_age_csv,
+        directional_bias_csv,
+        temporal_summary_csv,
+    ]:
+        assert required.exists(), f"Expected export missing: {required}"
+
     triplets_df = pd.read_csv(triplets_csv)
-
-    # Expected: 2 triplets total (P1 has 2 triplets, P2 has 0)
-    assert len(triplets_df) == 2
-
-    # Verify: Triplet patterns are correct
     assert set(triplets_df["pattern"].unique()) == {
         "man_face>toy_present>woman_face",
         "woman_face>toy_present>man_face",
     }
 
-    # Verify: Triplet counts by trial
-    counts_csv = ar3_output_dir / "triplet_counts_by_trial.csv"
-    assert counts_csv.exists()
-    counts_df = pd.read_csv(counts_csv)
-    assert len(counts_df) >= 2  # At least P1's two trials
-
-    # Verify: Summary by condition
-    summary_condition_csv = ar3_output_dir / "triplet_summary_by_condition.csv"
-    assert summary_condition_csv.exists()
     summary_condition_df = pd.read_csv(summary_condition_csv)
-    assert not summary_condition_df.empty
-    assert "condition_name" in summary_condition_df.columns
-    assert "mean_triplets" in summary_condition_df.columns
+    assert set(summary_condition_df["condition_name"]) == {"GIVE_WITH", "HUG_WITH"}
 
-    # Verify: Summary by age group
-    summary_age_csv = ar3_output_dir / "triplet_summary_by_age_group.csv"
-    assert summary_age_csv.exists()
+    directional_df = pd.read_csv(directional_bias_csv)
+    assert {"pattern", "condition_name", "count"}.issubset(directional_df.columns)
+    assert {
+        "man_face>toy_present>woman_face",
+        "woman_face>toy_present>man_face",
+    }.issubset(set(directional_df["pattern"]))
 
-    # Verify: Figures were generated
-    condition_fig = ar3_output_dir / "triplets_by_condition.png"
-    age_fig = ar3_output_dir / "triplets_by_age_group.png"
-    assert condition_fig.exists() or age_fig.exists()  # At least one figure
+    temporal_df = pd.read_csv(temporal_summary_csv)
+    assert {"condition_name", "first_occurrence", "subsequent_occurrences"}.issubset(
+        temporal_df.columns
+    )
 
 
 def test_ar3_detect_triplets_with_valid_patterns():
     """Test triplet detection with sample data."""
-    gaze_events = pd.DataFrame(
+    gaze_fixations = pd.DataFrame(
         [
             {
                 "participant_id": "P1",
@@ -295,7 +286,7 @@ def test_ar3_detect_triplets_with_valid_patterns():
 
     valid_patterns = [("man_face", "toy_present", "woman_face")]
 
-    triplets = ar3.detect_triplets(gaze_events, valid_patterns, require_consecutive=True)
+    triplets = ar3.detect_triplets(gaze_fixations, valid_patterns, require_consecutive=True)
 
     assert len(triplets) == 1
     assert triplets.iloc[0]["pattern"] == "man_face>toy_present>woman_face"
@@ -305,14 +296,14 @@ def test_ar3_detect_triplets_with_valid_patterns():
 
 def test_ar3_no_triplets_detected(tmp_path: Path):
     """Test AR-3 analysis when no triplets are detected."""
-    # Setup: Create gaze events with no valid triplet patterns
+    # Setup: Create gaze fixations with no valid triplet patterns
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
 
     data = pd.DataFrame(
         [
             {
-                "gaze_event_id": 1,
+                "gaze_fixation_id": 1,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -330,7 +321,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
                 "gaze_offset_time": 0.1,
             },
             {
-                "gaze_event_id": 2,
+                "gaze_fixation_id": 2,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -351,7 +342,7 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
     )
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    data.to_csv(gaze_events_path, index=False)
+    data.to_csv(gaze_fixations_path, index=False)
 
     # Setup: Create config
     results_dir = tmp_path / "results"
@@ -387,11 +378,11 @@ def test_ar3_no_triplets_detected(tmp_path: Path):
     assert len(triplets_df) == 0  # No triplets detected
 
 
-def test_ar3_missing_gaze_events_file(tmp_path: Path):
-    """Test AR-3 analysis when gaze events file is missing."""
+def test_ar3_missing_gaze_fixations_file(tmp_path: Path):
+    """Test AR-3 analysis when gaze fixations file is missing."""
     processed_dir = tmp_path / "data" / "processed"
     processed_dir.mkdir(parents=True, exist_ok=True)
-    # Note: NOT creating the gaze_events file
+    # Note: NOT creating the gaze_fixations file
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)

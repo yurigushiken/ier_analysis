@@ -1,4 +1,4 @@
-# Terminology Migration Plan: "gaze event" → "gaze fixation"
+# Terminology Migration Plan: "gaze fixation" → "gaze fixation"
 
 **Status:** Planning Phase - No Changes Made Yet
 **Date:** 2025-10-27
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-**Current:** "gaze event" terminology is confusing (conflicts with "stimulus event")
+**Current:** "gaze fixation" terminology is confusing (conflicts with "stimulus event")
 **Target:** "gaze fixation" terminology is standard and clear
 **Impact:** 66 files affected, ~535 occurrences
 **Approach:** Systematic find-replace with verification at each stage
@@ -24,9 +24,9 @@
 
 ```
 CURRENT                                    NEW
-data/processed/gaze_events.csv         → data/processed/gaze_fixations.csv
-data/processed/gaze_events_child.csv   → data/processed/gaze_fixations_child.csv
-data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.csv
+data/processed/gaze_fixations.csv         → data/processed/gaze_fixations.csv
+data/processed/gaze_fixations_child.csv   → data/processed/gaze_fixations_child.csv
+data/processed/gaze_fixations_adult.csv   → data/processed/gaze_fixations_adult.csv
 ```
 
 **Action:** Rename files AND update all references
@@ -39,21 +39,21 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 #### File: `src/preprocessing/gaze_detector.py`
 **Changes:**
-- Class: `GazeEvent` → `GazeFixation`
-- Function: `detect_gaze_events()` → `detect_gaze_fixations()`
+- Class: `GazeFixation` → `GazeFixation`
+- Function: `detect_gaze_fixations()` → `detect_gaze_fixations()`
 - Function: `_extract_events_from_group()` → `_extract_fixations_from_group()`
 - Function: `_finalize_event()` → `_finalize_fixation()`
-- All docstrings mentioning "gaze event"
+- All docstrings mentioning "gaze fixation"
 - Comment references
 
 **Estimated:** 30 minutes
 
 #### File: `src/preprocessing/master_log_generator.py`
 **Changes:**
-- Import statement: `from src.preprocessing.gaze_detector import detect_gaze_events`
-- Function call: `detect_gaze_events()` → `detect_gaze_fixations()`
+- Import statement: `from src.preprocessing.gaze_detector import detect_gaze_fixations`
+- Function call: `detect_gaze_fixations()` → `detect_gaze_fixations()`
 - Docstring references
-- Variable names: `gaze_events` → `gaze_fixations`
+- Variable names: `gaze_fixations` → `gaze_fixations`
 
 **Estimated:** 15 minutes
 
@@ -71,11 +71,11 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 - `src/analysis/ar7_dissociation.py` (5 occurrences)
 
 **Changes per file:**
-- Function: `_load_gaze_events()` → `_load_gaze_fixations()`
-- Variable: `df = _load_gaze_events()` → `df = _load_gaze_fixations()`
-- Docstrings: "gaze events" → "gaze fixations"
+- Function: `_load_gaze_fixations()` → `_load_gaze_fixations()`
+- Variable: `df = _load_gaze_fixations()` → `df = _load_gaze_fixations()`
+- Docstrings: "gaze fixations" → "gaze fixations"
 - Comments: Update all references
-- File path strings: `"gaze_events.csv"` → `"gaze_fixations.csv"`
+- File path strings: `"gaze_fixations.csv"` → `"gaze_fixations.csv"`
 
 **Estimated:** 2 hours (all 7 files)
 
@@ -84,7 +84,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 ### 1.4 Main Pipeline (`src/main.py`) (3 occurrences)
 **Changes:**
 - Import statements
-- Logging messages: "Generating gaze events" → "Detecting gaze fixations"
+- Logging messages: "Generating gaze fixations" → "Detecting gaze fixations"
 - Variable names
 
 **Estimated:** 10 minutes
@@ -104,8 +104,8 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 - `tests/unit/test_ar7_dissociation.py`
 
 **Changes:**
-- Test function names: `test_detect_gaze_events()` → `test_detect_gaze_fixations()`
-- Fixture names: `gaze_events_df` → `gaze_fixations_df`
+- Test function names: `test_detect_gaze_fixations()` → `test_detect_gaze_fixations()`
+- Fixture names: `gaze_fixations_df` → `gaze_fixations_df`
 - File path references in test data
 - Assert statements and error messages
 
@@ -137,9 +137,9 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 ### 2.3 Contract Tests (10+ occurrences)
 
 #### Files:
-- `tests/contract/test_gaze_events_schema.py` (RENAME)
+- `tests/contract/test_gaze_fixations_schema.py` (RENAME)
 - `tests/contract/test_report_outputs.py`
-- `tests/fixtures/expected_gaze_events.csv` (RENAME)
+- `tests/fixtures/expected_gaze_fixations.csv` (RENAME)
 
 **Changes:**
 - Test class names
@@ -156,7 +156,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 #### File: `specs/001-infant-event-analysis/spec.md`
 **Changes:**
-- All uses of "gaze event" → "gaze fixation"
+- All uses of "gaze fixation" → "gaze fixation"
 - Technical definitions section
 - Data model descriptions
 - Example code snippets
@@ -173,7 +173,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 #### File: `specs/001-infant-event-analysis/data-model.md`
 **Changes:**
-- Entity definitions: "Gaze Event" → "Gaze Fixation"
+- Entity definitions: "Gaze Fixation" → "Gaze Fixation"
 - Relationship descriptions
 - Column names in tables (if CSV column headers change)
 - Example data
@@ -206,7 +206,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 ### 3.2 Contracts & Schemas (15+ occurrences)
 
-#### File: `specs/001-infant-event-analysis/contracts/gaze_events_schema.json`
+#### File: `specs/001-infant-event-analysis/contracts/gaze_fixations_schema.json`
 **Action:** RENAME to `gaze_fixations_schema.json`
 
 **Changes:**
@@ -241,7 +241,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 #### File: `MENTORSHIP_DATA_FLOW.md`
 **Changes:**
 - ASCII flowchart labels
-- File name references: "gaze_events.csv (19,813 events)"
+- File name references: "gaze_fixations.csv (19,813 events)"
 - Section headers
 - Explanatory text
 
@@ -269,7 +269,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 #### File: `config/pipeline_config.yaml`
 **Changes:**
-- Comments referencing gaze events
+- Comments referencing gaze fixations
 - Validation section descriptions
 
 **Estimated:** 10 minutes
@@ -287,7 +287,7 @@ data/processed/gaze_events_adult.csv   → data/processed/gaze_fixations_adult.c
 
 #### File: `templates/ar1_template.html`
 **Changes:**
-- Section headings: "Gaze Event Definition" → "Gaze Fixation Definition"
+- Section headings: "Gaze Fixation Definition" → "Gaze Fixation Definition"
 - Body text describing the 3+ frame rule
 - Table captions
 - Figure captions
@@ -342,13 +342,13 @@ cp -r data/processed data/processed_backup
 3. **Rename data files**
    ```bash
    cd data/processed
-   mv gaze_events.csv gaze_fixations.csv
-   mv gaze_events_child.csv gaze_fixations_child.csv
-   mv gaze_events_adult.csv gaze_fixations_adult.csv
+   mv gaze_fixations.csv gaze_fixations.csv
+   mv gaze_fixations_child.csv gaze_fixations_child.csv
+   mv gaze_fixations_adult.csv gaze_fixations_adult.csv
    ```
 
 4. **Update all AR modules (ar1-ar7)**
-   - Update `_load_gaze_events()` → `_load_gaze_fixations()`
+   - Update `_load_gaze_fixations()` → `_load_gaze_fixations()`
    - Update file path strings
    - Update all docstrings
    - Test each: `pytest tests/integration/test_arX_analysis.py -v`
@@ -363,8 +363,8 @@ cp -r data/processed data/processed_backup
 1. **Rename test files**
    ```bash
    mv tests/unit/test_gaze_detector.py tests/unit/test_gaze_fixation_detector.py
-   mv tests/contract/test_gaze_events_schema.py tests/contract/test_gaze_fixations_schema.py
-   mv tests/fixtures/expected_gaze_events.csv tests/fixtures/expected_gaze_fixations.csv
+   mv tests/contract/test_gaze_fixations_schema.py tests/contract/test_gaze_fixations_schema.py
+   mv tests/fixtures/expected_gaze_fixations.csv tests/fixtures/expected_gaze_fixations.csv
    ```
 
 2. **Update test content**
@@ -391,11 +391,11 @@ cp -r data/processed data/processed_backup
    ```markdown
    ## [Unreleased]
    ### Changed
-   - **TERMINOLOGY:** Renamed "gaze event" to "gaze fixation" throughout codebase for clarity
-     - Gaze fixation: 3+ consecutive frames on same AOI (previously called "gaze event")
+   - **TERMINOLOGY:** Renamed "gaze fixation" to "gaze fixation" throughout codebase for clarity
+     - Gaze fixation: 3+ consecutive frames on same AOI (previously called "gaze fixation")
      - This distinguishes from stimulus events (video clips like gw, hw)
-     - Data files renamed: gaze_events.csv → gaze_fixations.csv
-     - All APIs updated: detect_gaze_events() → detect_gaze_fixations()
+     - Data files renamed: gaze_fixations.csv → gaze_fixations.csv
+     - All APIs updated: detect_gaze_fixations() → detect_gaze_fixations()
    ```
 
 ### Step 5: Update Templates
@@ -417,7 +417,7 @@ open results/AR1_Gaze_Duration/report.html
 # 4. Verify data files exist
 ls -la data/processed/gaze_fixations*.csv
 
-# 5. Search for any remaining "gaze event" references
+# 5. Search for any remaining "gaze fixation" references
 grep -r "gaze.event" --include="*.py" --include="*.md" . | grep -v temp_analysis | grep -v backup
 ```
 
@@ -428,46 +428,46 @@ grep -r "gaze.event" --include="*.py" --include="*.md" . | grep -v temp_analysis
 ### For Python Files:
 ```python
 # Class names
-GazeEvent → GazeFixation
+GazeFixation → GazeFixation
 
 # Function names
-detect_gaze_events → detect_gaze_fixations
+detect_gaze_fixations → detect_gaze_fixations
 _extract_events_from_group → _extract_fixations_from_group
 _finalize_event → _finalize_fixation
-_load_gaze_events → _load_gaze_fixations
+_load_gaze_fixations → _load_gaze_fixations
 
 # Variable names
-gaze_events → gaze_fixations
-gaze_event → gaze_fixation
-num_gaze_events → num_gaze_fixations
+gaze_fixations → gaze_fixations
+gaze_fixation → gaze_fixation
+num_gaze_fixations → num_gaze_fixations
 
 # File paths (strings)
-"gaze_events.csv" → "gaze_fixations.csv"
-"gaze_events_child.csv" → "gaze_fixations_child.csv"
-"gaze_events_adult.csv" → "gaze_fixations_adult.csv"
-"gaze_events_schema.json" → "gaze_fixations_schema.json"
+"gaze_fixations.csv" → "gaze_fixations.csv"
+"gaze_fixations_child.csv" → "gaze_fixations_child.csv"
+"gaze_fixations_adult.csv" → "gaze_fixations_adult.csv"
+"gaze_fixations_schema.json" → "gaze_fixations_schema.json"
 
 # Comments and docstrings
-"gaze event" → "gaze fixation"
-"Gaze event" → "Gaze fixation"
-"gaze events" → "gaze fixations"
-"Gaze events" → "Gaze fixations"
+"gaze fixation" → "gaze fixation"
+"Gaze fixation" → "Gaze fixation"
+"gaze fixations" → "gaze fixations"
+"Gaze fixations" → "Gaze fixations"
 ```
 
 ### For Markdown Files:
 ```markdown
-gaze event → gaze fixation
-Gaze event → Gaze fixation
-gaze events → gaze fixations
-Gaze events → Gaze fixations
+gaze fixation → gaze fixation
+Gaze fixation → Gaze fixation
+gaze fixations → gaze fixations
+Gaze fixations → Gaze fixations
 gaze-event → gaze-fixation
-`gaze_event` → `gaze_fixation`
+`gaze_fixation` → `gaze_fixation`
 ```
 
 ### For YAML/JSON:
 ```yaml
-gaze_events → gaze_fixations
-"gaze event" → "gaze fixation"
+gaze_fixations → gaze_fixations
+"gaze fixation" → "gaze fixation"
 ```
 
 ---

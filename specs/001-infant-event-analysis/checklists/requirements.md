@@ -43,7 +43,7 @@
 
 **Written for non-technical stakeholders**: ✓ PASS
 - Language is accessible and focused on research outcomes.
-- Technical concepts (gaze events, AOIs, statistical tests) are explained in context.
+- Technical concepts (gaze fixations, AOIs, statistical tests) are explained in context.
 - User stories emphasize research value and scientific contributions.
 
 **All mandatory sections completed**: ✓ PASS
@@ -61,7 +61,7 @@
 **Requirements are testable and unambiguous**: ✓ PASS
 - Each functional requirement uses clear "MUST" language with specific, verifiable outcomes.
 - Examples:
-  - FR-002: "System MUST identify gaze events by detecting sequences of 3 or more consecutive frames on the same Area of Interest (AOI)" - Testable with specific threshold
+  - FR-002: "System MUST identify gaze fixations by detecting sequences of 3 or more consecutive frames on the same Area of Interest (AOI)" - Testable with specific threshold
   - FR-007: "System MUST perform independent samples t-tests comparing mean proportion of toy-looking between GIVE and HUG conditions" - Specific statistical method and comparison groups
   - FR-047: "System MUST include a table of contents with hyperlinks to each analysis section in the final report" - Verifiable feature
 
@@ -73,7 +73,7 @@
 
 **Success criteria are technology-agnostic**: ✓ PASS
 - Success criteria focus on outcomes, not technologies:
-  - Good: "Researchers can transform raw annotated data into a validated master gaze events log" (SC-001)
+  - Good: "Researchers can transform raw annotated data into a validated master gaze fixations log" (SC-001)
   - Good: "All analysis reports include publication-quality visualizations with proper axis labels, legends, and error bars" (SC-005)
   - Good: "The modular code structure allows individual analytical requirements to be executed independently" (SC-007)
 - No mention of specific frameworks, languages, or tools in success criteria section.

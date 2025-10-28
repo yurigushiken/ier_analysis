@@ -14,7 +14,7 @@
 **Answer**: Confirmed - `sw` = SHOW WITH, `swo` = SHOW WITHOUT
 
 ### ✅ Question 3: Off-Screen Frames
-**Answer**: Exclude and break gaze event sequences at (no,signal) frames
+**Answer**: Exclude and break gaze fixation sequences at (no,signal) frames
 
 ### ✅ Question 4: Adult Data
 **Answer**: Process separately with same pipeline, keep separate reports
@@ -93,7 +93,7 @@
 
 ## 🔍 Key Implementation Details
 
-### Gaze Event Detection:
+### Gaze Fixation Detection:
 ```python
 # Minimum 3 consecutive frames on same AOI
 # Off-screen frames (no,signal) BREAK sequences
@@ -107,8 +107,8 @@ Frame 5: toy,other  ✓
 Frame 6: toy,other  ✓
 
 Result:
-  Gaze Event 1: Frames 1-2 (TOO SHORT, exclude)
-  Gaze Event 2: Frames 4-6 (VALID)
+  Gaze Fixation 1: Frames 1-2 (TOO SHORT, exclude)
+  Gaze Fixation 2: Frames 4-6 (VALID)
 ```
 
 ### Event Presentation ID:

@@ -65,7 +65,7 @@
       "properties": {
         "data_source": {
           "type": "string",
-          "description": "Path to gaze_events.csv or other data source"
+          "description": "Path to gaze_fixations.csv or other data source"
         },
         "config_version": {
           "type": "string",

@@ -10,9 +10,9 @@ print("COMPREHENSIVE AR1 AUDIT")
 print("="*80)
 
 # Load data
-df = pd.read_csv('data/processed/gaze_events.csv')
+df = pd.read_csv('data/processed/gaze_fixations.csv')
 print(f"\n1. DATA LOADED")
-print(f"   Total gaze events: {len(df):,}")
+print(f"   Total gaze fixations: {len(df):,}")
 print(f"   Participants: {df['participant_id'].nunique()}")
 print(f"   Participant types: {dict(df['participant_type'].value_counts())}")
 
@@ -31,15 +31,15 @@ EXCLUDE_AOIS = ('off_screen',)
 
 filtered = df[~df['aoi_category'].isin(EXCLUDE_AOIS)].copy()
 print(f"\n   Step 1: Exclude off-screen gazes")
-print(f"   - Total gaze events: {len(df):,}")
+print(f"   - Total gaze fixations: {len(df):,}")
 print(f"   - After excluding off_screen: {len(filtered):,}")
 print(f"   - Percentage on-screen: {len(filtered)/len(df)*100:.1f}%")
 
 # Step 2: Identify toy gazes
 filtered['is_toy'] = filtered['aoi_category'].isin(TOY_AOIS)
 print(f"\n   Step 2: Identify toy gazes")
-print(f"   - On-screen gaze events: {len(filtered):,}")
-print(f"   - Toy gaze events: {filtered['is_toy'].sum():,}")
+print(f"   - On-screen gaze fixations: {len(filtered):,}")
+print(f"   - Toy gaze fixations: {filtered['is_toy'].sum():,}")
 print(f"   - Toy gaze breakdown:")
 for aoi in TOY_AOIS:
     count = (filtered['aoi_category'] == aoi).sum()

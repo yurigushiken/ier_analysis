@@ -1,8 +1,8 @@
 # AR-4: Dwell Time Analysis Configuration
-# Purpose: Analyze processing depth via mean dwell time per gaze event
+# Purpose: Analyze processing depth via mean dwell time per gaze fixation
 
 analysis_name: "AR-4: Dwell Time Analysis"
-description: "Analysis of mean dwell time (duration per gaze event) as indicator of processing depth"
+description: "Analysis of mean dwell time (duration per gaze fixation) as indicator of processing depth"
 
 # Dwell Time Calculation
 dwell_time:
@@ -21,7 +21,7 @@ dwell_time:
 
 # Statistical Methods
 statistics:
-  # Primary test: Linear Mixed Model (accounts for multiple gaze events per participant)
+  # Primary test: Linear Mixed Model (accounts for multiple gaze fixations per participant)
   primary_test: "linear_mixed_model"
 
   # LMM formula specification
@@ -54,8 +54,8 @@ aoi_analysis:
     - "woman_face"
     - "toy_present"
 
-  # Minimum gaze events per AOI to include in analysis
-  min_gaze_events_per_aoi: 3
+  # Minimum gaze fixations per AOI to include in analysis
+  min_gaze_fixations_per_aoi: 3
 
 # Visualization Settings
 visualization:
@@ -87,7 +87,7 @@ visualization:
 
 # Output Settings
 output:
-  # Export gaze event-level dwell times
+  # Export gaze fixation-level dwell times
   export_event_level_data: true
 
   # Export participant-level means

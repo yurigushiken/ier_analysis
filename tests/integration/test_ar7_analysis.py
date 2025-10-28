@@ -10,8 +10,8 @@ import pytest
 from src.analysis import ar7_dissociation as ar7
 
 
-def _create_sample_gaze_events_multi_condition(output_path: Path) -> pd.DataFrame:
-    """Create sample gaze events across multiple conditions."""
+def _create_sample_gaze_fixations_multi_condition(output_path: Path) -> pd.DataFrame:
+    """Create sample gaze fixations across multiple conditions."""
     data = []
 
     conditions = [
@@ -26,7 +26,7 @@ def _create_sample_gaze_events_multi_condition(output_path: Path) -> pd.DataFram
                 for idx, aoi in enumerate(aois):
                     data.append(
                         {
-                            "gaze_event_id": len(data) + 1,
+                            "gaze_fixation_id": len(data) + 1,
                             "participant_id": participant_id,
                             "participant_type": "infant",
                             "age_months": 10,
@@ -53,11 +53,11 @@ def _create_sample_gaze_events_multi_condition(output_path: Path) -> pd.DataFram
 
 
 def test_ar7_analysis_end_to_end(tmp_path: Path):
-    """Test AR-7 analysis from gaze events to report generation."""
+    """Test AR-7 analysis from gaze fixations to report generation."""
     # Setup
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
-    _create_sample_gaze_events_multi_condition(gaze_events_path)
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
+    _create_sample_gaze_fixations_multi_condition(gaze_fixations_path)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -89,8 +89,8 @@ def test_ar7_analysis_end_to_end(tmp_path: Path):
     assert data_csv.exists()
 
 
-def test_ar7_missing_gaze_events(tmp_path: Path):
-    """Test AR-7 with missing gaze events file."""
+def test_ar7_missing_gaze_fixations(tmp_path: Path):
+    """Test AR-7 with missing gaze fixations file."""
     processed_dir = tmp_path / "data" / "processed"
     processed_dir.mkdir(parents=True, exist_ok=True)
 
@@ -112,7 +112,7 @@ def test_ar7_missing_gaze_events(tmp_path: Path):
 
 def test_ar7_calculate_condition_metrics_integration():
     """Test condition metrics with realistic data structure."""
-    gaze_events = pd.DataFrame(
+    gaze_fixations = pd.DataFrame(
         [
             {"participant_id": "P1", "condition_name": "GIVE", "aoi_category": "toy_present", "gaze_duration_ms": 600},
             {
@@ -126,7 +126,7 @@ def test_ar7_calculate_condition_metrics_integration():
         ]
     )
 
-    result = ar7.calculate_condition_metrics(gaze_events)
+    result = ar7.calculate_condition_metrics(gaze_fixations)
 
     assert len(result) == 2  # Two participants, different conditions
 

@@ -10,13 +10,13 @@ import pytest
 from src.analysis import ar4_dwell_times as ar4
 
 
-def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
-    """Create sample gaze events data with varying dwell times."""
+def _create_sample_gaze_fixations(output_path: Path) -> pd.DataFrame:
+    """Create sample gaze fixations data with varying dwell times."""
     data = pd.DataFrame(
         [
             # Participant P1 - GIVE_WITH condition
             {
-                "gaze_event_id": 1,
+                "gaze_fixation_id": 1,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -34,7 +34,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.5,
             },
             {
-                "gaze_event_id": 2,
+                "gaze_fixation_id": 2,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -53,7 +53,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             },
             # Participant P1 - HUG_WITH condition (shorter dwell times)
             {
-                "gaze_event_id": 3,
+                "gaze_fixation_id": 3,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -71,7 +71,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.2,
             },
             {
-                "gaze_event_id": 4,
+                "gaze_fixation_id": 4,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -90,7 +90,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             },
             # Participant P2 - GIVE_WITH condition
             {
-                "gaze_event_id": 5,
+                "gaze_fixation_id": 5,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -108,7 +108,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.75,
             },
             {
-                "gaze_event_id": 6,
+                "gaze_fixation_id": 6,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -127,7 +127,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             },
             # Participant P2 - HUG_WITH condition
             {
-                "gaze_event_id": 7,
+                "gaze_fixation_id": 7,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -145,7 +145,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.25,
             },
             {
-                "gaze_event_id": 8,
+                "gaze_fixation_id": 8,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -164,7 +164,7 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
             },
             # Add a very short dwell time to test filtering
             {
-                "gaze_event_id": 9,
+                "gaze_fixation_id": 9,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -191,11 +191,11 @@ def _create_sample_gaze_events(output_path: Path) -> pd.DataFrame:
 
 
 def test_ar4_analysis_end_to_end(tmp_path: Path):
-    """Test AR-4 analysis from gaze events to report generation."""
-    # Setup: Create sample gaze events
+    """Test AR-4 analysis from gaze fixations to report generation."""
+    # Setup: Create sample gaze fixations
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
-    _create_sample_gaze_events(gaze_events_path)
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
+    _create_sample_gaze_fixations(gaze_fixations_path)
 
     # Setup: Create results directory
     results_dir = tmp_path / "results"
@@ -215,7 +215,7 @@ def test_ar4_analysis_end_to_end(tmp_path: Path):
                     "outlier_threshold_sd": 3,
                 },
                 "aoi_analysis": {
-                    "min_gaze_events_per_aoi": 2,
+                    "min_gaze_fixations_per_aoi": 2,
                 },
             },
         },
@@ -323,13 +323,13 @@ def test_ar4_calculate_participant_dwell_times():
     p1_give = result[(result["participant_id"] == "P1") & (result["condition_name"] == "GIVE_WITH")]
     assert len(p1_give) == 1
     assert pytest.approx(p1_give.iloc[0]["mean_dwell_time_ms"], rel=1e-6) == 400.0
-    assert p1_give.iloc[0]["gaze_event_count"] == 2
+    assert p1_give.iloc[0]["gaze_fixation_count"] == 2
 
     # Verify: P1 HUG_WITH should only have 200 ms (50 ms filtered out)
     p1_hug = result[(result["participant_id"] == "P1") & (result["condition_name"] == "HUG_WITH")]
     assert len(p1_hug) == 1
     assert pytest.approx(p1_hug.iloc[0]["mean_dwell_time_ms"], rel=1e-6) == 200.0
-    assert p1_hug.iloc[0]["gaze_event_count"] == 1
+    assert p1_hug.iloc[0]["gaze_fixation_count"] == 1
 
 
 def test_ar4_summarize_by_condition():
@@ -340,25 +340,25 @@ def test_ar4_summarize_by_condition():
                 "participant_id": "P1",
                 "condition_name": "GIVE_WITH",
                 "mean_dwell_time_ms": 400.0,
-                "gaze_event_count": 2,
+                "gaze_fixation_count": 2,
             },
             {
                 "participant_id": "P2",
                 "condition_name": "GIVE_WITH",
                 "mean_dwell_time_ms": 500.0,
-                "gaze_event_count": 2,
+                "gaze_fixation_count": 2,
             },
             {
                 "participant_id": "P1",
                 "condition_name": "HUG_WITH",
                 "mean_dwell_time_ms": 200.0,
-                "gaze_event_count": 1,
+                "gaze_fixation_count": 1,
             },
             {
                 "participant_id": "P2",
                 "condition_name": "HUG_WITH",
                 "mean_dwell_time_ms": 225.0,
-                "gaze_event_count": 2,
+                "gaze_fixation_count": 2,
             },
         ]
     )
@@ -379,14 +379,14 @@ def test_ar4_summarize_by_condition():
     assert hug_row["n_participants"] == 2
 
 
-def test_ar4_empty_gaze_events(tmp_path: Path):
-    """Test AR-4 analysis with empty gaze events file."""
-    # Setup: Create empty gaze events file
+def test_ar4_empty_gaze_fixations(tmp_path: Path):
+    """Test AR-4 analysis with empty gaze fixations file."""
+    # Setup: Create empty gaze fixations file
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "condition_name"]).to_csv(gaze_events_path, index=False)
+    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "condition_name"]).to_csv(gaze_fixations_path, index=False)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -407,11 +407,11 @@ def test_ar4_empty_gaze_events(tmp_path: Path):
     assert result["pdf_path"] == ""
 
 
-def test_ar4_missing_gaze_events_file(tmp_path: Path):
-    """Test AR-4 analysis when gaze events file is missing."""
+def test_ar4_missing_gaze_fixations_file(tmp_path: Path):
+    """Test AR-4 analysis when gaze fixations file is missing."""
     processed_dir = tmp_path / "data" / "processed"
     processed_dir.mkdir(parents=True, exist_ok=True)
-    # Note: NOT creating the gaze_events file
+    # Note: NOT creating the gaze_fixations file
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -436,7 +436,7 @@ def test_ar4_aoi_analysis(tmp_path: Path):
     """Test AOI-specific dwell time analysis."""
     # Setup: Create sample data with different AOIs
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
 
     data = pd.DataFrame(
         [
@@ -481,7 +481,7 @@ def test_ar4_aoi_analysis(tmp_path: Path):
     )
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    data.to_csv(gaze_events_path, index=False)
+    data.to_csv(gaze_fixations_path, index=False)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -494,7 +494,7 @@ def test_ar4_aoi_analysis(tmp_path: Path):
         "analysis_specific": {
             "ar4_dwell_times": {
                 "dwell_time": {"min_dwell_time_ms": 100},
-                "aoi_analysis": {"min_gaze_events_per_aoi": 2},
+                "aoi_analysis": {"min_gaze_fixations_per_aoi": 2},
             },
         },
     }

@@ -38,20 +38,20 @@ class DevelopmentalModelResult:
     warnings: List[str]
 
 
-def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
-    """Load gaze events from processed data directory."""
+def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
+    """Load gaze fixations from processed data directory."""
     processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+    default_path = processed_dir / "gaze_fixations.csv"
+    child_path = processed_dir / "gaze_fixations_child.csv"
 
     if default_path.exists():
         path = default_path
     elif child_path.exists():
         path = default_path
     else:
-        raise FileNotFoundError("No gaze events file found for AR-5 analysis")
+        raise FileNotFoundError("No gaze fixations file found for AR-5 analysis")
 
-    LOGGER.info("Loading gaze events from %s", path)
+    LOGGER.info("Loading gaze fixations from %s", path)
     df = pd.read_csv(path)
 
     # Ensure age_months is numeric
@@ -113,23 +113,23 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
     return defaults
 
 
-def calculate_proportion_primary_aois(gaze_events: pd.DataFrame) -> pd.DataFrame:
+def calculate_proportion_primary_aois(gaze_fixations: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate proportion of time looking at primary AOIs (toy, faces) per participant per condition.
 
     This is the main dependent variable for AR-5 developmental analysis.
     """
-    if gaze_events.empty:
+    if gaze_fixations.empty:
         return pd.DataFrame(columns=["participant_id", "age_months", "condition_name", "proportion_primary_aois"])
 
     # Define primary AOIs (faces and toy)
     primary_aois = ["man_face", "woman_face", "toy_present"]
 
     # Mark primary AOIs
-    gaze_events["is_primary"] = gaze_events["aoi_category"].isin(primary_aois)
+    gaze_fixations["is_primary"] = gaze_fixations["aoi_category"].isin(primary_aois)
 
     # Calculate total duration per participant per condition
-    grouped = gaze_events.groupby(["participant_id", "age_months", "condition_name"], as_index=False)
+    grouped = gaze_fixations.groupby(["participant_id", "age_months", "condition_name"], as_index=False)
 
     results = []
     for (participant, age, condition), group in grouped:
@@ -153,13 +153,13 @@ def calculate_proportion_primary_aois(gaze_events: pd.DataFrame) -> pd.DataFrame
     return pd.DataFrame(results)
 
 
-def calculate_social_triplet_rate(gaze_events: pd.DataFrame) -> pd.DataFrame:
+def calculate_social_triplet_rate(gaze_fixations: pd.DataFrame) -> pd.DataFrame:
     """
     Calculate social gaze triplet rate per participant per condition.
 
     Uses simple detection: count triplets per participant per condition.
     """
-    if gaze_events.empty:
+    if gaze_fixations.empty:
         return pd.DataFrame(columns=["participant_id", "age_months", "condition_name", "social_triplet_rate"])
 
     # Simple triplet detection: man_face -> toy_present -> woman_face (or reverse)
@@ -170,7 +170,7 @@ def calculate_social_triplet_rate(gaze_events: pd.DataFrame) -> pd.DataFrame:
 
     triplet_counts = []
 
-    for (participant, trial), trial_df in gaze_events.groupby(["participant_id", "trial_number"]):
+    for (participant, trial), trial_df in gaze_fixations.groupby(["participant_id", "trial_number"]):
         trial_df = trial_df.sort_values("gaze_onset_time").reset_index(drop=True)
         count = 0
 
@@ -465,7 +465,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-5 developmental trajectory analysis")
 
     try:
-        gaze_events = _load_gaze_events(config)
+        gaze_fixations = _load_gaze_fixations(config)
     except FileNotFoundError as exc:
         LOGGER.warning("Skipping AR-5 analysis: %s", exc)
         return {
@@ -475,8 +475,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             "pdf_path": "",
         }
 
-    if gaze_events.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-5 analysis")
+    if gaze_fixations.empty:
+        LOGGER.warning("Gaze fixations file is empty; skipping AR-5 analysis")
         return {
             "report_id": "AR-5",
             "title": "Developmental Trajectory Analysis",
@@ -488,7 +488,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Calculate dependent variable (proportion of primary AOIs)
     dependent_var = "proportion_primary_aois"
-    data = calculate_proportion_primary_aois(gaze_events)
+    data = calculate_proportion_primary_aois(gaze_fixations)
 
     if data.empty:
         LOGGER.warning("No valid data for AR-5 analysis")

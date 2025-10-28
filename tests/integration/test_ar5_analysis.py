@@ -10,13 +10,13 @@ import pytest
 from src.analysis import ar5_development as ar5
 
 
-def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
-    """Create sample gaze events with age variation for integration testing."""
+def _create_sample_gaze_fixations_with_age(output_path: Path) -> pd.DataFrame:
+    """Create sample gaze fixations with age variation for integration testing."""
     data = pd.DataFrame(
         [
             # Younger infants (8 months) - show developmental pattern
             {
-                "gaze_event_id": 1,
+                "gaze_fixation_id": 1,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -34,7 +34,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.4,
             },
             {
-                "gaze_event_id": 2,
+                "gaze_fixation_id": 2,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -53,7 +53,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
             },
             # Middle age (10 months)
             {
-                "gaze_event_id": 3,
+                "gaze_fixation_id": 3,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 10,
@@ -71,7 +71,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.5,
             },
             {
-                "gaze_event_id": 4,
+                "gaze_fixation_id": 4,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 10,
@@ -90,7 +90,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
             },
             # Older infants (12 months) - different pattern
             {
-                "gaze_event_id": 5,
+                "gaze_fixation_id": 5,
                 "participant_id": "P3",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -108,7 +108,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.6,
             },
             {
-                "gaze_event_id": 6,
+                "gaze_fixation_id": 6,
                 "participant_id": "P3",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -127,7 +127,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
             },
             # Add HUG condition data for comparison
             {
-                "gaze_event_id": 7,
+                "gaze_fixation_id": 7,
                 "participant_id": "P1",
                 "participant_type": "infant",
                 "age_months": 8,
@@ -145,7 +145,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.2,
             },
             {
-                "gaze_event_id": 8,
+                "gaze_fixation_id": 8,
                 "participant_id": "P2",
                 "participant_type": "infant",
                 "age_months": 10,
@@ -163,7 +163,7 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
                 "gaze_offset_time": 0.24,
             },
             {
-                "gaze_event_id": 9,
+                "gaze_fixation_id": 9,
                 "participant_id": "P3",
                 "participant_type": "infant",
                 "age_months": 12,
@@ -189,11 +189,11 @@ def _create_sample_gaze_events_with_age(output_path: Path) -> pd.DataFrame:
 
 
 def test_ar5_analysis_end_to_end(tmp_path: Path):
-    """Test AR-5 analysis from gaze events to report generation."""
-    # Setup: Create sample gaze events with age variation
+    """Test AR-5 analysis from gaze fixations to report generation."""
+    # Setup: Create sample gaze fixations with age variation
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
-    _create_sample_gaze_events_with_age(gaze_events_path)
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
+    _create_sample_gaze_fixations_with_age(gaze_fixations_path)
 
     # Setup: Create results directory
     results_dir = tmp_path / "results"
@@ -266,7 +266,7 @@ def test_ar5_analysis_end_to_end(tmp_path: Path):
 
 def test_ar5_calculate_proportion_primary_aois():
     """Test proportion calculation with real-like data structure."""
-    gaze_events = pd.DataFrame(
+    gaze_fixations = pd.DataFrame(
         [
             {
                 "participant_id": "P1",
@@ -299,7 +299,7 @@ def test_ar5_calculate_proportion_primary_aois():
         ]
     )
 
-    result = ar5.calculate_proportion_primary_aois(gaze_events)
+    result = ar5.calculate_proportion_primary_aois(gaze_fixations)
 
     # P1: 500 / 1000 = 0.5
     p1_row = result[result["participant_id"] == "P1"]
@@ -310,8 +310,8 @@ def test_ar5_calculate_proportion_primary_aois():
     assert pytest.approx(p2_row.iloc[0]["proportion_primary_aois"], rel=1e-6) == 0.8
 
 
-def test_ar5_missing_gaze_events_file(tmp_path: Path):
-    """Test AR-5 analysis when gaze events file is missing."""
+def test_ar5_missing_gaze_fixations_file(tmp_path: Path):
+    """Test AR-5 analysis when gaze fixations file is missing."""
     processed_dir = tmp_path / "data" / "processed"
     processed_dir.mkdir(parents=True, exist_ok=True)
 
@@ -334,14 +334,14 @@ def test_ar5_missing_gaze_events_file(tmp_path: Path):
     assert result["pdf_path"] == ""
 
 
-def test_ar5_empty_gaze_events(tmp_path: Path):
-    """Test AR-5 analysis with empty gaze events file."""
-    # Setup: Create empty gaze events file
+def test_ar5_empty_gaze_fixations(tmp_path: Path):
+    """Test AR-5 analysis with empty gaze fixations file."""
+    # Setup: Create empty gaze fixations file
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
 
     processed_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "age_months"]).to_csv(gaze_events_path, index=False)
+    pd.DataFrame(columns=["gaze_duration_ms", "participant_id", "age_months"]).to_csv(gaze_fixations_path, index=False)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)

@@ -35,20 +35,20 @@ class DissociationResult:
     warnings: List[str]
 
 
-def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
-    """Load gaze events from processed data directory."""
+def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
+    """Load gaze fixations from processed data directory."""
     processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+    default_path = processed_dir / "gaze_fixations.csv"
+    child_path = processed_dir / "gaze_fixations_child.csv"
 
     if default_path.exists():
         path = default_path
     elif child_path.exists():
         path = default_path
     else:
-        raise FileNotFoundError("No gaze events file found for AR-7 analysis")
+        raise FileNotFoundError("No gaze fixations file found for AR-7 analysis")
 
-    LOGGER.info("Loading gaze events from %s", path)
+    LOGGER.info("Loading gaze fixations from %s", path)
     return pd.read_csv(path)
 
 
@@ -106,7 +106,7 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def calculate_condition_metrics(
-    gaze_events: pd.DataFrame,
+    gaze_fixations: pd.DataFrame,
     target_conditions: Optional[List[str]] = None,
 ) -> pd.DataFrame:
     """
@@ -114,32 +114,32 @@ def calculate_condition_metrics(
 
     For AR-7, we need participant-level summaries across conditions.
     """
-    if gaze_events.empty:
+    if gaze_fixations.empty:
         return pd.DataFrame(columns=["participant_id", "condition_name", "proportion_primary_aois"])
 
     # Filter to target conditions if specified
     if target_conditions:
         # Normalize condition names for matching (partial match)
-        gaze_events = gaze_events.copy()
+        gaze_fixations = gaze_fixations.copy()
 
         # Create a mask for rows that contain any of the target conditions
-        mask = pd.Series([False] * len(gaze_events), index=gaze_events.index)
+        mask = pd.Series([False] * len(gaze_fixations), index=gaze_fixations.index)
         for target in target_conditions:
             # Match if target appears in condition_name (e.g., "GIVE" matches "GIVE_WITH")
-            mask |= gaze_events["condition_name"].str.upper().str.contains(target.upper(), na=False)
+            mask |= gaze_fixations["condition_name"].str.upper().str.contains(target.upper(), na=False)
 
-        gaze_events = gaze_events[mask]
+        gaze_fixations = gaze_fixations[mask]
 
-    if gaze_events.empty:
+    if gaze_fixations.empty:
         LOGGER.warning("No data found for target conditions: %s", target_conditions)
         return pd.DataFrame(columns=["participant_id", "condition_name", "proportion_primary_aois"])
 
     # Define primary AOIs
     primary_aois = ["man_face", "woman_face", "toy_present"]
-    gaze_events["is_primary"] = gaze_events["aoi_category"].isin(primary_aois)
+    gaze_fixations["is_primary"] = gaze_fixations["aoi_category"].isin(primary_aois)
 
     # Calculate proportion per participant per condition
-    grouped = gaze_events.groupby(["participant_id", "condition_name"], as_index=False)
+    grouped = gaze_fixations.groupby(["participant_id", "condition_name"], as_index=False)
 
     results = []
     for (participant, condition), group in grouped:
@@ -389,7 +389,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-7 event dissociation analysis")
 
     try:
-        gaze_events = _load_gaze_events(config)
+        gaze_fixations = _load_gaze_fixations(config)
     except FileNotFoundError as exc:
         LOGGER.warning("Skipping AR-7 analysis: %s", exc)
         return {
@@ -399,8 +399,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             "pdf_path": "",
         }
 
-    if gaze_events.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-7 analysis")
+    if gaze_fixations.empty:
+        LOGGER.warning("Gaze fixations file is empty; skipping AR-7 analysis")
         return {
             "report_id": "AR-7",
             "title": "Event Dissociation Analysis",
@@ -415,7 +415,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
     # Calculate metrics per condition
     dependent_var = "proportion_primary_aois"
-    data = calculate_condition_metrics(gaze_events, target_conditions)
+    data = calculate_condition_metrics(gaze_fixations, target_conditions)
 
     if data.empty:
         LOGGER.warning("No valid data for AR-7 analysis (target conditions may be missing)")

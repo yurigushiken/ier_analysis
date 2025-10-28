@@ -176,8 +176,8 @@ hug = participant_means[participant_means["condition_name"].contains("HUG_WITH")
 51 Participants
   ├─ Each sees ~10-11 conditions
   │    ├─ Each condition presented ~3-9 times (trials)
-  │    │    └─ Each trial has multiple gaze events
-  │    │         └─ Each gaze event has 3+ frames
+  │    │    └─ Each trial has multiple gaze fixations
+  │    │         └─ Each gaze fixation has 3+ frames
 ```
 
 ### **For Statistical Testing**:
@@ -186,13 +186,13 @@ hug = participant_means[participant_means["condition_name"].contains("HUG_WITH")
 |-------|-------|---------|
 | **Participants** | 51 | ✅ **Independent samples t-test** |
 | Trials | ~2,568 | Aggregate to participant means first |
-| Gaze Events | 19,811 | Calculate proportions within trials |
-| Frames | ~250,000+ | Aggregated into gaze events |
+| Gaze Fixations | 19,811 | Calculate proportions within trials |
+| Frames | ~250,000+ | Aggregated into gaze fixations |
 
 ### **Correct Analysis Flow**:
 
 ```
-19,811 Gaze Events
+19,811 Gaze Fixations
   ↓ [Calculate toy-looking proportion per trial]
 ~2,568 Trial Proportions  
   ↓ [Average to participant level per condition]
@@ -232,13 +232,13 @@ python check_data.py
 ### **View Combined Child + Adult Data** (after processing adult):
 ```powershell
 conda activate ier_analysis
-python -c "import pandas as pd; child = pd.read_csv('data/processed/gaze_events_child.csv'); adult = pd.read_csv('data/processed/gaze_events_adult.csv'); combined = pd.concat([child, adult], ignore_index=True); print(f'Child: {len(child)} events, {child[\"participant_id\"].nunique()} participants'); print(f'Adult: {len(adult)} events, {adult[\"participant_id\"].nunique()} participants'); print(f'Combined: {len(combined)} events, {combined[\"participant_id\"].nunique()} participants')"
+python -c "import pandas as pd; child = pd.read_csv('data/processed/gaze_fixations_child.csv'); adult = pd.read_csv('data/processed/gaze_fixations_adult.csv'); combined = pd.concat([child, adult], ignore_index=True); print(f'Child: {len(child)} events, {child[\"participant_id\"].nunique()} participants'); print(f'Adult: {len(adult)} events, {adult[\"participant_id\"].nunique()} participants'); print(f'Combined: {len(combined)} events, {combined[\"participant_id\"].nunique()} participants')"
 ```
 
 ### **Create Combined CSV** (optional, for external analysis):
 ```powershell
 conda activate ier_analysis
-python -c "import pandas as pd; child = pd.read_csv('data/processed/gaze_events_child.csv'); adult = pd.read_csv('data/processed/gaze_events_adult.csv'); combined = pd.concat([child, adult], ignore_index=True); combined.to_csv('data/processed/gaze_events_combined.csv', index=False); print(f'Created: data/processed/gaze_events_combined.csv ({len(combined)} rows)')"
+python -c "import pandas as pd; child = pd.read_csv('data/processed/gaze_fixations_child.csv'); adult = pd.read_csv('data/processed/gaze_fixations_adult.csv'); combined = pd.concat([child, adult], ignore_index=True); combined.to_csv('data/processed/gaze_fixations_combined.csv', index=False); print(f'Created: data/processed/gaze_fixations_combined.csv ({len(combined)} rows)')"
 ```
 
 ---
@@ -283,7 +283,7 @@ After regenerating, check:
 ### **Repeated Measures Structure**:
 ```
 Your data is NESTED:
-  Frames → Gaze Events → Trials → Participants
+  Frames → Gaze Fixations → Trials → Participants
   
 ALWAYS test at the PARTICIPANT level for between-subjects comparisons.
 ```

@@ -296,7 +296,7 @@ print(f"   - Events are REPEATED multiple times")
 print(f"\n5. NESTING STRUCTURE:")
 print(f"   Level 3: Participant (N = {len(participant_events)})")
 print(f"   Level 2: Event presentation (~{avg_presentations:.0f} per participant)")
-print(f"   Level 1: Gaze event (derived from 3+ consecutive frames on same AOI)")
+print(f"   Level 1: Gaze fixation (derived from 3+ consecutive frames on same AOI)")
 print(f"   Level 0: Frame (150-185 per event presentation, aggregated)")
 
 print(f"\n6. IMPLICATIONS FOR LMM/GLMM:")
@@ -333,7 +333,7 @@ with open(output_file, 'w') as f:
     f.write("=" * 80 + "\n")
     f.write("Participant\n")
     f.write("  └─ Event Presentation (video clip)\n")
-    f.write("      └─ Gaze Event (3+ frames on same AOI)\n")
+    f.write("      └─ Gaze Fixation (3+ frames on same AOI)\n")
     f.write("          └─ Frame (aggregated)\n")
 
 print(f"\n✓ Detailed results saved to: {output_file}")

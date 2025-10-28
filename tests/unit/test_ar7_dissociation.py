@@ -60,9 +60,9 @@ def _sample_condition_data() -> pd.DataFrame:
 
 def test_calculate_condition_metrics():
     """Test condition-level metric calculation."""
-    gaze_events = _sample_condition_data()
+    gaze_fixations = _sample_condition_data()
 
-    result = ar7.calculate_condition_metrics(gaze_events)
+    result = ar7.calculate_condition_metrics(gaze_fixations)
 
     assert not result.empty
     assert "condition_name" in result.columns
@@ -84,10 +84,10 @@ def test_calculate_condition_metrics():
 
 def test_calculate_condition_metrics_filtered():
     """Test condition metrics with target conditions filter."""
-    gaze_events = _sample_condition_data()
+    gaze_fixations = _sample_condition_data()
 
     # Only request GIVE and HUG
-    result = ar7.calculate_condition_metrics(gaze_events, target_conditions=["GIVE", "HUG"])
+    result = ar7.calculate_condition_metrics(gaze_fixations, target_conditions=["GIVE", "HUG"])
 
     conditions_found = result["condition_name"].unique()
     assert "SHOW" not in conditions_found or len(result[result["condition_name"] == "SHOW"]) == 0

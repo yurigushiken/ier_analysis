@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from src.preprocessing.gaze_detector import detect_gaze_events
+from src.preprocessing.gaze_detector import detect_gaze_fixations
 
 
 def _build_dataframe() -> pd.DataFrame:
@@ -23,9 +23,9 @@ def _build_dataframe() -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def test_detect_gaze_events_identifies_sequences():
+def test_detect_gaze_fixations_identifies_sequences():
     df = _build_dataframe()
-    events = detect_gaze_events(df)
+    events = detect_gaze_fixations(df)
 
     assert len(events) == 1
     event = events.iloc[0]
@@ -34,12 +34,12 @@ def test_detect_gaze_events_identifies_sequences():
     assert pytest.approx(event["gaze_duration_ms"], rel=1e-4) == 99.0
 
 
-def test_detect_gaze_events_handles_short_sequences():
+def test_detect_gaze_fixations_handles_short_sequences():
     df = _build_dataframe()
     df.loc[:, "What"] = ["man", "man", "toy", "toy", "toy"]
     df.loc[:, "Where"] = ["face", "face", "other", "other", "other"]
 
-    events = detect_gaze_events(df)
+    events = detect_gaze_fixations(df)
 
     assert len(events) == 1
     event = events.iloc[0]
@@ -47,6 +47,6 @@ def test_detect_gaze_events_handles_short_sequences():
     assert event["gaze_duration_frames"] == 3
 
 
-def test_detect_gaze_events_empty_dataframe():
-    events = detect_gaze_events(pd.DataFrame())
+def test_detect_gaze_fixations_empty_dataframe():
+    events = detect_gaze_fixations(pd.DataFrame())
     assert events.empty

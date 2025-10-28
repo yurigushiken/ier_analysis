@@ -1,7 +1,7 @@
 ================================================================================
 Traceback (most recent call last):
   File "C:\CascadeProjects\ier_analysis\temp_analysis\terminology_inventory.py", line 8, in <module>
-    print("TERMINOLOGY INVENTORY: 'gaze event' \u2192 'gaze fixation'")
+    print("TERMINOLOGY INVENTORY: 'gaze fixation' \u2192 'gaze fixation'")
   File "C:\Users\yurig\miniforge3\envs\ier_analysis\Lib\encodings\cp1252.py", line 19, in encode
     return codecs.charmap_encode(input,self.errors,encoding_table)[0]
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

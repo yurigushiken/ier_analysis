@@ -43,13 +43,13 @@
 
 ### **Issue 3: Off-Screen Frames (no,signal)** ✅ FIXED
 
-**Question**: How to handle off-screen frames in gaze event detection?
+**Question**: How to handle off-screen frames in gaze fixation detection?
 
 **Answer**: **Option B - Exclude and break sequences**
 
 **Implementation rule**:
 ```python
-# Off-screen frames (no,signal) BREAK gaze event sequences
+# Off-screen frames (no,signal) BREAK gaze fixation sequences
 
 Frame 1: AOI = "toy,other"  ✓
 Frame 2: AOI = "toy,other"  ✓
@@ -59,8 +59,8 @@ Frame 5: AOI = "toy,other"  ✓
 Frame 6: AOI = "toy,other"  ✓
 
 Result:
-  Gaze Event 1: Frames 1-2 (2 frames) → TOO SHORT, exclude
-  Gaze Event 2: Frames 4-6 (3 frames) → VALID gaze event
+  Gaze Fixation 1: Frames 1-2 (2 frames) → TOO SHORT, exclude
+  Gaze Fixation 2: Frames 4-6 (3 frames) → VALID gaze fixation
 ```
 
 **Rationale**:
@@ -70,7 +70,7 @@ Result:
 
 **Updated**:
 - ✅ [spec.md](../specs/001-infant-event-analysis/spec.md#L30) - Added Q&A about off-screen handling
-- 📝 **TODO**: Implement in preprocessing gaze event detection logic
+- 📝 **TODO**: Implement in preprocessing gaze fixation detection logic
 
 ---
 

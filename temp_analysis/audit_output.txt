@@ -3,7 +3,7 @@ COMPREHENSIVE AR1 AUDIT
 ================================================================================
 
 1. DATA LOADED
-   Total gaze events: 26,560
+   Total gaze fixations: 26,560
    Participants: 66
    Participant types: {'infant': np.int64(19811), 'adult': np.int64(6749)}
 
@@ -15,13 +15,13 @@ COMPREHENSIVE AR1 AUDIT
 3. REPLICATING AR1 CALCULATION STEP-BY-STEP
 
    Step 1: Exclude off-screen gazes
-   - Total gaze events: 26,560
+   - Total gaze fixations: 26,560
    - After excluding off_screen: 21,802
    - Percentage on-screen: 82.1%
 
    Step 2: Identify toy gazes
-   - On-screen gaze events: 21,802
-   - Toy gaze events: 4,266
+   - On-screen gaze fixations: 21,802
+   - Toy gaze fixations: 4,266
    - Toy gaze breakdown:
       toy_present: 2,644
       toy_location: 1,622

@@ -1,4 +1,4 @@
-"""Gaze event detection logic using 3+ consecutive frame rule."""
+"""Gaze fixation detection logic using 3+ consecutive frame rule."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from src.preprocessing.aoi_mapper import map_what_where_to_aoi
 
 
 @dataclass
-class GazeEvent:
+class GazeFixation:
     participant_id: str
     participant_type: str
     age_months: int
@@ -29,12 +29,12 @@ class GazeEvent:
     gaze_offset_time: float
 
 
-def detect_gaze_events(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.DataFrame:
-    """Detect gaze events from raw frame data using 3+ consecutive frame rule.
-    
-    A gaze event is defined as a sequence of 3 or more consecutive frames where
+def detect_gaze_fixations(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.DataFrame:
+    """Detect gaze fixations from raw frame data using 3+ consecutive frame rule.
+
+    A gaze fixation is defined as a sequence of 3 or more consecutive frames where
     an infant's gaze remains on the same Area of Interest (AOI). This function
-    processes raw eye-tracking data and identifies all valid gaze events according
+    processes raw eye-tracking data and identifies all valid gaze fixations according
     to the scientific definition from Gordon (2003).
     
     Parameters
@@ -51,14 +51,14 @@ def detect_gaze_events(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.Da
         - segment: event segment (approach, action, post)
         - frame_count_trial_number: frame index within trial
     min_frames : int, default=3
-        Minimum number of consecutive frames required to constitute a gaze event.
+        Minimum number of consecutive frames required to constitute a gaze fixation.
         Default is 3 frames as per research protocol.
-    
+
     Returns
     -------
     pd.DataFrame
-        Gaze events dataframe with columns:
-        - gaze_event_id: auto-incremented unique identifier
+        Gaze fixations dataframe with columns:
+        - gaze_fixation_id: auto-incremented unique identifier
         - participant_id, participant_type, age_months, age_group
         - trial_number, condition, condition_name, segment
         - aoi_category: mapped AOI label (e.g., "woman_face", "toy_present")
@@ -71,14 +71,14 @@ def detect_gaze_events(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.Da
     -----
     - Off-screen frames (no,signal AOI) break gaze sequences and are excluded
     - Invalid AOI combinations are silently skipped with sequence reset
-    - Events are detected independently within each participant × trial combination
+    - Fixations are detected independently within each participant × trial combination
     - Frame ordering is critical: data is sorted by Participant, trial_number, Frame Number
-    
+
     Examples
     --------
     >>> raw_data = load_csv_files(["data/csvs_human_verified_vv/child/"])
-    >>> gaze_events = detect_gaze_events(raw_data, min_frames=3)
-    >>> print(f"Detected {len(gaze_events)} gaze events")
+    >>> gaze_fixations = detect_gaze_fixations(raw_data, min_frames=3)
+    >>> print(f"Detected {len(gaze_fixations)} gaze fixations")
     
     See Also
     --------
@@ -86,21 +86,21 @@ def detect_gaze_events(dataframe: pd.DataFrame, *, min_frames: int = 3) -> pd.Da
     master_log_generator.generate_master_log : Wrapper function for full preprocessing
     """
     if dataframe.empty:
-        return pd.DataFrame(columns=[field.name for field in fields(GazeEvent)])
+        return pd.DataFrame(columns=[field.name for field in fields(GazeFixation)])
 
-    events: List[GazeEvent] = []
+    fixations: List[GazeFixation] = []
 
     grouped = dataframe.sort_values(["Participant", "trial_number", "Frame Number"]).groupby(
         ["Participant", "trial_number"], sort=False
     )
 
     for (_, _), group in grouped:
-        _extract_events_from_group(group, events, min_frames=min_frames)
+        _extract_fixations_from_group(group, fixations, min_frames=min_frames)
 
-    return pd.DataFrame([event.__dict__ for event in events])
+    return pd.DataFrame([fixation.__dict__ for fixation in fixations])
 
 
-def _extract_events_from_group(group: pd.DataFrame, events: List[GazeEvent], *, min_frames: int) -> None:
+def _extract_fixations_from_group(group: pd.DataFrame, fixations: List[GazeFixation], *, min_frames: int) -> None:
     current_aoi = None
     buffer: List[pd.Series] = []
 
@@ -115,14 +115,14 @@ def _extract_events_from_group(group: pd.DataFrame, events: List[GazeEvent], *, 
         if aoi == current_aoi:
             buffer.append(row)
         else:
-            _finalize_event(buffer, events, min_frames)
+            _finalize_fixation(buffer, fixations, min_frames)
             current_aoi = aoi
             buffer = [row]
 
-    _finalize_event(buffer, events, min_frames)
+    _finalize_fixation(buffer, fixations, min_frames)
 
 
-def _finalize_event(buffer: List[pd.Series], events: List[GazeEvent], min_frames: int) -> None:
+def _finalize_fixation(buffer: List[pd.Series], fixations: List[GazeFixation], min_frames: int) -> None:
     if len(buffer) < min_frames:
         return
 
@@ -131,8 +131,8 @@ def _finalize_event(buffer: List[pd.Series], events: List[GazeEvent], min_frames
 
     duration_ms = (float(last["Offset"]) - float(first["Onset"])) * 1000.0
 
-    events.append(
-        GazeEvent(
+    fixations.append(
+        GazeFixation(
             participant_id=first["Participant"],
             participant_type=first["participant_type"],
             age_months=int(first["participant_age_months"]),
@@ -152,4 +152,4 @@ def _finalize_event(buffer: List[pd.Series], events: List[GazeEvent], min_frames
     )
 
 
-__all__ = ["detect_gaze_events", "GazeEvent"]
+__all__ = ["detect_gaze_fixations", "GazeFixation"]

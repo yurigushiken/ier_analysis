@@ -1,0 +1,8 @@
+Line 265 length: 128
+Contains arrow corruption: True
+First 50 chars:             label = f"{from_a} ÃƒÆ’Ã‚Â¢�
+Char at position 40-60: 'Ã‚Â¢ÃƒÂ¢Ã�'
+
+CORRUPTION FOUND!
+Position: 31
+Context: 'm_a} ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢'

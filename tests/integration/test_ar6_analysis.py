@@ -9,8 +9,8 @@ import pandas as pd
 from src.analysis import ar6_learning as ar6
 
 
-def _create_sample_gaze_events_with_trials(output_path: Path) -> pd.DataFrame:
-    """Create sample gaze events showing trial-order effects."""
+def _create_sample_gaze_fixations_with_trials(output_path: Path) -> pd.DataFrame:
+    """Create sample gaze fixations showing trial-order effects."""
     data = []
     for participant_id in ["P1", "P2", "P3"]:
         for trial_num in range(1, 4):  # 3 trials per participant
@@ -20,7 +20,7 @@ def _create_sample_gaze_events_with_trials(output_path: Path) -> pd.DataFrame:
             data.extend(
                 [
                     {
-                        "gaze_event_id": len(data) + 1,
+                        "gaze_fixation_id": len(data) + 1,
                         "participant_id": participant_id,
                         "participant_type": "infant",
                         "age_months": 10,
@@ -39,7 +39,7 @@ def _create_sample_gaze_events_with_trials(output_path: Path) -> pd.DataFrame:
                         "gaze_offset_time": 0.6,
                     },
                     {
-                        "gaze_event_id": len(data) + 2,
+                        "gaze_fixation_id": len(data) + 2,
                         "participant_id": participant_id,
                         "participant_type": "infant",
                         "age_months": 10,
@@ -67,11 +67,11 @@ def _create_sample_gaze_events_with_trials(output_path: Path) -> pd.DataFrame:
 
 
 def test_ar6_analysis_end_to_end(tmp_path: Path):
-    """Test AR-6 analysis from gaze events to report generation."""
+    """Test AR-6 analysis from gaze fixations to report generation."""
     # Setup
     processed_dir = tmp_path / "data" / "processed"
-    gaze_events_path = processed_dir / "gaze_events_child.csv"
-    _create_sample_gaze_events_with_trials(gaze_events_path)
+    gaze_fixations_path = processed_dir / "gaze_fixations_child.csv"
+    _create_sample_gaze_fixations_with_trials(gaze_fixations_path)
 
     results_dir = tmp_path / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -106,8 +106,8 @@ def test_ar6_analysis_end_to_end(tmp_path: Path):
     assert summary_csv.exists()
 
 
-def test_ar6_missing_gaze_events(tmp_path: Path):
-    """Test AR-6 with missing gaze events file."""
+def test_ar6_missing_gaze_fixations(tmp_path: Path):
+    """Test AR-6 with missing gaze fixations file."""
     processed_dir = tmp_path / "data" / "processed"
     processed_dir.mkdir(parents=True, exist_ok=True)
 

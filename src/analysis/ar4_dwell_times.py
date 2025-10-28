@@ -25,7 +25,7 @@ class ParticipantDwellSummary:
     participant_id: str
     condition_name: str
     mean_dwell_time_ms: float
-    gaze_event_count: int
+    gaze_fixation_count: int
 
 
 def _remove_outliers(series: pd.Series, threshold_sd: Optional[float]) -> pd.Series:
@@ -77,7 +77,7 @@ def calculate_participant_dwell_times(
                 "participant_id",
                 "condition_name",
                 "mean_dwell_time_ms",
-                "gaze_event_count",
+                "gaze_fixation_count",
             ]
         )
 
@@ -94,7 +94,7 @@ def calculate_participant_dwell_times(
                 "participant_id",
                 "condition_name",
                 "mean_dwell_time_ms",
-                "gaze_event_count",
+                "gaze_fixation_count",
             ]
         )
 
@@ -102,7 +102,7 @@ def calculate_participant_dwell_times(
 
     summaries = grouped["gaze_duration_ms"].agg(
         mean_dwell_time_ms="mean",
-        gaze_event_count="size",
+        gaze_fixation_count="size",
     )
 
     return summaries
@@ -153,7 +153,7 @@ def summarize_by_aoi(
                 "condition_name",
                 "aoi_category",
                 "mean_dwell_time_ms",
-                "gaze_event_count",
+                "gaze_fixation_count",
             ]
         )
 
@@ -164,13 +164,13 @@ def summarize_by_aoi(
     grouped = filtered.groupby(["condition_name", "aoi_category"], as_index=False)
     summary = grouped["gaze_duration_ms"].agg(
         mean_dwell_time_ms="mean",
-        gaze_event_count="size",
+        gaze_fixation_count="size",
     )
 
     if summary.empty:
         return summary
 
-    return summary[summary["gaze_event_count"] >= min_events].reset_index(drop=True)
+    return summary[summary["gaze_fixation_count"] >= min_events].reset_index(drop=True)
 
 
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -188,7 +188,7 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
         "statistics": {},
         "aoi_analysis": {
             "aoi_categories_of_interest": [],
-            "min_gaze_events_per_aoi": 3,
+            "min_gaze_fixations_per_aoi": 3,
         },
         "visualization": {},
         "output": {},
@@ -208,19 +208,19 @@ def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
     return merged
 
 
-def _load_gaze_events(config: Dict[str, Any]) -> pd.DataFrame:
+def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
     processed_dir = Path(config["paths"]["processed_data"])
-    default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+    default_path = processed_dir / "gaze_fixations.csv"
+    child_path = processed_dir / "gaze_fixations_child.csv"
 
     if default_path.exists():
         path = default_path
     elif child_path.exists():
         path = default_path
     else:
-        raise FileNotFoundError("No gaze events file found for AR-4 analysis")
+        raise FileNotFoundError("No gaze fixations file found for AR-4 analysis")
 
-    LOGGER.info("Loading gaze events from %s", path)
+    LOGGER.info("Loading gaze fixations from %s", path)
     return pd.read_csv(path)
 
 
@@ -245,7 +245,7 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
         thresholds.append(f"outliers beyond ±{dwell_cfg['outlier_threshold_sd']} SD removed")
     threshold_text = "; ".join(thresholds)
     return (
-        "Dwell time was defined as the duration of individual gaze events in milliseconds. "
+        "Dwell time was defined as the duration of individual gaze fixations in milliseconds. "
         f"Filters applied: {threshold_text}. Mean dwell time per participant per condition forms the basis for summaries."
     )
 
@@ -349,7 +349,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     LOGGER.info("Starting AR-4 dwell time analysis")
 
     try:
-        gaze_events = _load_gaze_events(config)
+        gaze_fixations = _load_gaze_fixations(config)
     except FileNotFoundError as exc:
         LOGGER.warning("Skipping AR-4 analysis: %s", exc)
         return {
@@ -359,8 +359,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             "pdf_path": "",
         }
 
-    if gaze_events.empty:
-        LOGGER.warning("Gaze events file is empty; skipping AR-4 analysis")
+    if gaze_fixations.empty:
+        LOGGER.warning("Gaze fixations file is empty; skipping AR-4 analysis")
         return {
             "report_id": "AR-4",
             "title": "Dwell Time Analysis",
@@ -375,7 +375,7 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     outlier_threshold_sd = dwell_cfg.get("outlier_threshold_sd")
 
     participant_means = calculate_participant_dwell_times(
-        gaze_events,
+        gaze_fixations,
         min_dwell_time_ms=min_dwell_time_ms,
         max_dwell_time_ms=max_dwell_time_ms,
         outlier_threshold_sd=outlier_threshold_sd,
@@ -384,9 +384,9 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     condition_summary = summarize_by_condition(participant_means)
 
     aoi_cfg = settings.get("aoi_analysis", {})
-    min_events = int(aoi_cfg.get("min_gaze_events_per_aoi", 3))
+    min_events = int(aoi_cfg.get("min_gaze_fixations_per_aoi", 3))
     aoi_summary = summarize_by_aoi(
-        gaze_events,
+        gaze_fixations,
         min_events=min_events,
         min_dwell_time_ms=min_dwell_time_ms,
         max_dwell_time_ms=max_dwell_time_ms,

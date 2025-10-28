@@ -10,7 +10,7 @@ Design sources loaded:
 - plan.md (tech stack, structure)
 - spec.md (user stories with priorities)
 - data-model.md (entities)
-- contracts/ (raw_data_schema.json, gaze_events_schema.json, report_schema.json)
+- contracts/ (raw_data_schema.json, gaze_fixations_schema.json, report_schema.json)
 - research.md (decisions)
 - quickstart.md (test scenarios)
 
@@ -48,8 +48,8 @@ Purpose: Core pipeline infrastructure required before any user story.
       C:\CascadeProjects\ier_analysis\src\utils\validation.py
 - [X] T007 Add raw CSV contract test (columns/types) per contracts/raw_data_schema.json
       C:\CascadeProjects\ier_analysis\tests\contract\test_raw_csv_schema.py
-- [X] T008 [P] Add gaze_events.csv contract test per contracts/gaze_events_schema.json
-      C:\CascadeProjects\ier_analysis\tests\contract\test_gaze_events_schema.py
+- [X] T008 [P] Add gaze_fixations.csv contract test per contracts/gaze_fixations_schema.json
+      C:\CascadeProjects\ier_analysis\tests\contract\test_gaze_fixations_schema.py
 - [X] T009 [P] Add report outputs contract test per contracts/report_schema.json
       C:\CascadeProjects\ier_analysis\tests\contract\test_report_outputs.py
 - [X] T010 Implement CSV loader with structural validation and safe globbing
@@ -59,12 +59,12 @@ Purpose: Core pipeline infrastructure required before any user story.
 - [X] T012 [P] Implement gaze detector (>=3 consecutive frames rule)
       C:\CascadeProjects\ier_analysis\src\preprocessing\gaze_detector.py
 
-- [X] T013 Implement master log generator (writes gaze_events.csv)
+- [X] T013 Implement master log generator (writes gaze_fixations.csv)
       C:\CascadeProjects\ier_analysis\src\preprocessing\master_log_generator.py
-- [X] T014 Add preprocessing integration test: CSVs → gaze_events.csv
+- [X] T014 Add preprocessing integration test: CSVs → gaze_fixations.csv
       C:\CascadeProjects\ier_analysis\tests\integration\test_preprocessing_pipeline.py
-- [X] T015 [P] Add fixtures for tests (sample raw CSV, expected gaze_events.csv)
-      C:\CascadeProjects\ier_analysis\tests\fixtures\{sample_raw_data.csv,expected_gaze_events.csv}
+- [X] T015 [P] Add fixtures for tests (sample raw CSV, expected gaze_fixations.csv)
+      C:\CascadeProjects\ier_analysis\tests\fixtures\{sample_raw_data.csv,expected_gaze_fixations.csv}
 - [X] T016 Implement shared statistical utilities (LMM/GLMM helpers)
       C:\CascadeProjects\ier_analysis\src\reporting\statistics.py
 - [X] T017 [P] Implement visualization utilities (bar, line, directed graphs)
@@ -102,12 +102,12 @@ Checkpoint: Foundation ready – user stories can start in parallel where indepe
 ## Phase 3: User Story 1 – Core Event Salience (Priority: P1) [US1] 🎯 MVP
 
 Goal: Quantify toy-looking proportions (GIVE_WITH vs HUG_WITH) and generate HTML/PDF report.
-Independent Test: Running AR-1 alone produces complete report with stats/figures from gaze_events.csv.
+Independent Test: Running AR-1 alone produces complete report with stats/figures from gaze_fixations.csv.
 
 ### Tests (write first)
 - [X] T022 [P] [US1] Unit tests for AR-1 stats and plotting
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar1_duration.py
-- [X] T023 [P] [US1] Integration test: gaze_events.csv → AR-1 report
+- [X] T023 [P] [US1] Integration test: gaze_fixations.csv → AR-1 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar1_analysis.py
 
 ### Implementation
@@ -131,7 +131,7 @@ Independent Test: Running AR-2 alone produces matrices, graphs, and report.
 ### Tests
 - [X] T027 [P] [US2] Unit tests for transition derivation and matrix math
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar2_transitions.py
-- [X] T028 [P] [US2] Integration: gaze_events.csv → AR-2 report
+- [X] T028 [P] [US2] Integration: gaze_fixations.csv → AR-2 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar2_analysis.py
 
 ### Implementation
@@ -153,7 +153,7 @@ Independent Test: Running AR-3 alone produces counts, stats, and report.
 ### Tests
 - [X] T031 [P] [US3] Unit tests for triplet detection and exclusions
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar3_triplets.py
-- [X] T032 [P] [US3] Integration: gaze_events.csv → AR-3 report
+- [X] T032 [P] [US3] Integration: gaze_fixations.csv → AR-3 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar3_analysis.py
 
 ### Implementation
@@ -172,7 +172,7 @@ Independent Test: Running AR-4 alone produces dwell-time figures and tables.
 ### Tests
 - [X] T035 [P] [US4] Unit tests for dwell-time computation
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar4_dwell.py
-- [X] T036 [P] [US4] Integration: gaze_events.csv → AR-4 report
+- [X] T036 [P] [US4] Integration: gaze_fixations.csv → AR-4 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar4_analysis.py
 
 ### Implementation
@@ -191,7 +191,7 @@ Independent Test: Running AR-5 alone yields interaction plots and model summarie
 ### Tests
 - [X] T039 [P] [US5] Unit tests for model formula, diagnostics
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar5_development.py
-- [X] T040 [P] [US5] Integration: gaze_events.csv → AR-5 report
+- [X] T040 [P] [US5] Integration: gaze_fixations.csv → AR-5 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar5_analysis.py
 
 ### Implementation
@@ -210,7 +210,7 @@ Independent Test: Running AR-6 alone yields slope estimates, line plots, report.
 ### Tests
 - [X] T043 [P] [US6] Unit tests for random-slope model construction
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar6_learning.py
-- [X] T044 [P] [US6] Integration: gaze_events.csv → AR-6 report
+- [X] T044 [P] [US6] Integration: gaze_fixations.csv → AR-6 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar6_analysis.py
 
 ### Implementation
@@ -229,7 +229,7 @@ Independent Test: Running AR-7 alone yields side-by-side visuals and synthesis.
 ### Tests
 - [X] T047 [P] [US7] Unit tests for SHOW filters and synthesis logic
       C:\CascadeProjects\ier_analysis\tests\unit\test_ar7_dissociation.py
-- [X] T048 [P] [US7] Integration: gaze_events.csv → AR-7 report
+- [X] T048 [P] [US7] Integration: gaze_fixations.csv → AR-7 report
       C:\CascadeProjects\ier_analysis\tests\integration\test_ar7_analysis.py
 
 ### Implementation

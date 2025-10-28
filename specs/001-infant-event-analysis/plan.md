@@ -7,7 +7,7 @@
 
 ## Summary
 
-This project implements a comprehensive analysis pipeline for infant event representation research based on Gordon (2003). The system processes frame-by-frame eye-tracking data from CSV files, identifies gaze events (3+ consecutive frames on the same AOI), generates a master gaze_events.csv file, and executes seven analytical requirements (AR-1 through AR-7) to probe infant cognition. Each analysis produces self-contained HTML and PDF reports with statistical tests, visualizations, and interpretations. The entire pipeline is automated, modular, and reproducible, with a final compiled report integrating all findings.
+This project implements a comprehensive analysis pipeline for infant event representation research based on Gordon (2003). The system processes frame-by-frame eye-tracking data from CSV files, identifies gaze fixations (3+ consecutive frames on the same AOI), generates a master gaze_fixations.csv file, and executes seven analytical requirements (AR-1 through AR-7) to probe infant cognition. Each analysis produces self-contained HTML and PDF reports with statistical tests, visualizations, and interpretations. The entire pipeline is automated, modular, and reproducible, with a final compiled report integrating all findings.
 
 **Technical Approach**: Python-based scientific computing pipeline using pandas for data processing, **Linear Mixed Models (LMM) and Generalized Linear Mixed Models (GLMM) via statsmodels** for statistical analysis (properly handling repeated measures structure), matplotlib/seaborn for visualizations, and Jinja2 + WeasyPrint for reproducible reporting. Each analysis module uses LMM to account for trial-level nesting within participants, providing more accurate inference than traditional t-tests/ANOVA. The system follows a modular architecture with separate preprocessing, individual analysis modules (AR-1 to AR-7), and report compilation components. All intermediate results are saved, logging is comprehensive, and the design supports independent execution of individual analyses. Development in VS Code.
 
@@ -25,10 +25,10 @@ This project implements a comprehensive analysis pipeline for infant event repre
 **Storage**: File-based (CSV for data, HTML/PDF for reports). Raw data in `data/csvs_human_verified_vv/child/` and `data/csvs_human_verified_vv/adult/`, processed data in `data/processed/`, reports in `results/` and `reports/`
 
 **Testing**: pytest with TDD approach - tests written before implementation, comprehensive coverage including:
-- Unit tests for gaze event detection, AOI mapping, statistical functions
+- Unit tests for gaze fixation detection, AOI mapping, statistical functions
 - Integration tests for end-to-end pipeline execution
 - Data validation tests for CSV structure and integrity
-- Contract tests for gaze_events.csv schema
+- Contract tests for gaze_fixations.csv schema
 
 **Target Platform**: Cross-platform (Windows/Linux/macOS) scientific computing environment
 
@@ -55,7 +55,7 @@ This project implements a comprehensive analysis pipeline for infant event repre
 - **5,000-8,500 total frames** per participant file
 - **10 AOI categories** (What+Where pairs: no/signal, screen/other, woman/face, man/face, toy/other, toy2/other, man/body, woman/body, man/hands, woman/hands)
 - **Experimental design**: 3 Actions (GIVE, HUG, SHOW) × 2 Toy Presence (WITH, WITHOUT) × 2 Orientations (NORMAL, UPSIDE-DOWN) + FLOATING control
-- **Nesting structure**: Participant (N=51) → Event Presentation (N≈50 per participant, 2,568 total) → Gaze Event (3+ frames) → Frame (aggregated)
+- **Nesting structure**: Participant (N=51) → Event Presentation (N≈50 per participant, 2,568 total) → Gaze Fixation (3+ frames) → Frame (aggregated)
 - **7 core analyses + 1 compiled report** = 8 total outputs per run
 
 ## Constitution Check
@@ -64,13 +64,13 @@ This project implements a comprehensive analysis pipeline for infant event repre
 
 ### Scientific Integrity (NON-NEGOTIABLE)
 ✓ **PASS**: All analyses use established statistical methods (t-tests, ANOVA, Chi-squared, regression)
-✓ **PASS**: Gaze event definition (3+ consecutive frames) is transparent and documented
+✓ **PASS**: Gaze fixation definition (3+ consecutive frames) is transparent and documented
 ✓ **PASS**: All assumptions explicitly documented in spec (alpha=0.05, error bar conventions)
 ✓ **PASS**: Edge case handling is conservative (exclude problematic data, log warnings)
 
 ### Reproducibility First
 ✓ **PASS**: Pipeline is fully automated (single command execution per FR-050, FR-054)
-✓ **PASS**: All intermediate results saved (gaze_events.csv, individual reports per FR-052)
+✓ **PASS**: All intermediate results saved (gaze_fixations.csv, individual reports per FR-052)
 ✓ **PASS**: Dependencies will be pinned in requirements.txt
 ✓ **PASS**: Random seed handling: N/A for this project (no randomized processes)
 ✓ **PASS**: SC-008 explicitly requires reproducible results on repeated runs
@@ -120,7 +120,7 @@ specs/001-infant-event-analysis/
 ├── quickstart.md        # Phase 1 output (setup and execution guide)
 ├── contracts/           # Phase 1 output (data schemas, CSV contracts)
 │   ├── raw_data_schema.json        # Input CSV structure
-│   ├── gaze_events_schema.json     # Master log schema
+│   ├── gaze_fixations_schema.json     # Master log schema
 │   └── report_schema.json          # Report output specifications
 ├── checklists/
 │   └── requirements.md  # Spec quality validation checklist
@@ -134,9 +134,9 @@ src/
 ├── preprocessing/
 │   ├── __init__.py
 │   ├── csv_loader.py           # Load all CSV files from data/csvs_human_verified_vv/
-│   ├── gaze_detector.py        # Identify 3+ frame gaze events
+│   ├── gaze_detector.py        # Identify 3+ frame gaze fixations
 │   ├── aoi_mapper.py           # Map What+Where → AOI categories
-│   └── master_log_generator.py # Generate gaze_events.csv
+│   └── master_log_generator.py # Generate gaze_fixations.csv
 │
 ├── analysis/
 │   ├── __init__.py
@@ -197,12 +197,12 @@ tests/
 │
 ├── contract/
 │   ├── test_raw_csv_schema.py
-│   ├── test_gaze_events_schema.py
+│   ├── test_gaze_fixations_schema.py
 │   └── test_report_outputs.py
 │
 └── fixtures/
     ├── sample_raw_data.csv     # Sample input for testing
-    ├── expected_gaze_events.csv # Expected preprocessing output
+    ├── expected_gaze_fixations.csv # Expected preprocessing output
     └── mock_analyses.py        # Mock data for testing
 
 data/
@@ -211,7 +211,7 @@ data/
 │   └── adult/                  # Adult control data (read-only)
 │
 └── processed/
-    └── gaze_events.csv         # Master gaze event log (generated)
+    └── gaze_fixations.csv         # Master gaze fixation log (generated)
 
 results/
 ├── AR1_Gaze_Duration/

@@ -1,18 +1,18 @@
 # Combined Data Summary
 
 **Date:** 2025-10-27
-**Action:** Created combined gaze_events.csv and updated all AR analyses to use it by default
+**Action:** Created combined gaze_fixations.csv and updated all AR analyses to use it by default
 
 ---
 
 ## ✅ COMPLETED ACTIONS
 
-### 1. Created Combined Gaze Events File
-**Location:** `data/processed/gaze_events.csv`
+### 1. Created Combined Gaze Fixations File
+**Location:** `data/processed/gaze_fixations.csv`
 
 **Contents:**
 ```
-Total gaze events:    26,560
+Total gaze fixations:    26,560
 Total participants:   66
   - Infants:          51 participants (19,811 events)
   - Adults:           15 participants (6,749 events)
@@ -21,16 +21,16 @@ Conditions:           11 unique
 ```
 
 **Source Files:**
-- `data/processed/gaze_events_child.csv` (19,811 events, 51 infants)
-- `data/processed/gaze_events_adult.csv` (6,749 events, 15 adults)
+- `data/processed/gaze_fixations_child.csv` (19,811 events, 51 infants)
+- `data/processed/gaze_fixations_adult.csv` (6,749 events, 15 adults)
 
 ---
 
 ### 2. Updated All AR Modules
 
 **Changed default file loading order:**
-- **NEW (Priority 1):** `gaze_events.csv` (combined child + adult)
-- **OLD (Priority 2):** `gaze_events_child.csv` (child-only fallback)
+- **NEW (Priority 1):** `gaze_fixations.csv` (combined child + adult)
+- **OLD (Priority 2):** `gaze_fixations_child.csv` (child-only fallback)
 
 **Files updated:**
 - ✓ `src/analysis/ar1_gaze_duration.py`
@@ -85,17 +85,17 @@ UPSIDE_DOWN_HUG_WITHOUT      62                0.120
 ### Current File Organization:
 ```
 data/processed/
-├── gaze_events.csv           ← COMBINED (26,560 events, 66 participants) [DEFAULT]
-├── gaze_events_child.csv     ← Child-only (19,811 events, 51 infants)
-└── gaze_events_adult.csv     ← Adult-only (6,749 events, 15 adults)
+├── gaze_fixations.csv           ← COMBINED (26,560 events, 66 participants) [DEFAULT]
+├── gaze_fixations_child.csv     ← Child-only (19,811 events, 51 infants)
+└── gaze_fixations_adult.csv     ← Adult-only (6,749 events, 15 adults)
 ```
 
 ### How Analyses Load Data:
-1. **First check:** `gaze_events.csv` exists? → Use it (combined)
-2. **Fallback:** `gaze_events_child.csv` exists? → Use it (child-only)
+1. **First check:** `gaze_fixations.csv` exists? → Use it (combined)
+2. **Fallback:** `gaze_fixations_child.csv` exists? → Use it (child-only)
 3. **Error:** Neither exists → Raise FileNotFoundError
 
-**Current behavior:** All analyses use `gaze_events.csv` (combined data)
+**Current behavior:** All analyses use `gaze_fixations.csv` (combined data)
 
 ---
 
@@ -169,7 +169,7 @@ data/processed/
 
 ### To Use Child-Only Data:
 ```python
-# In each AR module's _load_gaze_events function, add:
+# In each AR module's _load_gaze_fixations function, add:
 df = pd.read_csv(path)
 df = df[df['participant_type'] == 'infant']
 return df
@@ -184,7 +184,7 @@ return df
 
 ### To Create Separate Adult Reports:
 ```python
-# In each AR module's _load_gaze_events function, add:
+# In each AR module's _load_gaze_fixations function, add:
 df = pd.read_csv(path)
 df = df[df['participant_type'] == 'adult']
 return df
@@ -219,7 +219,7 @@ return df
 
 ## 📁 FILES CREATED
 
-- ✅ `data/processed/gaze_events.csv` - Combined child + adult data
+- ✅ `data/processed/gaze_fixations.csv` - Combined child + adult data
 - ✅ `temp_analysis/combine_data.py` - Script to create combined file
 - ✅ `temp_analysis/update_ar_defaults.py` - Script to update AR modules
 - ✅ `results/AR1_Gaze_Duration/report.html` - Updated AR1 report with combined data

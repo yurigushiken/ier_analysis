@@ -33,20 +33,20 @@
                        ↓
          ┌─────────────┴─────────────┐
          │   Gaze Detector           │ ← Identifies 3+ consecutive frames
-         │   (gaze_detector.py)      │   on same AOI = 1 gaze event
+         │   (gaze_detector.py)      │   on same AOI = 1 gaze fixation
          └─────────────┬─────────────┘
                        │
                        ↓
          ┌─────────────┴─────────────┐
-         │   Master Log Generator    │ ← Writes gaze_events.csv
+         │   Master Log Generator    │ ← Writes gaze_fixations.csv
          │   (master_log_generator)  │   Adds condition names, age groups
          └─────────────┬─────────────┘
                        │
                        ↓
 ┌────────────────────────────────────────────────────────────────┐
-│          PROCESSED DATA (Master Gaze Event Logs)                │
-│   data/processed/gaze_events_child.csv   (19,813 events)       │
-│   data/processed/gaze_events_adult.csv   (not yet generated)   │
+│          PROCESSED DATA (Master Gaze Fixation Logs)                │
+│   data/processed/gaze_fixations_child.csv   (19,813 events)       │
+│   data/processed/gaze_fixations_adult.csv   (not yet generated)   │
 └──────────────────────┬─────────────────────────────────────────┘
                        │
                        ↓ [SEVEN ANALYTICAL REQUIREMENTS]
@@ -60,7 +60,7 @@
         ↓              ↓              ↓
 ┌────────────────────────────────────────────────────────────────┐
 │          ANALYSIS RESULTS (Individual Reports)                  │
-│   results/AR1_Gaze_Duration/   ← YOUR CURRENT RESULTS          │
+│   results/AR1/<variant_key>/   ← YOUR CURRENT RESULTS          │
 │   results/AR2_Gaze_Transitions/                                │
 │   results/AR3_Social_Triplets/                                 │
 │   ... AR4, AR5, AR6, AR7 ...                                   │
@@ -77,19 +77,19 @@
 
 ---
 
-## 📊 **gaze_events_child.csv - The Master Log**
+## 📊 **gaze_fixations_child.csv - The Master Log**
 
 ### **What It Is**
 
-This is the **foundation of all analyses**. It's a processed, validated dataset where each row represents **one gaze event** (3+ consecutive frames looking at the same AOI).
+This is the **foundation of all analyses**. It's a processed, validated dataset where each row represents **one gaze fixation** (3+ consecutive frames looking at the same AOI).
 
 ### **File Statistics**
 
 - **Size**: 2.4 MB (2,424,604 bytes)
-- **Rows**: 19,813 gaze events
+- **Rows**: 19,813 gaze fixations
 - **Source**: 51 child participants (ages 7-12 months)
 - **Generated**: October 27, 2025 at 13:54:41
-- **Location**: `data/processed/gaze_events_child.csv`
+- **Location**: `data/processed/gaze_fixations_child.csv`
 
 ### **Column Structure** (15 columns)
 
@@ -111,7 +111,7 @@ This is the **foundation of all analyses**. It's a processed, validated dataset 
 | `gaze_onset_time` | float | Absolute time (start) in seconds | 9.9333 |
 | `gaze_offset_time` | float | Absolute time (end) in seconds | 10.1333 |
 
-### **Example Gaze Event**
+### **Example Gaze Fixation**
 
 ```csv
 Eight-0101-1579,infant,8,8-month-olds,1,gwo,GIVE_WITHOUT,approach,man_face,23,28,6,200.0,9.9333,10.1333
@@ -126,7 +126,7 @@ Eight-0101-1579,infant,8,8-month-olds,1,gwo,GIVE_WITHOUT,approach,man_face,23,28
 ✅ Human-readable (can inspect in Excel/Google Sheets)  
 ✅ Importable to R, SPSS, SAS for external analysis  
 ✅ Preserves all metadata from raw data  
-✅ Reproducible (same raw data → same gaze_events.csv)
+✅ Reproducible (same raw data → same gaze_fixations.csv)
 
 ---
 
@@ -134,7 +134,7 @@ Eight-0101-1579,infant,8,8-month-olds,1,gwo,GIVE_WITHOUT,approach,man_face,23,28
 
 ### **Currently Completed: AR-1 Only**
 
-You have results for: `results/AR1_Gaze_Duration/`
+You have results for: `results/AR1/<variant_key>/`
 
 ### **To Run ALL Analyses**
 
@@ -147,7 +147,7 @@ python src/main.py
 ```
 
 **What this does:**
-1. ✅ Preprocessing (already done → gaze_events_child.csv exists)
+1. ✅ Preprocessing (already done → gaze_fixations_child.csv exists)
 2. 🔄 AR-1 through AR-7 (will run all 7 analyses)
 3. 🔄 Final report compilation
 
@@ -159,7 +159,7 @@ python src/main.py
 
 ### **AR-1: Gaze Duration Analysis** ✅ **COMPLETED**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: Do infants look longer at toys in GIVE (toy-relevant) vs HUG (toy-irrelevant) conditions?
 
@@ -169,7 +169,7 @@ python src/main.py
 3. Performs independent samples t-test: GIVE vs HUG
 4. Reports Cohen's d effect size
 
-**📤 OUTPUTS** (in `results/AR1_Gaze_Duration/`):
+**📤 OUTPUTS** (in `results/AR1/<variant_key>/`):
 - `report.html` - Full analysis report with visualizations
 - `report.pdf` - PDF version
 - `summary_stats.csv` - Descriptive statistics table
@@ -184,12 +184,12 @@ python src/main.py
 
 ### **AR-2: Gaze Transition Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: How do infants shift attention between AOIs? Do they have systematic scanning strategies?
 
 **📊 WHAT IT DOES**:
-1. Identifies transitions between consecutive gaze events
+1. Identifies transitions between consecutive gaze fixations
 2. Builds transition probability matrices (10×10 for all AOI pairs)
 3. Tests for non-random patterns using Chi-squared tests
 4. Generates directed network graphs
@@ -210,7 +210,7 @@ python src/main.py
 
 ### **AR-3: Social Gaze Triplet Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: Do infants produce face→toy→face sequences (across different people) more in GIVE than HUG?
 
@@ -236,7 +236,7 @@ python src/main.py
 
 ### **AR-4: Dwell Time Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: How long do infants fixate on each AOI when they *do* look at it?
 
@@ -260,7 +260,7 @@ python src/main.py
 
 ### **AR-5: Developmental Trajectory Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: Does the condition effect (GIVE vs HUG) change with infant age?
 
@@ -284,7 +284,7 @@ python src/main.py
 
 ### **AR-6: Learning/Habituation Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: Do looking patterns change across repeated presentations of the same event?
 
@@ -309,7 +309,7 @@ python src/main.py
 
 ### **AR-7: Complex Event Dissociation Analysis** 🔄 **PENDING**
 
-**📥 INPUT**: `data/processed/gaze_events_child.csv`
+**📥 INPUT**: `data/processed/gaze_fixations_child.csv`
 
 **🎯 RESEARCH QUESTION**: Does SHOW condition dissociate visual attention from social understanding?
 
@@ -347,10 +347,10 @@ python src/main.py
 
 **Expected outputs after completion**:
 ```
-data/processed/gaze_events_child.csv     ✅ Already exists
-data/processed/gaze_events_adult.csv     ✅ Will be generated
+data/processed/gaze_fixations_child.csv     ✅ Already exists
+data/processed/gaze_fixations_adult.csv     ✅ Will be generated
 
-results/AR1_Gaze_Duration/report.html    ✅ Already exists
+results/AR1/<variant_key>/report.html    ✅ Already exists
 results/AR2_Gaze_Transitions/report.html ✅ Will be created
 results/AR3_Social_Triplets/report.html  ✅ Will be created
 results/AR4_Dwell_Times/report.html      ✅ Will be created
@@ -387,7 +387,7 @@ Replace `ar2_transitions` with:
 
 ## 🎓 **KEY CONCEPTS TO UNDERSTAND**
 
-### **1. What is a "Gaze Event"?**
+### **1. What is a "Gaze Fixation"?**
 
 **Definition**: 3+ consecutive frames where infant looks at the same AOI
 
@@ -395,11 +395,11 @@ Replace `ar2_transitions` with:
 ```
 Frame 23: man_face  ┐
 Frame 24: man_face  │
-Frame 25: man_face  │ = 1 gaze event (6 frames)
+Frame 25: man_face  │ = 1 gaze fixation (6 frames)
 Frame 26: man_face  │
 Frame 27: man_face  │
 Frame 28: man_face  ┘
-Frame 29: toy_present  ← NEW gaze event starts
+Frame 29: toy_present  ← NEW gaze fixation starts
 ```
 
 **Why 3 frames?**
@@ -454,7 +454,7 @@ Your data has **3-level hierarchy**:
 ```
 Participant (N=51)
   └── Event Presentation (N≈50 per participant, 2,568 total)
-      └── Gaze Event (N≈10-30 per presentation, 19,813 total)
+      └── Gaze Fixation (N≈10-30 per presentation, 19,813 total)
           └── Frame (aggregated, not modeled separately)
 ```
 
@@ -528,7 +528,7 @@ Participant (N=51)
 
 ### **1. Understand Your Data**
 
-**Action**: Open `gaze_events_child.csv` in Excel/Google Sheets
+**Action**: Open `gaze_fixations_child.csv` in Excel/Google Sheets
 - Sort by participant_id → see individual patterns
 - Filter by condition → compare GIVE vs HUG
 - Calculate summary stats by hand → verify pipeline

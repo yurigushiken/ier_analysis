@@ -7,7 +7,7 @@ analysis:
   # Statistical significance threshold
   alpha: 0.05
 
-  # Minimum consecutive frames to define a gaze event
+  # Minimum consecutive frames to define a gaze fixation
   min_gaze_frames: 3
 
   # Minimum sample size for statistical tests (n < 3 will skip test with warning)
@@ -72,7 +72,7 @@ paths:
 
   # Processed data directory
   processed_data: "data/processed"
-  gaze_events_file: "data/processed/gaze_events.csv"
+  gaze_fixations_file: "data/processed/gaze_fixations.csv"
 
   # Results directory for individual analyses
   results: "results"
@@ -127,7 +127,7 @@ validation:
     - "segment"
     - "frame_count_segment"
     - "participant_type"
-    - "participant_age_months"
+    - "age_months"
     - "participant_age_years"
 
   # Valid AOI combinations (What, Where pairs)
@@ -180,26 +180,37 @@ condition_mapping:
 age_groups:
   # Infant age groups (in months)
   infant:
-    - label: "8-month-olds"
+    - label: "7-month-olds"
       min_months: 7
+      max_months: 7
+    - label: "8-month-olds"
+      min_months: 8
+      max_months: 8
+    - label: "9-month-olds"
+      min_months: 9
       max_months: 9
-    - label: "12-month-olds"
+    - label: "10-month-olds"
+      min_months: 10
+      max_months: 10
+    - label: "11-month-olds"
       min_months: 11
-      max_months: 13
-    - label: "16-month-olds"
-      min_months: 15
-      max_months: 17
-    - label: "20-month-olds"
-      min_months: 19
-      max_months: 21
+      max_months: 11
+    - label: "12-month-olds"
+      min_months: 12
+      max_months: 12
 
   # Adult classification (age in months > threshold)
   adult_threshold_months: 216  # 18 years
 
 # Analysis-Specific Configuration
 analysis_specific:
+  # AR-1: Gaze Duration Variants
+  ar1_gaze_duration:
+    config_name: "ar1/ar1_gw_vs_hw"
+
   # AR-2: Transition Analysis
   ar2_transitions:
+    config_name: "ar2/ar2_gw_vs_gwo"
     # Minimum transition count to include in matrix
     min_transition_count: 1
 

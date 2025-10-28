@@ -8,8 +8,8 @@ import pytest
 from src.analysis import ar5_development as ar5
 
 
-def _sample_gaze_events_with_age() -> pd.DataFrame:
-    """Create sample gaze events with age variation."""
+def _sample_gaze_fixations_with_age() -> pd.DataFrame:
+    """Create sample gaze fixations with age variation."""
     return pd.DataFrame(
         [
             # Younger infant (8 months)
@@ -111,9 +111,9 @@ def _sample_gaze_events_with_age() -> pd.DataFrame:
 
 def test_calculate_proportion_primary_aois():
     """Test calculation of proportion looking at primary AOIs."""
-    gaze_events = _sample_gaze_events_with_age()
+    gaze_fixations = _sample_gaze_fixations_with_age()
 
-    result = ar5.calculate_proportion_primary_aois(gaze_events)
+    result = ar5.calculate_proportion_primary_aois(gaze_fixations)
 
     # Verify result structure
     assert not result.empty
@@ -155,7 +155,7 @@ def test_calculate_proportion_primary_aois_empty_data():
 
 def test_calculate_social_triplet_rate():
     """Test calculation of social gaze triplet rate."""
-    gaze_events = pd.DataFrame(
+    gaze_fixations = pd.DataFrame(
         [
             # Valid triplet: man_face -> toy_present -> woman_face
             {
@@ -210,7 +210,7 @@ def test_calculate_social_triplet_rate():
         ]
     )
 
-    result = ar5.calculate_social_triplet_rate(gaze_events)
+    result = ar5.calculate_social_triplet_rate(gaze_fixations)
 
     assert not result.empty
     assert set(result.columns) >= {

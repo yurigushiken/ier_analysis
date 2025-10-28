@@ -1,4 +1,4 @@
-"""Master gaze event log generation."""
+"""Master gaze fixation log generation."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import pandas as pd
 
 from src.preprocessing.aoi_mapper import map_what_where_to_aoi
 from src.preprocessing.csv_loader import load_csv_files
-from src.preprocessing.gaze_detector import detect_gaze_events
+from src.preprocessing.gaze_detector import detect_gaze_fixations
 from src.utils.config import load_config
 
 
@@ -26,14 +26,14 @@ def generate_master_log(
     df["condition_name"] = df["event_verified"].map(lambda code: _map_condition_name(code, cfg))
     df["aoi_category"] = df.apply(lambda row: map_what_where_to_aoi(row["What"], row["Where"], config=cfg), axis=1)
     df["age_group"] = df.apply(lambda row: _map_age_to_group(row["participant_age_months"], cfg), axis=1)
-    gaze_events = detect_gaze_events(df)
+    gaze_fixations = detect_gaze_fixations(df)
 
     if output_path:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        gaze_events.to_csv(path, index=False)
+        gaze_fixations.to_csv(path, index=False)
 
-    return gaze_events
+    return gaze_fixations
 
 
 def _map_age_to_group(age_months: int, config: dict) -> str:

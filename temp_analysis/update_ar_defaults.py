@@ -1,4 +1,4 @@
-"""Update all AR modules to use gaze_events.csv by default."""
+"""Update all AR modules to use gaze_fixations.csv by default."""
 
 from pathlib import Path
 import re
@@ -14,17 +14,17 @@ ar_files = [
 ]
 
 # Pattern to find and replace
-old_pattern = r'child_path = processed_dir / "gaze_events_child\.csv"\s+default_path = processed_dir / "gaze_events\.csv"\s+if child_path\.exists\(\):\s+path = child_path\s+elif default_path\.exists\(\):'
+old_pattern = r'child_path = processed_dir / "gaze_fixations_child\.csv"\s+default_path = processed_dir / "gaze_fixations\.csv"\s+if child_path\.exists\(\):\s+path = child_path\s+elif default_path\.exists\(\):'
 
-new_pattern = '''default_path = processed_dir / "gaze_events.csv"
-    child_path = processed_dir / "gaze_events_child.csv"
+new_pattern = '''default_path = processed_dir / "gaze_fixations.csv"
+    child_path = processed_dir / "gaze_fixations_child.csv"
 
     if default_path.exists():
         path = default_path
     elif child_path.exists():'''
 
 print("="*80)
-print("UPDATING AR MODULES TO USE gaze_events.csv BY DEFAULT")
+print("UPDATING AR MODULES TO USE gaze_fixations.csv BY DEFAULT")
 print("="*80)
 
 updated = []
@@ -37,11 +37,11 @@ for ar_file in ar_files:
     content = path.read_text()
 
     # Check if pattern exists
-    if 'child_path = processed_dir / "gaze_events_child.csv"' in content:
+    if 'child_path = processed_dir / "gaze_fixations_child.csv"' in content:
         # Replace: swap the order so default_path is checked first
         new_content = content.replace(
-            'child_path = processed_dir / "gaze_events_child.csv"\n    default_path = processed_dir / "gaze_events.csv"\n\n    if child_path.exists():\n        path = child_path\n    elif default_path.exists():',
-            'default_path = processed_dir / "gaze_events.csv"\n    child_path = processed_dir / "gaze_events_child.csv"\n\n    if default_path.exists():\n        path = default_path\n    elif child_path.exists():'
+            'child_path = processed_dir / "gaze_fixations_child.csv"\n    default_path = processed_dir / "gaze_fixations.csv"\n\n    if child_path.exists():\n        path = child_path\n    elif default_path.exists():',
+            'default_path = processed_dir / "gaze_fixations.csv"\n    child_path = processed_dir / "gaze_fixations_child.csv"\n\n    if default_path.exists():\n        path = default_path\n    elif child_path.exists():'
         )
 
         if new_content != content:

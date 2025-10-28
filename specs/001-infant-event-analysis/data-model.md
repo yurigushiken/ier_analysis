@@ -6,7 +6,7 @@
 
 ## Overview
 
-This data model describes the structure of all data entities in the infant event representation analysis pipeline, from raw eye-tracking CSV files through the master gaze events log to final analysis outputs.
+This data model describes the structure of all data entities in the infant event representation analysis pipeline, from raw eye-tracking CSV files through the master gaze fixations log to final analysis outputs.
 
 ## Entity Definitions
 
@@ -94,7 +94,7 @@ This data model describes the structure of all data entities in the infant event
 
 ---
 
-### Entity 3: Gaze Event
+### Entity 3: Gaze Fixation
 
 **Description**: A continuous sequence of 3 or more consecutive frames on the same AOI
 
@@ -104,7 +104,7 @@ This data model describes the structure of all data entities in the infant event
 
 | Field Name | Type | Required | Constraints | Description |
 |------------|------|----------|-------------|-------------|
-| gaze_event_id | int | Yes | Unique, auto-increment | Unique identifier for this gaze event |
+| gaze_fixation_id | int | Yes | Unique, auto-increment | Unique identifier for this gaze fixation |
 | participant_id | string | Yes | Non-empty | From Raw Frame Record |
 | participant_type | string | Yes | Enum: "infant", "adult" | From Raw Frame Record |
 | age_months | int | Yes | > 0 | From participant_age_months |
@@ -122,7 +122,7 @@ This data model describes the structure of all data entities in the infant event
 | gaze_offset_time | float | Yes | > gaze_onset_time | Offset time of last frame in seconds |
 
 **Validation Rules**:
-- gaze_duration_frames must be >= 3 (definition of gaze event)
+- gaze_duration_frames must be >= 3 (definition of gaze fixation)
 - gaze_end_frame >= gaze_start_frame + 2
 - gaze_duration_ms = (gaze_offset_time - gaze_onset_time) * 1000
 - aoi_category must be a valid AOI Category
@@ -130,7 +130,7 @@ This data model describes the structure of all data entities in the infant event
 
 **Derivation Logic**:
 ```python
-# Pseudocode for gaze event detection
+# Pseudocode for gaze fixation detection
 for each participant:
     for each trial:
         current_aoi = None
@@ -144,7 +144,7 @@ for each participant:
             else:
                 # AOI changed - check if previous sequence qualifies
                 if len(frame_sequence) >= 3:
-                    create_gaze_event(frame_sequence)
+                    create_gaze_fixation(frame_sequence)
 
                 # Start new sequence
                 current_aoi = aoi
@@ -152,15 +152,15 @@ for each participant:
 
         # Handle final sequence
         if len(frame_sequence) >= 3:
-            create_gaze_event(frame_sequence)
+            create_gaze_fixation(frame_sequence)
 ```
 
 **Relationships**:
-- Each Gaze Event is composed of 3+ Raw Frame Records (consecutive, same AOI)
-- Each Gaze Event belongs to exactly one Participant
-- Each Gaze Event belongs to exactly one Trial
-- Multiple Gaze Events form Transitions
-- Sequences of Gaze Events may form Social Gaze Triplets
+- Each Gaze Fixation is composed of 3+ Raw Frame Records (consecutive, same AOI)
+- Each Gaze Fixation belongs to exactly one Participant
+- Each Gaze Fixation belongs to exactly one Trial
+- Multiple Gaze Fixations form Transitions
+- Sequences of Gaze Fixations may form Social Gaze Triplets
 
 ---
 
@@ -180,7 +180,7 @@ for each participant:
 | age_years | float | Yes | > 0 | Age in years |
 | age_group | string | Yes | Computed | Categorical age (e.g., "8-month-olds") |
 | num_trials | int | Yes | >= 0 | Count of trials with valid data |
-| num_gaze_events | int | Yes | >= 0 | Count of gaze events for this participant |
+| num_gaze_fixations | int | Yes | >= 0 | Count of gaze fixations for this participant |
 | data_quality_flags | list[string] | No | - | Any quality warnings for this participant |
 
 **Age Group Mapping**:
@@ -193,7 +193,7 @@ for each participant:
 
 **Relationships**:
 - One Participant has many Raw Frame Records
-- One Participant has many Gaze Events
+- One Participant has many Gaze Fixations
 - One Participant participates in many Trials
 
 ---
@@ -214,8 +214,8 @@ for each participant:
 | condition | string | Yes | Non-empty | Experimental condition code from `event_verified` (e.g., "gw") |
 | condition_name | string | Yes | Computed | Full name (e.g., "GIVE_WITH") |
 | num_frames | int | Yes | > 0 | Total frames in this trial |
-| num_gaze_events | int | Yes | >= 0 | Count of gaze events in this trial |
-| total_gaze_duration_ms | float | Yes | >= 0 | Sum of all gaze event durations |
+| num_gaze_fixations | int | Yes | >= 0 | Count of gaze fixations in this trial |
+| total_gaze_duration_ms | float | Yes | >= 0 | Sum of all gaze fixation durations |
 | proportion_offscreen | float | Yes | 0.0 - 1.0 | Proportion of frames with off_screen AOI (quality metric; excluded from events/denominators) |
 | data_quality_flag | string | No | - | "outlier" if proportion_offscreen > 0.5 |
 
@@ -227,13 +227,13 @@ for each participant:
 
 **Validation Rules**:
 - trial_id = participant_id + "_" + str(trial_number) must be unique
-- num_gaze_events <= num_frames / 3 (can't have more gazes than possible)
+- num_gaze_fixations <= num_frames / 3 (can't have more gazes than possible)
 - Flag as outlier if proportion_offscreen > 0.5 (per edge case handling)
 
 **Relationships**:
 - Each Trial belongs to exactly one Participant
 - One Trial has many Raw Frame Records
-- One Trial has many Gaze Events
+- One Trial has many Gaze Fixations
 - One Trial belongs to exactly one Experimental Condition
 
 ---
@@ -272,29 +272,29 @@ for each participant:
 
 ### Entity 7: Transition
 
-**Description**: A change from one gaze event to another (different AOI)
+**Description**: A change from one gaze fixation to another (different AOI)
 
-**Source**: Computed from consecutive Gaze Events within a trial
+**Source**: Computed from consecutive Gaze Fixations within a trial
 
 **Schema**:
 
 | Field Name | Type | Required | Constraints | Description |
 |------------|------|----------|-------------|-------------|
 | transition_id | int | Yes | Unique | Auto-increment identifier |
-| participant_id | string | Yes | FK to Participant | From gaze events |
-| trial_number | int | Yes | >= 1 | From gaze events |
+| participant_id | string | Yes | FK to Participant | From gaze fixations |
+| trial_number | int | Yes | >= 1 | From gaze fixations |
 | condition | string | Yes | - | Experimental condition |
 | from_aoi | string | Yes | Valid AOI | Source AOI of transition |
 | to_aoi | string | Yes | Valid AOI | Target AOI of transition |
 | transition_time | float | Yes | >= 0 | Time of transition (gaze_offset_time of source gaze) |
-| source_gaze_id | int | Yes | FK to Gaze Event | Gaze event being transitioned from |
-| target_gaze_id | int | Yes | FK to Gaze Event | Gaze event being transitioned to |
+| source_gaze_id | int | Yes | FK to Gaze Fixation | Gaze fixation being transitioned from |
+| target_gaze_id | int | Yes | FK to Gaze Fixation | Gaze fixation being transitioned to |
 
 **Derivation Logic**:
 ```python
 # Pseudocode for transition detection
 for each trial:
-    gazes = get_sorted_gaze_events(trial)
+    gazes = get_sorted_gaze_fixations(trial)
 
     for i in range(len(gazes) - 1):
         source_gaze = gazes[i]
@@ -314,7 +314,7 @@ for each trial:
 - Both source and target gazes belong to same trial
 
 **Relationships**:
-- Each Transition connects two Gaze Events
+- Each Transition connects two Gaze Fixations
 - Many Transitions used to compute Transition Probability Matrices (AR-2)
 
 ---
@@ -323,7 +323,7 @@ for each trial:
 
 **Description**: A specific sequence pattern of three consecutive gazes indicating joint attention
 
-**Source**: Detected from sequences of Gaze Events
+**Source**: Detected from sequences of Gaze Fixations
 
 **Valid Patterns** (per clarifications):
 1. man_face → toy_present → woman_face
@@ -338,13 +338,13 @@ for each trial:
 | Field Name | Type | Required | Constraints | Description |
 |------------|------|----------|-------------|-------------|
 | triplet_id | int | Yes | Unique | Auto-increment identifier |
-| participant_id | string | Yes | FK to Participant | From gaze events |
-| trial_number | int | Yes | >= 1 | From gaze events |
+| participant_id | string | Yes | FK to Participant | From gaze fixations |
+| trial_number | int | Yes | >= 1 | From gaze fixations |
 | condition | string | Yes | - | Experimental condition |
 | pattern_type | string | Yes | "man_toy_woman" or "woman_toy_man" | Which valid pattern |
-| gaze1_id | int | Yes | FK to Gaze Event | First gaze (face) |
-| gaze2_id | int | Yes | FK to Gaze Event | Second gaze (toy) |
-| gaze3_id | int | Yes | FK to Gaze Event | Third gaze (face) |
+| gaze1_id | int | Yes | FK to Gaze Fixation | First gaze (face) |
+| gaze2_id | int | Yes | FK to Gaze Fixation | Second gaze (toy) |
+| gaze3_id | int | Yes | FK to Gaze Fixation | Third gaze (face) |
 | triplet_start_frame | int | Yes | - | gaze1.gaze_start_frame |
 | triplet_end_frame | int | Yes | - | gaze3.gaze_end_frame |
 | triplet_duration_ms | float | Yes | > 0 | Total time span of triplet |
@@ -353,7 +353,7 @@ for each trial:
 ```python
 # Pseudocode for social gaze triplet detection
 for each trial:
-    gazes = get_sorted_gaze_events(trial)
+    gazes = get_sorted_gaze_fixations(trial)
 
     for i in range(len(gazes) - 2):
         gaze1 = gazes[i]
@@ -380,7 +380,7 @@ for each trial:
 - Middle gaze must be toy_present (not toy_location - requires actual toy)
 
 **Relationships**:
-- Each Social Gaze Triplet is composed of exactly 3 Gaze Events
+- Each Social Gaze Triplet is composed of exactly 3 Gaze Fixations
 - Many Social Gaze Triplets are counted per Participant/Condition for AR-3
 
 ---
@@ -418,7 +418,7 @@ for each trial:
 - Reports must be self-contained (embedded images, no external dependencies)
 
 **Relationships**:
-- Each Analysis Report processes many Gaze Events
+- Each Analysis Report processes many Gaze Fixations
 - Multiple Analysis Reports are compiled into one Final Compiled Report
 
 ---
@@ -444,7 +444,7 @@ for each trial:
 1. **Title Page**: Project title, date, authors
 2. **Table of Contents**: Hyperlinked section list
 3. **Introduction**: Gordon (2003) background, research questions
-4. **Methods Overview**: Gaze event definition, participant demographics, data collection
+4. **Methods Overview**: Gaze fixation definition, participant demographics, data collection
 5. **AR-1 Results**: Imported from AR-1 report
 6. **AR-2 Results**: Imported from AR-2 report
 7. (Continue for all ARs)
@@ -472,9 +472,9 @@ Raw Frame Records (in-memory DataFrame)
     ↓
 Frame Records with AOI Categories
     ↓
-[Gaze Event Detector]
+[Gaze Fixation Detector]
     ↓
-Gaze Events → gaze_events.csv (data/processed/)
+Gaze Fixations → gaze_fixations.csv (data/processed/)
     ↓
     ├─→ [AR-1: Gaze Duration] → AR-1 Report
     ├─→ [AR-2: Transitions] → AR-2 Report (via Transition derivation)
@@ -491,14 +491,14 @@ Gaze Events → gaze_events.csv (data/processed/)
 
 ## State Transitions
 
-### Gaze Event Lifecycle
+### Gaze Fixation Lifecycle
 
 ```
 1. [Non-existent] → (frame sequence starts) → [Accumulating Frames]
-2. [Accumulating Frames] → (frame count >= 3) → [Valid Gaze Event]
+2. [Accumulating Frames] → (frame count >= 3) → [Valid Gaze Fixation]
 3. [Accumulating Frames] → (AOI changes, count < 3) → [Discarded]
-4. [Valid Gaze Event] → (AOI changes) → [Completed Gaze Event]
-5. [Completed Gaze Event] → (written to gaze_events.csv) → [Persisted]
+4. [Valid Gaze Fixation] → (AOI changes) → [Completed Gaze Fixation]
+5. [Completed Gaze Fixation] → (written to gaze_fixations.csv) → [Persisted]
 ```
 
 ### Analysis Report Lifecycle
@@ -513,20 +513,20 @@ Gaze Events → gaze_events.csv (data/processed/)
 ## Data Integrity Constraints
 
 ### Referential Integrity
-- Every Gaze Event references a valid Participant (participant_id exists)
-- Every Gaze Event references a valid Trial (trial_number exists for that participant)
-- Every Transition references two valid Gaze Events (source_gaze_id, target_gaze_id exist)
-- Every Social Gaze Triplet references three valid Gaze Events (gaze1_id, gaze2_id, gaze3_id exist)
+- Every Gaze Fixation references a valid Participant (participant_id exists)
+- Every Gaze Fixation references a valid Trial (trial_number exists for that participant)
+- Every Transition references two valid Gaze Fixations (source_gaze_id, target_gaze_id exist)
+- Every Social Gaze Triplet references three valid Gaze Fixations (gaze1_id, gaze2_id, gaze3_id exist)
 
 ### Temporal Integrity
 - Within a trial, frame numbers are monotonically increasing
 - Within a trial, time values (Onset, Offset) are monotonically increasing
-- Gaze events do not overlap in time within a trial
+- Gaze fixations do not overlap in time within a trial
 - Transitions occur at gaze boundaries (offset of source = onset of target or immediate next frame)
 
 ### Logical Integrity
-- Gaze event duration (frames) = end_frame - start_frame + 1
-- Gaze event duration (ms) ≈ (offset_time - onset_time) * 1000 (within rounding tolerance)
+- Gaze fixation duration (frames) = end_frame - start_frame + 1
+- Gaze fixation duration (ms) ≈ (offset_time - onset_time) * 1000 (within rounding tolerance)
 - Proportion of looking time per trial sums to 1.0 (across all AOIs)
 - Social gaze triplets only formed from consecutive, non-overlapping gazes
 
@@ -542,7 +542,7 @@ Gaze Events → gaze_events.csv (data/processed/)
 |--------|---------------------------|----------------------------|
 | Raw Frame | Required columns present, types correct | Invalid/missing required values, invalid AOI pairs |
 | AOI Category | Valid What+Where pair | Invalid combination |
-| Gaze Event | Duration >= 3 frames, times consistent | Inconsistent timing/derivations |
+| Gaze Fixation | Duration >= 3 frames, times consistent | Inconsistent timing/derivations |
 | Participant | Unique ID, age fields consistent | Invalid age ranges |
 | Trial | Valid participant, condition code | - |
 | Transition | From ≠ To, temporal order | - |
@@ -553,7 +553,7 @@ Gaze Events → gaze_events.csv (data/processed/)
 
 ### Per Participant
 - Total number of trials
-- Total number of gaze events
+- Total number of gaze fixations
 - Mean gaze duration
 - Proportion of gazes per AOI
 - Social gaze triplet frequency
@@ -597,7 +597,7 @@ Gaze Events → gaze_events.csv (data/processed/)
 ### Missing Data Handling (per clarifications)
 - Missing trials: Exclude participant from affected analyses only
 - Missing values in non-required fields: Treat as valid missing data
-- Insufficient gaze length (<3 frames): Exclude from gaze event log
+- Insufficient gaze length (<3 frames): Exclude from gaze fixation log
 - Insufficient statistical power (n < 3): Skip test, log warning
 
 ## Schema Versioning

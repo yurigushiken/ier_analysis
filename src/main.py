@@ -32,22 +32,22 @@ def run_preprocessing(config: dict[str, Any], logger) -> None:
 
     try:
         if raw_child_dir.exists():
-            logger.info("Generating child gaze events log from %s", raw_child_dir)
+            logger.info("Generating child gaze fixations log from %s", raw_child_dir)
             generate_master_log(
                 raw_directories=[raw_child_dir],
                 contract_path=contract_path,
-                output_path=processed_dir / "gaze_events_child.csv",
+                output_path=processed_dir / "gaze_fixations_child.csv",
                 config=config,
             )
         else:
             logger.warning("Child data directory not found: %s", raw_child_dir)
 
         if raw_adult_dir.exists():
-            logger.info("Generating adult gaze events log from %s", raw_adult_dir)
+            logger.info("Generating adult gaze fixations log from %s", raw_adult_dir)
             generate_master_log(
                 raw_directories=[raw_adult_dir],
                 contract_path=contract_path,
-                output_path=processed_dir / "gaze_events_adult.csv",
+                output_path=processed_dir / "gaze_fixations_adult.csv",
                 config=config,
             )
         else:

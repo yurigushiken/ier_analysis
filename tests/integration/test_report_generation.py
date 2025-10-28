@@ -20,7 +20,7 @@ def test_render_report(tmp_path: Path):
         "total_participants": 10,
         "participants_included": 8,
         "participants_excluded": 2,
-        "total_gaze_events": 100,
+        "total_gaze_fixations": 100,
         "conditions": ["GIVE", "HUG"],
         "exclusions": [],
         "min_gaze_frames": 3,

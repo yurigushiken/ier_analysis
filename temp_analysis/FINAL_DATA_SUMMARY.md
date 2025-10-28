@@ -79,10 +79,10 @@ Level 3: Participant
             ├─ Each event type shown ~3 times (tracked by trial_cumulative_by_event)
             └─ Duration: 150-1,000 frames per presentation (variable)
                  │
-                 └─ Level 1: Gaze Event
+                 └─ Level 1: Gaze Fixation
                       ├─ N ≈ 10-30 per presentation
                       ├─ Defined as 3+ consecutive frames on same AOI
-                      └─ Total ≈ 4,320-12,960 gaze events
+                      └─ Total ≈ 4,320-12,960 gaze fixations
                            │
                            └─ Level 0: Frame
                                 ├─ ~8,000 frames per participant file
@@ -156,9 +156,9 @@ Level 3: Participant
 - ✅ **Adequate for**: GLMM Poisson with random intercepts
 
 ### **AR-4: Dwell Time**
-- **Unit**: Gaze event level
-- **N**: ~4,320-12,960 gaze events
-- **Structure**: Participants → Presentations → Gaze events
+- **Unit**: Gaze fixation level
+- **N**: ~4,320-12,960 gaze fixations
+- **Structure**: Participants → Presentations → Gaze fixations
 - ✅ **Adequate for**: Nested random effects (participant + presentation)
 
 ### **AR-5: Developmental Trajectory**

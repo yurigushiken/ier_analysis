@@ -1,4 +1,4 @@
-# AUDIT REPORT: Gaze Event Detection & AR1 Analysis Logic
+# AUDIT REPORT: Gaze Fixation Detection & AR1 Analysis Logic
 
 **Date:** 2025-10-27
 **Auditor:** Claude
@@ -8,8 +8,8 @@
 
 ## EXECUTIVE SUMMARY
 
-### ✅ **Gaze Event Detection: CORRECT**
-The preprocessing pipeline correctly detects gaze events using the 3+ consecutive frame rule. The count of **19,811 gaze events** is accurate.
+### ✅ **Gaze Fixation Detection: CORRECT**
+The preprocessing pipeline correctly detects gaze fixations using the 3+ consecutive frame rule. The count of **19,811 gaze fixations** is accurate.
 
 ### ✅ **AR1 Analysis Logic: CORRECT**
 AR1 correctly calculates toy-looking proportions using participant-level means. Statistical tests are appropriate.
@@ -26,16 +26,16 @@ Several report fields are hardcoded to incorrect values or left empty.
 
 ### 1. GAZE EVENT DETECTION ✅ CORRECT
 
-#### What is a "Gaze Event"?
-A gaze event is defined as **3 or more consecutive frames** where the infant looks at the **same AOI** (Area of Interest).
+#### What is a "Gaze Fixation"?
+A gaze fixation is defined as **3 or more consecutive frames** where the infant looks at the **same AOI** (Area of Interest).
 
 #### Verification Process:
 - **Manual replication** of gaze detection logic on sample participant
 - **Result:** 342 events detected manually vs. 342 in processed file ✓ **EXACT MATCH**
 
-#### Gaze Event Statistics:
+#### Gaze Fixation Statistics:
 ```
-Total gaze events:        19,811
+Total gaze fixations:        19,811
 Participants:             51
 Events per participant:   388.5 (mean)
 Duration (frames):
@@ -44,7 +44,7 @@ Duration (frames):
   - Range:                3 - 1,118 frames
 ```
 
-#### Gaze Events by AOI:
+#### Gaze Fixations by AOI:
 ```
 AOI                   Count    Percentage
 screen_nonAOI         4,940    24.9%
@@ -60,7 +60,7 @@ woman_hands             178     0.9%
 ```
 
 #### Key Insight:
-The **19,811** number in MENTORSHIP_DATA_FLOW.md is **CORRECT**. It represents detected gaze events, not raw frames or video events.
+The **19,811** number in MENTORSHIP_DATA_FLOW.md is **CORRECT**. It represents detected gaze fixations, not raw frames or video events.
 
 ---
 
@@ -68,9 +68,9 @@ The **19,811** number in MENTORSHIP_DATA_FLOW.md is **CORRECT**. It represents d
 
 #### Data Flow:
 ```
-19,811 gaze events
-  → Filter out off_screen: 15,910 on-screen gaze events (80.3%)
-  → Identify toy gazes: 2,763 toy gaze events (17.4% of on-screen)
+19,811 gaze fixations
+  → Filter out off_screen: 15,910 on-screen gaze fixations (80.3%)
+  → Identify toy gazes: 2,763 toy gaze fixations (17.4% of on-screen)
   → Aggregate to trials: 1,916 trials
   → Calculate proportions: toy_duration / total_onscreen_duration per trial
   → Aggregate to participants: 529 participant × condition combinations
@@ -126,7 +126,7 @@ UPSIDE_DOWN_HUG_WITHOUT      0.123              47
 
 #### Age Data Availability ✅ PRESENT
 ```
-Column: age_months (present in gaze_events_child.csv)
+Column: age_months (present in gaze_fixations_child.csv)
 Range: 7 - 12 months
 Missing: 0 participants
 
@@ -179,18 +179,18 @@ Current report shows:
 
 ### 4. AR1 REPORT ISSUES ❌ MULTIPLE PROBLEMS
 
-#### Issue 1: Total Gaze Events = 0 ❌
+#### Issue 1: Total Gaze Fixations = 0 ❌
 ```
-Report shows: "Total Gaze Events Analyzed: 0"
-Should show: "Total Gaze Events Analyzed: 19,811"
+Report shows: "Total Gaze Fixations Analyzed: 0"
+Should show: "Total Gaze Fixations Analyzed: 19,811"
 ```
 
 **Location:** `src/analysis/ar1_gaze_duration.py:232`
 ```python
-"total_gaze_events": 0,  # ❌ HARDCODED TO 0
+"total_gaze_fixations": 0,  # ❌ HARDCODED TO 0
 ```
 
-**Fix:** Count rows in the gaze_events dataframe before filtering.
+**Fix:** Count rows in the gaze_fixations dataframe before filtering.
 
 #### Issue 2: Missing 95% CI ❌
 ```
@@ -245,13 +245,13 @@ The word **"event"** is overloaded in this project:
    - Same video event can be shown multiple times
    - Example: Participant sees "gw" 3 times → 3 exposures
 
-3. **Gaze Event** (DERIVED by pipeline)
+3. **Gaze Fixation** (DERIVED by pipeline)
    - 3+ consecutive frames looking at same AOI
-   - ~388 gaze events per participant
-   - Example: Looking at woman's face for 5 frames = 1 gaze event
+   - ~388 gaze fixations per participant
+   - Example: Looking at woman's face for 5 frames = 1 gaze fixation
 
 ### In the AR1 Report:
-When the report says **"Total Gaze Events Analyzed"**, it means #3 (gaze events), not #1 or #2.
+When the report says **"Total Gaze Fixations Analyzed"**, it means #3 (gaze fixations), not #1 or #2.
 
 ### Recommended Terminology Clarification:
 ```
@@ -259,7 +259,7 @@ Term                    Meaning
 -------------------------------------------
 "Stimulus event"        Video clip (gw, hw, etc.)
 "Trial"                 One presentation of a stimulus event
-"Gaze event"            3+ consecutive frames on same AOI (DERIVED)
+"Gaze fixation"            3+ consecutive frames on same AOI (DERIVED)
 "Frame"                 Raw data row (30fps)
 ```
 
@@ -268,7 +268,7 @@ Term                    Meaning
 ## RECOMMENDATIONS
 
 ### Priority 1: Fix AR1 Report Metadata ❌ HIGH
-1. Add actual gaze event count (19,811)
+1. Add actual gaze fixation count (19,811)
 2. Calculate and display 95% confidence intervals
 3. Add analysis ID, timestamp, and version number
 4. Populate or remove supplementary sections
@@ -280,7 +280,7 @@ Term                    Meaning
 4. Add developmental interpretation section
 
 ### Priority 3: Clarify Documentation 📝 LOW
-1. Update MENTORSHIP_DATA_FLOW.md to clarify "gaze events" terminology
+1. Update MENTORSHIP_DATA_FLOW.md to clarify "gaze fixations" terminology
 2. Add data dictionary explaining all event types
 3. Document the 3+ frame gaze detection rule more prominently
 
@@ -289,7 +289,7 @@ Term                    Meaning
 ## CONCLUSION
 
 ### What's Working ✅
-- Gaze event detection is **100% correct**
+- Gaze fixation detection is **100% correct**
 - AR1 statistical analysis is **methodologically sound**
 - Data quality is **excellent** (no missing values)
 - Effect sizes are **meaningful** and consistent with hypothesis
@@ -300,7 +300,7 @@ Term                    Meaning
 - Age group mapping configuration
 
 ### The "19,813" Question: ANSWERED ✅
-**Yes, there are 19,811 gaze events.** This is the correct count using the 3+ consecutive frame rule. The number represents **detected gaze events**, not raw frames (366,272) or video events (11 types).
+**Yes, there are 19,811 gaze fixations.** This is the correct count using the 3+ consecutive frame rule. The number represents **detected gaze fixations**, not raw frames (366,272) or video events (11 types).
 
 ---
 
@@ -308,7 +308,7 @@ Term                    Meaning
 1. `src/preprocessing/gaze_detector.py` - Gaze detection logic
 2. `src/preprocessing/master_log_generator.py` - Preprocessing pipeline
 3. `src/analysis/ar1_gaze_duration.py` - AR1 analysis module
-4. `data/processed/gaze_events_child.csv` - Processed gaze events (19,811 rows)
+4. `data/processed/gaze_fixations_child.csv` - Processed gaze fixations (19,811 rows)
 5. `data/csvs_human_verified_vv/child/*.csv` - Raw participant data (sample of 3)
 6. `config/pipeline_config.yaml` - Pipeline configuration
 

@@ -108,11 +108,11 @@ Three segments per event:
 ## 🔍 Critical Finding: The "19,813 events" Issue
 
 **The report states:**
-> "Total Gaze Events Analyzed: 0"
+> "Total Gaze Fixations Analyzed: 0"
 
-But it should actually calculate **gaze events**, not raw frames or trials.
+But it should actually calculate **gaze fixations**, not raw frames or trials.
 
-### What is a "Gaze Event"?
+### What is a "Gaze Fixation"?
 According to the pipeline:
 - **3+ consecutive frames** where infant looks at the **same AOI**
 - Off-screen frames excluded from denominator
@@ -120,13 +120,13 @@ According to the pipeline:
 ### Example Calculation (rough estimate):
 - If we have ~19,000 frames across 3 participants
 - Exclude "no, signal" (off-screen): ~11,227 frames remaining
-- Average gaze event = ~10 frames (speculative)
-- Expected gaze events ≈ 1,100-1,500 for these 3 participants
+- Average gaze fixation = ~10 frames (speculative)
+- Expected gaze fixations ≈ 1,100-1,500 for these 3 participants
 
 ### For Full Dataset:
 - 51 child participants × ~6,000 frames/participant = ~306,000 frames
 - After excluding off-screen and grouping by consecutive AOI
-- **Expected gaze events: 15,000-25,000** (rough estimate)
+- **Expected gaze fixations: 15,000-25,000** (rough estimate)
 
 ---
 
@@ -134,7 +134,7 @@ According to the pipeline:
 
 ### What the report SHOULD show:
 
-1. **Total Gaze Events**: Count of 3+ frame sequences on same AOI
+1. **Total Gaze Fixations**: Count of 3+ frame sequences on same AOI
    - Currently shows: `0`
    - Should show: ~15,000-25,000
 
@@ -162,7 +162,7 @@ Participant (N=51 children, 15 adults)
           └─ segment (approach, interaction, departure)
               └─ Frame (row in CSV, 30fps)
                   └─ What-Where pair (AOI coding)
-                      └─ Gaze Event (3+ consecutive frames, DERIVED)
+                      └─ Gaze Fixation (3+ consecutive frames, DERIVED)
 ```
 
 **For statistical analysis:**
@@ -174,19 +174,19 @@ Participant (N=51 children, 15 adults)
 
 ## ✅ Recommendations
 
-1. **Fix "Total Gaze Events Analyzed"** in AR1 report
-   - Calculate from gaze_events.csv
+1. **Fix "Total Gaze Fixations Analyzed"** in AR1 report
+   - Calculate from gaze_fixations.csv
    - Should be count of rows where gaze_duration_ms ≥ (3 frames × 33.33ms)
 
 2. **Add "Total Trials Analyzed"**
    - Count unique trial_number_global values in analysis
 
 3. **Clarify terminology** in report:
-   - "Gaze event" = 3+ consecutive frames on same AOI (derived)
+   - "Gaze fixation" = 3+ consecutive frames on same AOI (derived)
    - "Event" or "Trial" = video stimulus (gw, hw, etc.)
    - "Frame" = raw data row (30fps)
 
-4. **Verify gaze_events.csv** contains correct event counts
+4. **Verify gaze_fixations.csv** contains correct event counts
    - Should be much less than raw frame count
    - Should reflect consecutive-frame grouping logic
 

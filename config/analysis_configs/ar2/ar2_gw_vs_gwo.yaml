@@ -1,0 +1,106 @@
+# AR-2 Variant: GIVE_WITH vs GIVE_WITHOUT
+# Purpose: Compare gaze transition patterns when the toy is present vs absent in GIVE events.
+
+variant_key: "ar2_gw_vs_gwo"
+variant_label: "GIVE_WITH vs GIVE_WITHOUT"
+analysis_name: "AR-2: Gaze Transition Analysis"
+description: "Transition probabilities between AOIs during GIVE events with versus without the toy."
+report_title: "AR-2: GIVE_WITH vs GIVE_WITHOUT Transitions"
+
+conditions:
+  include:
+    - "GIVE_WITH"
+    - "GIVE_WITHOUT"
+
+analysis:
+  min_fixation_duration_ms: 75
+  collapse_repeated_aois: true
+  segments:
+    include:
+      - "interaction"
+  min_transitions_per_participant: 5
+  key_transitions:
+    - label: "Man Face → Toy"
+      from_aoi: "man_face"
+      to_aoi:
+        default: "toy_present"
+        GIVE_WITHOUT: "toy_location"
+    - label: "Woman Face → Toy"
+      from_aoi: "woman_face"
+      to_aoi:
+        default: "toy_present"
+        GIVE_WITHOUT: "toy_location"
+    - label: "Toy → Man Face"
+      from_aoi:
+        default: "toy_present"
+        GIVE_WITHOUT: "toy_location"
+      to_aoi: "man_face"
+    - label: "Toy → Woman Face"
+      from_aoi:
+        default: "toy_present"
+        GIVE_WITHOUT: "toy_location"
+      to_aoi: "woman_face"
+
+cohorts:
+  - key: "month_7"
+    label: "7-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [7]
+  - key: "month_8"
+    label: "8-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [8]
+  - key: "month_9"
+    label: "9-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [9]
+  - key: "month_10"
+    label: "10-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [10]
+  - key: "month_11"
+    label: "11-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [11]
+  - key: "month_12"
+    label: "12-Month Infants"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["infant"]
+      age_months: [12]
+  - key: "adult"
+    label: "Adult Control Cohort"
+    data_path: "data/processed/gaze_fixations_adult.csv"
+    include_in_plots: true
+    participant_filters:
+      participant_type: ["adult"]
+
+reporting:
+  show_heatmaps: true
+  show_directed_graphs: true
+  show_transition_tables: true
+  include_participant_summary: true
+  include_methods: true
+  include_interpretation: true
+
+output:
+  export_transition_matrices: true
+  export_participant_metrics: true
+  export_summary: true
+  include_source_data: false

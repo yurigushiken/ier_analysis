@@ -1,14 +1,24 @@
 {% extends "base_report.html" %}
 
 {% block content %}
+<header class="report-header">
+    <h1>{{ report_title or "AR-4: Dwell Time Analysis" }}</h1>
+</header>
+
 <section id="overview">
     <h2>1. Overview</h2>
     <p>{{ overview_text }}</p>
+    {% if recording and recording.introduction %}
+    <p class="recording-intro">{{ recording.introduction }}</p>
+    {% endif %}
 </section>
 
 <section id="methods">
     <h2>2. Methods</h2>
     <p>{{ methods_text }}</p>
+    {% if recording and recording.methodology %}
+    <p class="recording-method">{{ recording.methodology }}</p>
+    {% endif %}
 </section>
 
 <section id="results">
@@ -17,12 +27,16 @@
     {{ dwell_table | safe }}
 
     <h3>3.2 Visualizations</h3>
-    {% for figure in figures %}
-        <figure>
-            <img src="{{ figure.path }}" alt="{{ figure.caption }}">
-            <figcaption>{{ figure.caption }}</figcaption>
-        </figure>
-    {% endfor %}
+    {% if figure_entries %}
+        {% for figure in figure_entries %}
+            <figure>
+                <img src="{{ figure.path }}" alt="{{ figure.caption }}">
+                <figcaption>{{ figure.caption }}</figcaption>
+            </figure>
+        {% endfor %}
+    {% else %}
+        <p>No figures were generated for this analysis.</p>
+    {% endif %}
 
     <h3>3.3 Statistical Tests</h3>
     {{ statistics_table | safe }}
@@ -31,5 +45,11 @@
 <section id="interpretation">
     <h2>4. Interpretation</h2>
     <p>{{ interpretation_text }}</p>
+    {% if recording and recording.interpretation_guidance %}
+    <p class="recording-interpret">{{ recording.interpretation_guidance }}</p>
+    {% endif %}
+    {% if recording and recording.outro %}
+    <p class="recording-outro">{{ recording.outro }}</p>
+    {% endif %}
 </section>
 {% endblock %}

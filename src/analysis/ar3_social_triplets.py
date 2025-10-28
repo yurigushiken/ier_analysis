@@ -5,9 +5,11 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
+import numpy as np
 import pandas as pd
 
 from src.reporting import visualizations
@@ -29,6 +31,8 @@ class TripletConfig:
     require_consecutive: bool = True
     max_gap_frames: Optional[int] = None
     alias_to_canonical: Dict[str, str] = field(default_factory=dict)
+    consecutive_mode: str = "gap_tolerant"
+    summary_age_mode: str = "detailed"
 
 
 def _resolve_dataset_paths(variant_config: Mapping[str, Any], global_config: Mapping[str, Any]) -> List[Dict[str, Any]]:
@@ -147,12 +151,16 @@ def _resolve_triplet_config(
     if not valid_patterns:
         raise ConfigurationError("No valid triplet patterns defined for AR-3 analysis.")
 
-    require_consecutive = bool(
-        triplet_settings.get(
-            "require_consecutive",
-            base_config.get("triplet_definition", {}).get("require_consecutive", True),
-        )
+    require_consecutive_setting = triplet_settings.get(
+        "require_consecutive",
+        base_config.get("triplet_definition", {}).get("require_consecutive", True),
     )
+    consecutive_mode = "gap_tolerant"
+    if isinstance(require_consecutive_setting, str):
+        consecutive_mode = require_consecutive_setting.lower()
+        require_consecutive = consecutive_mode == "strict"
+    else:
+        require_consecutive = bool(require_consecutive_setting)
     max_gap_frames = triplet_settings.get(
         "max_gap_frames",
         base_config.get("triplet_definition", {}).get("max_gap_frames"),
@@ -169,11 +177,20 @@ def _resolve_triplet_config(
     for canonical, alias in toy_absent_mapping.items():
         alias_to_canonical[str(alias)] = str(canonical)
 
+    summary_age_mode = str(
+        triplet_settings.get(
+            "summary_age_mode",
+            base_config.get("triplet_definition", {}).get("summary_age_mode", "detailed"),
+        )
+    ).lower()
+
     return TripletConfig(
         valid_patterns=valid_patterns,
         require_consecutive=require_consecutive,
         max_gap_frames=max_gap_frames,
         alias_to_canonical=alias_to_canonical,
+        consecutive_mode=consecutive_mode,
+        summary_age_mode=summary_age_mode,
     )
 
 
@@ -184,6 +201,7 @@ def detect_triplets(
     require_consecutive: bool = True,
     max_gap_frames: Optional[int] = None,
     alias_to_canonical: Optional[Dict[str, str]] = None,
+    consecutive_mode: str = "gap_tolerant",
 ) -> pd.DataFrame:
     """Identify social gaze triplets in the gaze fixations DataFrame."""
 
@@ -214,7 +232,7 @@ def detect_triplets(
         trial_df = trial_df.reset_index(drop=True)
         for idx in range(len(trial_df) - 2):
             window = trial_df.iloc[idx : idx + 3]
-            categories = []
+            categories: List[str] = []
             for value in window["aoi_category"].tolist():
                 canonical = alias_to_canonical.get(value, value) if alias_to_canonical else value
                 categories.append(canonical)
@@ -223,19 +241,20 @@ def detect_triplets(
             if pattern not in valid_set:
                 continue
 
-            if require_consecutive:
-                if pattern[0] == pattern[1] or pattern[1] == pattern[2]:
-                    continue
+    if require_consecutive and (pattern[0] == pattern[1] or pattern[1] == pattern[2]):
+                continue
 
             gap_first = _frame_gap(window.iloc[0], window.iloc[1])
             gap_second = _frame_gap(window.iloc[1], window.iloc[2])
 
-            if require_consecutive and (gap_first > 0 or gap_second > 0):
-                continue
-
-            if max_gap_frames is not None:
-                if gap_first > max_gap_frames or gap_second > max_gap_frames:
-                    continue
+            if require_consecutive:
+                if consecutive_mode == "strict":
+                    if gap_first > 0 or gap_second > 0:
+                        continue
+                else:
+                    tolerance = max_gap_frames if max_gap_frames is not None else 0
+                    if gap_first > tolerance or gap_second > tolerance:
+                        continue
 
             records.append(
                 {
@@ -267,16 +286,47 @@ def _safe_int(value: Any) -> Optional[int]:
         return None
 
 
-def count_triplets_per_trial(triplets: pd.DataFrame) -> pd.DataFrame:
+def count_triplets_per_trial(
+    triplets: pd.DataFrame,
+    *,
+    exposure_trials: pd.DataFrame | None = None,
+) -> pd.DataFrame:
+    if exposure_trials is None:
+        if triplets.empty:
+            return pd.DataFrame(
+                columns=[
+                    "participant_id",
+                    "trial_number",
+                    "condition_name",
+                    "age_group",
+                    "triplet_count",
+                ]
+            )
+        return (
+            triplets.groupby(
+                ["participant_id", "trial_number", "condition_name", "age_group"], as_index=False
+            )
+            .size()
+            .rename(columns={"size": "triplet_count"})
+        )
+
+    base_columns = ["participant_id", "trial_number", "condition_name", "age_group"]
+    base = exposure_trials[base_columns].drop_duplicates().copy()
+    if base.empty:
+        return base.assign(triplet_count=pd.Series(dtype=int))
+
     if triplets.empty:
-        return pd.DataFrame(columns=["participant_id", "trial_number", "condition_name", "age_group", "triplet_count"])
+        base["triplet_count"] = 0
+        return base
 
     counts = (
         triplets.groupby(["participant_id", "trial_number", "condition_name", "age_group"], as_index=False)
         .size()
         .rename(columns={"size": "triplet_count"})
     )
-    return counts
+    merged = base.merge(counts, on=base_columns, how="left")
+    merged["triplet_count"] = merged["triplet_count"].fillna(0).astype(int)
+    return merged
 
 
 def summarize_by_condition(counts: pd.DataFrame) -> pd.DataFrame:
@@ -301,12 +351,21 @@ def summarize_by_condition(counts: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def summarize_by_age_group(counts: pd.DataFrame) -> pd.DataFrame:
+def summarize_by_age_group(counts: pd.DataFrame, *, mode: str = "detailed") -> pd.DataFrame:
     if counts.empty:
         return pd.DataFrame(columns=["age_group", "mean_triplets", "std_triplets", "sem_triplets", "n_participants"])
 
     rows: List[Dict[str, Any]] = []
-    for age_group, age_df in counts.groupby("age_group", sort=True):
+    if mode == "child_vs_adult":
+        counts = counts.copy()
+        counts["age_group_normalized"] = counts["age_group"].apply(
+            lambda value: "adult" if str(value).lower() == "adult" else "child"
+        )
+        grouping_column = "age_group_normalized"
+    else:
+        grouping_column = "age_group"
+
+    for age_group, age_df in counts.groupby(grouping_column, sort=True):
         stats = _series_summary(age_df["triplet_count"])
         rows.append(
             {
@@ -367,7 +426,13 @@ def _series_summary(values: pd.Series) -> SummaryStats:
     try:
         return summarize(values.tolist())
     except ValueError:
-        return SummaryStats(mean=float(np.mean(values)), std=0.0, sem=0.0, count=len(values))
+        arr = values.to_numpy(dtype=float, copy=False)
+        if arr.size == 0:
+            return SummaryStats(mean=0.0, std=0.0, sem=0.0, count=0)
+        mean_value = float(np.mean(arr))
+        std_value = float(np.std(arr, ddof=1)) if arr.size > 1 else 0.0
+        sem_value = float(std_value / np.sqrt(arr.size)) if arr.size > 1 else 0.0
+        return SummaryStats(mean=mean_value, std=std_value, sem=sem_value, count=int(arr.size))
 
 
 def _build_overview_text(total_triplets: int) -> str:
@@ -397,11 +462,12 @@ def _build_methods_text(config: TripletConfig) -> str:
         if config.max_gap_frames is not None
         else "No frame gap limit applied."
     )
-    consecutive_desc = (
-        "Triplets require consecutive gaze fixations."
-        if config.require_consecutive
-        else "Triplets may include non-consecutive gaze fixations."
-    )
+    if config.consecutive_mode == "strict":
+        consecutive_desc = "Triplets require consecutive gaze fixations with no intervening frames."
+    elif not config.require_consecutive:
+        consecutive_desc = "Triplets may include non-consecutive gaze fixations."
+    else:
+        consecutive_desc = "Triplets allow brief gaps between fixations (gap-tolerant)."
     return (
         f"Triplets were detected using the following valid patterns: {patterns}. " f"{consecutive_desc} {max_gap_desc}"
     )
@@ -419,6 +485,8 @@ def _generate_outputs(
     variant_config: Mapping[str, Any],
     directional_bias: pd.DataFrame | None = None,
     temporal_summary: pd.DataFrame | None = None,
+    exposure: pd.DataFrame | None = None,
+    metadata: Mapping[str, Any] | None = None,
 ) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -494,7 +562,7 @@ def _generate_outputs(
     directional_table_html = directional_bias.to_html(index=False, classes="table table-striped")
     temporal_table_html = temporal_summary.to_html(index=False, classes="table table-striped")
 
-    context = {
+    context: Dict[str, Any] = {
         "overview_text": _build_overview_text(int(triplets.shape[0])),
         "methods_text": _build_methods_text(config),
         "frequency_table": frequency_table_html,
@@ -511,6 +579,9 @@ def _generate_outputs(
         "tables": [str(path) for path in tables_to_save],
     }
 
+    if metadata:
+        context.update(metadata)
+
     html_path = output_dir / "report.html"
     pdf_path = output_dir / "report.pdf"
 
@@ -518,14 +589,15 @@ def _generate_outputs(
         template_name="ar3_template.html",
         context=context,
         output_html=html_path,
-        output_pdf=pdf_path,
+        output_pdf=None,
+        render_pdf=False,
     )
 
     return {
         "report_id": "AR-3",
         "title": "Social Gaze Triplet Analysis",
         "html_path": str(html_path),
-        "pdf_path": str(pdf_path),
+        "pdf_path": "",
     }
 
 
@@ -582,25 +654,34 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             LOGGER.info("Cohort %s yielded no gaze fixations after filtering", cohort.get("key"))
             continue
 
+        exposure = filtered[
+            ["participant_id", "trial_number", "condition_name", "age_group"]
+        ].drop_duplicates()
+        exposure["cohort_key"] = cohort.get("key")
+        exposure["cohort_label"] = cohort.get("label")
+
         triplets = detect_triplets(
             filtered,
             triplet_config.valid_patterns,
             require_consecutive=triplet_config.require_consecutive,
             max_gap_frames=triplet_config.max_gap_frames,
             alias_to_canonical=triplet_config.alias_to_canonical,
+            consecutive_mode=triplet_config.consecutive_mode,
         )
+
+        counts = count_triplets_per_trial(triplets, exposure_trials=exposure)
+        counts["cohort_key"] = cohort.get("key")
+        counts["cohort_label"] = cohort.get("label")
 
         if triplets.empty:
             LOGGER.info("No triplets detected for cohort %s", cohort.get("key"))
+            all_counts.append(counts)
             continue
 
         triplets["cohort_key"] = cohort.get("key")
         triplets["cohort_label"] = cohort.get("label")
         all_triplets.append(triplets)
 
-        counts = count_triplets_per_trial(triplets)
-        counts["cohort_key"] = cohort.get("key")
-        counts["cohort_label"] = cohort.get("label")
         all_counts.append(counts)
 
     if not resolved_any:
@@ -648,6 +729,12 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
             variant_config=variant_config,
             directional_bias=pd.DataFrame(columns=["condition_name", "pattern", "count"]),
             temporal_summary=pd.DataFrame(columns=["condition_name", "first_occurrence", "subsequent_occurrences"]),
+            metadata={
+                "report_title": variant_config.get("report_title", variant_config.get("analysis_name", "AR-3")),
+                "analysis_name": variant_config.get("analysis_name", "AR-3: Social Gaze Triplets"),
+                "analysis_id": "AR-3",
+                "variant_key": variant_key,
+            },
         )
         metadata.update(_cohort_metadata(empty_triplets, empty_counts))
         metadata["variant_key"] = variant_key
@@ -657,11 +744,11 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     counts_concat = pd.concat(all_counts, ignore_index=True)
 
     summary_condition = summarize_by_condition(counts_concat)
-    summary_age = summarize_by_age_group(counts_concat)
+    summary_age = summarize_by_age_group(counts_concat, mode=triplet_config.summary_age_mode)
     directional_bias = compute_directional_bias(triplets_concat)
     temporal_summary = compute_temporal_summary(triplets_concat)
 
-    metadata = _generate_outputs(
+    report_metadata = _generate_outputs(
         output_dir=output_dir,
         triplets=triplets_concat,
         counts=counts_concat,
@@ -672,12 +759,22 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         variant_config=variant_config,
         directional_bias=directional_bias,
         temporal_summary=temporal_summary,
+        metadata={
+            "report_title": variant_config.get("report_title", variant_config.get("analysis_name", "AR-3")),
+            "analysis_name": variant_config.get("analysis_name", "AR-3: Social Gaze Triplets"),
+            "analysis_id": "AR-3",
+            "variant_key": variant_key,
+        },
     )
-    metadata.update(_cohort_metadata(triplets_concat, counts_concat))
-    metadata["variant_key"] = variant_key
+    report_metadata.update(_cohort_metadata(triplets_concat, counts_concat))
+    report_metadata["variant_key"] = variant_key
 
-    LOGGER.info("AR-3 analysis completed for %s; report generated at %s", variant_key, metadata["html_path"])
-    return metadata
+    LOGGER.info(
+        "AR-3 analysis completed for %s; report generated at %s",
+        variant_key,
+        report_metadata["html_path"],
+    )
+    return report_metadata
 
 
 __all__ = [

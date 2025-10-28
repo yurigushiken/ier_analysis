@@ -43,7 +43,27 @@ conda activate ier_analysis
 pytest tests/ -v
 ```
 
-### Running the Analysis
+### Running AR-4 Dwell-Time Analysis
+
+Activate the conda environment first:
+
+```bash
+conda activate ier_analysis
+```
+
+Run AR-4 using the currently configured variant:
+
+```bash
+python -c "from src.utils.config import load_config; from src.analysis import ar4_dwell_times as ar4; cfg = load_config(); ar4.run(config=cfg)"
+```
+
+Run AR-4 with an explicit YAML override (`ar4/ar4_gw_vs_gwo`):
+
+```bash
+python -c "from src.utils.config import load_config; from src.analysis import ar4_dwell_times as ar4; cfg = load_config(overrides=['analysis_specific.ar4_dwell_times.config_name=ar4/ar4_gw_vs_gwo']); ar4.run(config=cfg)"
+```
+
+### Running the Analysis (after all AR updates)
 
 ```bash
 # Ensure environment is activated
@@ -59,6 +79,8 @@ python src/main.py
 - `reports/final_report.html` - Comprehensive compiled report
 
 📖 **See [quickstart.md](./specs/001-infant-event-analysis/quickstart.md) for detailed setup instructions**
+
+**Please note:** until every AR module is fully updated, avoid running the full pipeline or full `pytest` suite. Focus on the analyses that have been brought up-to-date (currently AR-1 through AR-4) and their dedicated tests.
 
 ---
 

@@ -60,13 +60,17 @@ def bar_plot(
     plt.figure(figsize=figsize)
     
     if hue:
-        categories = data[x].unique()
-        hue_levels = data[hue].unique()
+        categories = list(data[x].unique())
+        hue_levels = list(data[hue].unique())
         width = 0.8 / len(hue_levels)
         for idx, level in enumerate(hue_levels):
             subset = data[data[hue] == level]
+            ordered = (
+                subset.set_index(x)[y]
+                .reindex(categories, fill_value=0.0)
+            )
             positions = [i + idx * width for i in range(len(categories))]
-            plt.bar(positions, subset[y], width=width, label=str(level))
+            plt.bar(positions, ordered.values, width=width, label=str(level))
         plt.xticks(
             [i + width * (len(hue_levels) - 1) / 2 for i in range(len(categories))],
             categories,

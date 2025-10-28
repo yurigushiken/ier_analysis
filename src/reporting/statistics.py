@@ -74,6 +74,81 @@ def fit_glmm_placeholder(*args, **kwargs) -> GLMMResult:
     )
 
 
+def fit_linear_mixed_model(
+    formula: str,
+    data: pd.DataFrame,
+    *,
+    groups_column: str,
+    re_formula: str | None = "1",
+    method: str = "lbfgs",
+) -> GLMMResult:
+    """Fit a linear mixed effects model using statsmodels.
+
+    Parameters
+    ----------
+    formula : str
+        Patsy-style formula specifying fixed effects.
+    data : pd.DataFrame
+        Dataset containing dependent variable, predictors, and grouping column.
+    groups_column : str
+        Column name defining grouping structure (random intercepts).
+    re_formula : str | None, default="1"
+        Formula for random effects; set to None for simple random intercept.
+    method : str, default="lbfgs"
+        Optimisation method passed to statsmodels MixedLM.fit.
+
+    Returns
+    -------
+    GLMMResult
+        Encapsulates convergence info, summary text, and warnings if any.
+    """
+
+    warnings: list[str] = []
+
+    if groups_column not in data.columns:
+        return GLMMResult(
+            model_name="LinearMixedModel",
+            converged=False,
+            summary=f"Grouping column '{groups_column}' not found in dataset.",
+            warnings=[f"Missing grouping column: {groups_column}"],
+        )
+
+    try:
+        from statsmodels.formula.api import mixedlm
+
+        model = mixedlm(
+            formula,
+            data=data,
+            groups=data[groups_column],
+            re_formula=re_formula,
+        )
+        fit = model.fit(method=method, reml=False)
+        converged = bool(getattr(fit, "converged", False))
+        summary_text = str(fit.summary())
+        if not converged:
+            warnings.append("Mixed model did not converge; interpret cautiously.")
+        return GLMMResult(
+            model_name="LinearMixedModel",
+            converged=converged,
+            summary=summary_text,
+            warnings=warnings,
+        )
+    except ImportError as exc:
+        return GLMMResult(
+            model_name="LinearMixedModel",
+            converged=False,
+            summary="statsmodels is required for linear mixed models.",
+            warnings=[f"Install statsmodels to enable LMM fitting: {exc}"],
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        return GLMMResult(
+            model_name="LinearMixedModel",
+            converged=False,
+            summary=f"Failed to fit linear mixed model: {exc}",
+            warnings=[str(exc)],
+        )
+
+
 __all__ = [
     "SummaryStats",
     "GLMMResult",
@@ -82,4 +157,5 @@ __all__ = [
     "t_test",
     "proportion",
     "fit_glmm_placeholder",
+    "fit_linear_mixed_model",
 ]

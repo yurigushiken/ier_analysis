@@ -17,10 +17,11 @@ triplets:
   valid_patterns:
     - ["man_face", "toy_present", "woman_face"]
     - ["woman_face", "toy_present", "man_face"]
-  require_consecutive: true
+  require_consecutive: "gap_tolerant"
   max_gap_frames: 2
   toy_absent_mapping:
     "toy_present": "toy_location"
+  summary_age_mode: "child_vs_adult"
 
 cohorts:
   - key: "infant"

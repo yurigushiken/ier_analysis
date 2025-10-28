@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(C:/Users/yurig/miniforge3/envs/ier_analysis/python.exe -c:*)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}

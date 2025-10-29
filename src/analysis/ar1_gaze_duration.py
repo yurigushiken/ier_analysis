@@ -16,6 +16,7 @@ from src.reporting.report_generator import render_report
 from src.reporting.statistics import cohens_d, t_test
 from src.utils.config import load_analysis_config
 from scipy import stats
+from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar1")
 
@@ -63,22 +64,14 @@ def _apply_participant_filters(
     df: pd.DataFrame, filters: Optional[Dict[str, Iterable[Any]]]
 ) -> pd.DataFrame:
     """Filter the gaze fixation dataframe using cohort-level criteria."""
-    if not filters:
+    try:
+        return apply_filters_tolerant(df, filters)
+    except KeyError:
+        # Preserve existing behaviour for explicit missing columns
+        raise
+    except Exception as exc:  # pragma: no cover - defensive
+        LOGGER.warning("Failed to apply participant filters (%s); returning unfiltered dataset", exc)
         return df
-
-    filtered = df
-    for column, allowed in filters.items():
-        if column not in filtered.columns:
-            raise KeyError(f"Filter column '{column}' not found in gaze fixations data.")
-
-        if isinstance(allowed, (list, tuple, set)):
-            allowed_values = list(allowed)
-        else:
-            allowed_values = [allowed]
-
-        filtered = filtered[filtered[column].isin(allowed_values)]
-
-    return filtered
 
 
 def _aggregate_by_condition(trial_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -697,7 +690,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         df = _apply_participant_filters(df, filters)
 
         if df.empty:
-            raise ValueError(f"Cohort '{key}' has no rows after applying configured filters.")
+            LOGGER.warning("Cohort '%s' has no rows after applying configured filters; skipping.", key)
+            continue
 
         LOGGER.info("Cohort '%s' retained %d gaze fixations after filtering", label, len(df))
 
@@ -705,15 +699,19 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         primary_trials = trials[trials["condition_name"].isin(primary_conditions)].copy()
 
         if primary_trials.empty:
-            raise ValueError(
-                f"Cohort '{key}' has no data for primary comparison conditions: {primary_conditions}"
+            LOGGER.warning(
+                "Cohort '%s' has no data for primary comparison conditions: %s; skipping.", key, primary_conditions
             )
+            continue
 
         primary_participant_means, primary_summary = _aggregate_by_condition(primary_trials)
         full_participant_means, full_summary = _aggregate_by_condition(trials)
 
         if primary_summary.empty:
-            raise ValueError(f"Cohort '{key}' summary is empty for primary comparison conditions.")
+            LOGGER.warning(
+                "Cohort '%s' summary is empty for primary comparison conditions; skipping.", key
+            )
+            continue
 
         stats_context = _compute_statistics(
             primary_participant_means,

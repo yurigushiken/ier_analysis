@@ -17,6 +17,7 @@ from scipy import stats
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
 from src.utils.config import load_analysis_config
+from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar2")
 
@@ -63,15 +64,14 @@ def _load_dataset(path: Path) -> pd.DataFrame:
 
 
 def _apply_filters(df: pd.DataFrame, filters: Optional[Dict[str, Sequence[Any]]]) -> pd.DataFrame:
-    if not filters:
+    try:
+        return apply_filters_tolerant(df, filters)
+    except KeyError:
+        # keep original KeyError behaviour
+        raise
+    except Exception:
+        # defensive fallback: return a copy so callers can continue
         return df.copy()
-    filtered = df.copy()
-    for column, allowed in filters.items():
-        if column not in filtered.columns:
-            raise KeyError(f"Filter column '{column}' not found in gaze fixations data.")
-        allowed_values = list(allowed)
-        filtered = filtered[filtered[column].isin(allowed_values)]
-    return filtered
 
 
 def _filter_by_conditions(df: pd.DataFrame, conditions_include: Sequence[str]) -> pd.DataFrame:

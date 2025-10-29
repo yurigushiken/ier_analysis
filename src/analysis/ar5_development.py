@@ -47,7 +47,7 @@ def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
     if default_path.exists():
         path = default_path
     elif child_path.exists():
-        path = default_path
+        path = child_path
     else:
         raise FileNotFoundError("No gaze fixations file found for AR-5 analysis")
 

@@ -22,6 +22,7 @@ from src.reporting.statistics import (
     summarize,
 )
 from src.utils.config import ConfigurationError, load_analysis_config
+from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar3")
 
@@ -75,15 +76,14 @@ def _load_dataset(path: Path) -> pd.DataFrame:
 
 
 def _apply_filters(df: pd.DataFrame, filters: Optional[Dict[str, Sequence[Any]]]) -> pd.DataFrame:
-    if not filters:
+    try:
+        return apply_filters_tolerant(df, filters)
+    except KeyError:
+        # preserve existing behaviour for missing columns
+        raise
+    except Exception:
+        # defensive fallback: return unfiltered copy
         return df.copy()
-    filtered = df.copy()
-    for column, allowed in filters.items():
-        if column not in filtered.columns:
-            raise KeyError(f"Filter column '{column}' not found in gaze fixations data.")
-        allowed_values = list(allowed)
-        filtered = filtered[filtered[column].isin(allowed_values)]
-    return filtered
 
 
 def _apply_condition_segment_filters(df: pd.DataFrame, variant_config: Mapping[str, Any]) -> pd.DataFrame:

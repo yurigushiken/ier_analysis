@@ -12,8 +12,10 @@ import pandas as pd
 
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
-from src.reporting.statistics import GLMMResult, fit_glmm_placeholder
+from src.reporting.statistics import GLMMResult, fit_linear_mixed_model, fit_glmm_placeholder
 from src.utils.config import ConfigurationError, load_analysis_config
+from src.analysis.filter_utils import apply_filters_tolerant
+import os
 
 LOGGER = logging.getLogger("ier.analysis.ar6")
 
@@ -48,12 +50,37 @@ def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
     if default_path.exists():
         path = default_path
     elif child_path.exists():
-        path = default_path
+        path = child_path
     else:
         raise FileNotFoundError("No gaze fixations file found for AR-6 analysis")
 
     LOGGER.info("Loading gaze fixations from %s", path)
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+
+    # Ensure numeric columns are numeric where appropriate
+    if "age_months" in df.columns:
+        df["age_months"] = pd.to_numeric(df["age_months"], errors="coerce")
+    # if trial cumulative column exists ensure numeric
+    if "trial_cumulative_by_event" in df.columns:
+        df["trial_cumulative_by_event"] = pd.to_numeric(df["trial_cumulative_by_event"], errors="coerce")
+
+    return df
+
+
+def _load_variant_configuration(config: Dict[str, Any]) -> tuple[Dict[str, Any], str]:
+    """Load AR-6 variant configuration (supports env override)."""
+    analysis_specific = config.get("analysis_specific", {}).get("ar6_learning", {})
+    default_variant = str(analysis_specific.get("config_name", "AR6_learning/ar6_example")).strip()
+    env_variant = os.environ.get("IER_AR6_CONFIG", "").strip()
+    variant_name = env_variant or default_variant
+
+    try:
+        variant_config = load_analysis_config(variant_name)
+    except ConfigurationError as exc:
+        LOGGER.warning("Failed to load AR-6 variant config '%s': %s; using empty variant.", variant_name, exc)
+        variant_config = {}
+
+    return variant_config, variant_name
 
 
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -185,12 +212,12 @@ def fit_trial_order_model(
     This is the gold standard for habituation/learning analysis.
     Uses placeholder until statsmodels LMM is fully integrated.
     """
-    warnings = []
+    warnings: List[str] = []
 
     if data.empty:
         warnings.append("No data available for modeling")
         return TrialOrderModelResult(
-            model_type="placeholder",
+            model_type="linear_mixed_model",
             formula="N/A",
             converged=False,
             fixed_effects=pd.DataFrame(),
@@ -205,49 +232,118 @@ def fit_trial_order_model(
             warnings=warnings,
         )
 
-    # Check for sufficient data
+    # Basic checks
     n_participants = data["participant_id"].nunique()
     if n_participants < 5:
         warnings.append(f"Small sample size (n={n_participants}); interpret with caution")
 
-    # Check trial range
-    max_trial = data[trial_variable].max()
-    if max_trial < 2:
-        warnings.append("Insufficient trial repetitions to test trial-order effects")
+    # Ensure trial variable exists
+    if trial_variable not in data.columns:
+        warnings.append(f"Trial variable '{trial_variable}' not found in data; attempting to fall back to 'trial_number_global'")
+        if "trial_number_global" in data.columns:
+            data[trial_variable] = data["trial_number_global"]
+        else:
+            warnings.append("No suitable trial variable found; modelling aborted")
+            return TrialOrderModelResult(
+                model_type="linear_mixed_model",
+                formula="N/A",
+                converged=False,
+                fixed_effects=pd.DataFrame(),
+                random_effects_variance={},
+                r_squared_marginal=0.0,
+                r_squared_conditional=0.0,
+                aic=0.0,
+                bic=0.0,
+                slope_coefficient=0.0,
+                slope_p_value=1.0,
+                slope_significant=False,
+                warnings=warnings,
+            )
 
-    # Placeholder fixed effects
-    fixed_effects = pd.DataFrame(
-        {
-            "term": ["Intercept", trial_variable, "condition", f"{trial_variable}:condition"],
-            "estimate": [0.50, -0.02, -0.08, 0.01],
-            "std_error": [0.04, 0.01, 0.03, 0.015],
-            "z_value": [12.5, -2.0, -2.67, 0.67],
-            "p_value": [0.001, 0.046, 0.008, 0.503],
-        }
-    )
+    # Prepare data for statsmodels
+    working = data.copy()
+    working["participant"] = working["participant_id"].astype(str)
+    working["condition_name"] = working["condition_name"].astype(str)
 
-    # Placeholder random effects variance
-    random_effects_var = {
-        "participant_intercept": 0.025,
-        "participant_slope": 0.004,
-        "residual": 0.050,
-    }
+    # Build formula from config-like defaults
+    formula = f"{dependent_var} ~ {trial_variable} * C(condition_name)"
 
-    warnings.append("LMM with random slopes not yet implemented; using placeholder results")
+    # Fit LMM using helper
+    glmm_res = fit_linear_mixed_model(formula, working, groups_column="participant", re_formula=f"1 + {trial_variable}")
+
+    if not glmm_res.converged:
+        warnings.extend(glmm_res.warnings or [])
+
+    # Build fixed effects table if available
+    fixed_df = pd.DataFrame()
+    if glmm_res.params is not None:
+        params = glmm_res.params
+        pvals = glmm_res.pvalues if glmm_res.pvalues is not None else pd.Series(index=params.index, data=[np.nan] * len(params))
+        std_err = []
+        z_vals = []
+        for term in params.index:
+            est = float(params.get(term, np.nan))
+            # std_err not provided by helper directly; leave NaN
+            std_err.append(np.nan)
+            z_vals.append(np.nan)
+
+        fixed_df = pd.DataFrame(
+            {
+                "term": list(params.index),
+                "estimate": list(params.values),
+                "std_error": std_err,
+                "z_value": z_vals,
+                "p_value": [float(pvals.get(t, np.nan)) for t in params.index],
+            }
+        )
+
+    # Random effects variance - cannot reliably extract from helper; leave empty or report warnings
+    random_var = {}
+    if glmm_res.aic is None and not glmm_res.converged:
+        warnings.append("Model fit did not return AIC/BIC or converged state may be unreliable")
+
+    # Extract slope coefficient for main trial term
+    slope_term_candidates = [t for t in (glmm_res.params.index if glmm_res.params is not None else []) if trial_variable in t and ":" not in t]
+    if slope_term_candidates:
+        slope_term = slope_term_candidates[0]
+        slope_coef = float(glmm_res.params[slope_term])
+        slope_p = float(glmm_res.pvalues[slope_term]) if (glmm_res.pvalues is not None and slope_term in glmm_res.pvalues.index) else float(np.nan)
+        slope_sig = (not np.isnan(slope_p)) and (slope_p < 0.05)
+    else:
+        slope_coef = 0.0
+        slope_p = 1.0
+        slope_sig = False
+
+    # Compute individual participant slopes by fitting simple OLS per participant
+    participant_slopes = []
+    for pid, grp in working.groupby("participant"):
+        grp = grp.dropna(subset=[dependent_var, trial_variable])
+        if grp.shape[0] >= 2:
+            try:
+                x = grp[trial_variable].astype(float).values
+                y = grp[dependent_var].astype(float).values
+                coef = np.polyfit(x, y, 1)[0]
+            except Exception:
+                coef = float(np.nan)
+        else:
+            coef = float(np.nan)
+        participant_slopes.append({"participant_id": pid, "slope": float(coef)})
+
+    slopes_df = pd.DataFrame(participant_slopes)
 
     return TrialOrderModelResult(
-        model_type="linear_mixed_model_random_slopes_placeholder",
-        formula=f"{dependent_var} ~ {trial_variable} * condition + (1 + {trial_variable} | participant)",
-        converged=True,
-        fixed_effects=fixed_effects,
-        random_effects_variance=random_effects_var,
-        r_squared_marginal=0.12,
-        r_squared_conditional=0.35,
-        aic=115.3,
-        bic=135.8,
-        slope_coefficient=-0.02,
-        slope_p_value=0.046,
-        slope_significant=True,
+        model_type="linear_mixed_model",
+        formula=formula,
+        converged=glmm_res.converged,
+        fixed_effects=fixed_df,
+        random_effects_variance=random_var,
+        r_squared_marginal=0.0,
+        r_squared_conditional=0.0,
+        aic=float(glmm_res.aic) if glmm_res.aic is not None else 0.0,
+        bic=float(glmm_res.bic) if glmm_res.bic is not None else 0.0,
+        slope_coefficient=float(slope_coef),
+        slope_p_value=float(slope_p) if not np.isnan(slope_p) else 1.0,
+        slope_significant=bool(slope_sig),
         warnings=warnings,
     )
 
@@ -443,53 +539,137 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     """Run AR-6 trial-order effects analysis."""
     LOGGER.info("Starting AR-6 trial-order effects analysis")
 
-    try:
-        gaze_fixations = _load_gaze_fixations(config)
-    except FileNotFoundError as exc:
-        LOGGER.warning("Skipping AR-6 analysis: %s", exc)
-        return {
-            "report_id": "AR-6",
-            "title": "Trial-Order Effects Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
-
-    if gaze_fixations.empty:
-        LOGGER.warning("Gaze fixations file is empty; skipping AR-6 analysis")
-        return {
-            "report_id": "AR-6",
-            "title": "Trial-Order Effects Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    # Load variant config (optional)
+    variant_config, variant_name = _load_variant_configuration(config)
+    variant_key = variant_config.get("variant_key", Path(variant_name).stem)
+    variant_label = variant_config.get("variant_label", variant_key)
 
     settings = _load_analysis_settings(config)
+
+    # Resolve cohorts if provided in variant; otherwise use processed gaze_fixations
+    cohorts = variant_config.get("cohorts") if isinstance(variant_config, dict) else None
+    cohort_frames: List[pd.DataFrame] = []
+
+    if not cohorts:
+        try:
+            gf = _load_gaze_fixations(config)
+        except FileNotFoundError as exc:
+            LOGGER.warning("Skipping AR-6 analysis: %s", exc)
+            return {"report_id": "AR-6", "title": "Trial-Order Effects Analysis", "html_path": "", "pdf_path": ""}
+
+        if gf.empty:
+            LOGGER.warning("Gaze fixations file is empty; skipping AR-6 analysis")
+            return {"report_id": "AR-6", "title": "Trial-Order Effects Analysis", "html_path": "", "pdf_path": ""}
+
+        cohort_frames.append(gf)
+    else:
+        processed_root = Path(config["paths"]["processed_data"]).resolve()
+        for cohort in cohorts:
+            data_path = cohort.get("data_path")
+            label = cohort.get("label", cohort.get("key", "cohort"))
+            if not data_path:
+                LOGGER.warning("Cohort '%s' missing data_path; skipping.", label)
+                continue
+            p = Path(data_path)
+            if not p.is_absolute():
+                p = (processed_root / p).resolve()
+            if not p.exists():
+                LOGGER.warning("Cohort '%s' dataset missing: %s; skipping.", label, p)
+                continue
+            try:
+                df = pd.read_csv(p)
+            except Exception as exc:
+                LOGGER.warning("Failed to read cohort '%s' at %s: %s; skipping.", label, p, exc)
+                continue
+
+            # Apply participant filters if present
+            filters = cohort.get("participant_filters")
+            try:
+                df = apply_filters_tolerant(df, filters)
+            except Exception as exc:  # defensive
+                LOGGER.warning("Cohort '%s' filter error: %s; skipping filters.", label, exc)
+
+            if df.empty:
+                LOGGER.info("Cohort '%s' has no data after filtering; skipping.", label)
+                continue
+
+            cohort_frames.append(df)
+
+    if not cohort_frames:
+        LOGGER.warning("No cohorts produced data for AR-6; skipping")
+        return {"report_id": "AR-6", "title": "Trial-Order Effects Analysis", "html_path": "", "pdf_path": ""}
+
+    gaze_fixations = pd.concat(cohort_frames, ignore_index=True)
 
     # Calculate trial-level metric
     dependent_var = "proportion_primary_aois"
     trial_data = calculate_trial_level_metric(gaze_fixations, dependent_var)
-
     if trial_data.empty:
         LOGGER.warning("No valid trial data for AR-6 analysis")
-        return {
-            "report_id": "AR-6",
-            "title": "Trial-Order Effects Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+        return {"report_id": "AR-6", "title": "Trial-Order Effects Analysis", "html_path": "", "pdf_path": ""}
 
     # Add trial order within event
     trial_data = add_trial_order_within_event(trial_data)
 
-    # Fit trial-order model - always use trial_order_within_event column we just created
-    trial_variable = "trial_order_within_event"
+    # Determine trial variable to use
+    trial_variable = settings.get("trial_analysis", {}).get("trial_variable", "trial_order_within_event")
+    if trial_variable not in trial_data.columns:
+        # try fallbacks
+        if "trial_number_global" in trial_data.columns:
+            trial_data[trial_variable] = trial_data["trial_number_global"]
+
+    # Fit trial-order model
     model_result = fit_trial_order_model(trial_data, dependent_var, trial_variable)
+
+    # Compute participant-level slopes (simple OLS per participant)
+    participant_slopes = []
+    for pid, grp in trial_data.groupby("participant_id"):
+        grp = grp.dropna(subset=[dependent_var, trial_variable])
+        if grp.shape[0] >= 2:
+            try:
+                x = grp[trial_variable].astype(float).values
+                y = grp[dependent_var].astype(float).values
+                slope = float(np.polyfit(x, y, 1)[0])
+            except Exception:
+                slope = float(np.nan)
+        else:
+            slope = float(np.nan)
+        participant_slopes.append({"participant_id": pid, "slope": slope})
+
+    slopes_df = pd.DataFrame(participant_slopes)
+
+    # Classify participants
+    classify = variant_config.get("trial_order_effects", {}).get("classify_participants", True)
+    slope_threshold = variant_config.get("trial_order_effects", {}).get("slope_threshold", 0.01)
+    classifications = []
+    if classify and not slopes_df.empty:
+        for _, row in slopes_df.iterrows():
+            s = row["slope"]
+            if pd.isna(s):
+                cls = "stable"
+            elif s > slope_threshold:
+                cls = "learner"
+            elif s < -slope_threshold:
+                cls = "adapter"
+            else:
+                cls = "stable"
+            classifications.append({"participant_id": row["participant_id"], "slope": row["slope"], "classification": cls})
+    classifications_df = pd.DataFrame(classifications)
 
     # Summarize by trial for visualization
     summary = summarize_by_trial(trial_data, dependent_var, trial_variable)
 
-    # Generate outputs
-    output_dir = Path(config["paths"]["results"]) / DEFAULT_OUTPUT_DIR.name
+    # Generate outputs under variant-specific directory
+    output_dir = Path(config["paths"]["results"]) / DEFAULT_OUTPUT_DIR.name / variant_key
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save extra outputs
+    slopes_csv = output_dir / f"{dependent_var}_participant_slopes.csv"
+    slopes_df.to_csv(slopes_csv, index=False)
+    if not classifications_df.empty:
+        class_csv = output_dir / f"{dependent_var}_participant_classification.csv"
+        classifications_df.to_csv(class_csv, index=False)
+
     metadata = _generate_outputs(
         output_dir=output_dir,
         trial_data=trial_data,
@@ -501,7 +681,10 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         config=config,
     )
 
-    LOGGER.info("AR-6 analysis completed; report generated at %s", metadata["html_path"])
+    metadata["variant_key"] = variant_key
+    metadata["variant_label"] = variant_label
+
+    LOGGER.info("AR-6 analysis completed; report generated at %s", metadata.get("html_path"))
     return metadata
 
 

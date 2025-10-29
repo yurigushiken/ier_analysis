@@ -1,0 +1,15 @@
+# Example AR-6 variant configuration
+variant_key: ar6_example
+variant_label: "AR-6 Example: Child cohort"
+
+cohorts:
+  - key: child_main
+    label: "Child processed data"
+    data_path: gaze_fixations_child.csv
+    participant_filters:
+      include_age_min: 6
+      include_age_max: 24
+
+trial_order_effects:
+  classify_participants: true
+  slope_threshold: 0.01

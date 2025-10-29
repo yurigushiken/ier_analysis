@@ -9,11 +9,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+import os
 
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
-from src.reporting.statistics import GLMMResult, fit_glmm_placeholder
+from src.reporting.statistics import GLMMResult, fit_linear_mixed_model
 from src.utils.config import ConfigurationError, load_analysis_config
+from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar5")
 
@@ -59,6 +61,22 @@ def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
         df["age_months"] = pd.to_numeric(df["age_months"], errors="coerce")
 
     return df
+
+
+def _load_variant_configuration(config: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
+    """Load AR-5 variant configuration (supports env override)."""
+    analysis_specific = config.get("analysis_specific", {}).get("ar5_development", {})
+    default_variant = str(analysis_specific.get("config_name", "AR5_development/ar5_example")).strip()
+    env_variant = os.environ.get("IER_AR5_CONFIG", "").strip()
+    variant_name = env_variant or default_variant
+
+    try:
+        variant_config = load_analysis_config(variant_name)
+    except ConfigurationError as exc:
+        LOGGER.warning("Failed to load AR-5 variant config '%s': %s; using empty variant.", variant_name, exc)
+        variant_config = {}
+
+    return variant_config, variant_name
 
 
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -213,12 +231,12 @@ def fit_developmental_model(
 
     Uses placeholder for now until statsmodels LMM is fully integrated.
     """
-    warnings = []
+    warnings: List[str] = []
 
     if data.empty:
         warnings.append("No data available for modeling")
         return DevelopmentalModelResult(
-            model_type="placeholder",
+            model_type="linear_mixed_model",
             formula="N/A",
             converged=False,
             coefficients=pd.DataFrame(),
@@ -232,49 +250,115 @@ def fit_developmental_model(
             warnings=warnings,
         )
 
-    # Check for sufficient data
+    # Ensure necessary columns
+    if "participant_id" not in data.columns or "condition_name" not in data.columns or "age_months" not in data.columns:
+        warnings.append("Input data missing required columns (participant_id, condition_name, age_months)")
+        return DevelopmentalModelResult(
+            model_type="linear_mixed_model",
+            formula="N/A",
+            converged=False,
+            coefficients=pd.DataFrame(),
+            anova_table=None,
+            r_squared=0.0,
+            r_squared_adj=0.0,
+            aic=0.0,
+            bic=0.0,
+            interaction_significant=False,
+            interaction_p_value=1.0,
+            warnings=warnings,
+        )
+
     n_participants = data["participant_id"].nunique()
-    if n_participants < 10:
-        warnings.append(f"Small sample size (n={n_participants}); interpret with caution")
+    if n_participants < 6:
+        warnings.append(f"Small sample size (n={n_participants}); model estimates may be unstable")
 
-    # Placeholder coefficients table
-    coefficients = pd.DataFrame(
-        {
-            "term": ["Intercept", "age_months", "condition", "age_months:condition"],
-            "estimate": [0.45, 0.01, -0.05, 0.005],
-            "std_error": [0.05, 0.005, 0.03, 0.003],
-            "z_value": [9.0, 2.0, -1.67, 1.67],
-            "p_value": [0.001, 0.046, 0.095, 0.095],
-        }
-    )
+    # Prepare dataset for statsmodels
+    working = data.copy()
+    working["participant"] = working["participant_id"].astype(str)
+    # Use categorical for condition
+    working["condition_name"] = working["condition_name"].astype(str)
 
-    # Placeholder ANOVA table
-    anova_table = pd.DataFrame(
-        {
-            "term": ["age_months", "condition", "age_months:condition", "Residual"],
-            "df": [1, 1, 1, n_participants - 4],
-            "sum_sq": [0.15, 0.08, 0.04, 1.20],
-            "mean_sq": [0.15, 0.08, 0.04, 0.025],
-            "F": [6.0, 3.2, 1.6, np.nan],
-            "p_value": [0.016, 0.077, 0.209, np.nan],
-        }
-    )
+    # Formula: dependent ~ age_months * C(condition_name)
+    formula = f"{dependent_var} ~ age_months * C(condition_name)"
 
-    warnings.append("LMM not yet implemented; using placeholder results for demonstration")
+    glmm_res = fit_linear_mixed_model(formula, working, groups_column="participant")
+
+    if not glmm_res.converged:
+        warnings.extend(glmm_res.warnings or [])
+        return DevelopmentalModelResult(
+            model_type="linear_mixed_model",
+            formula=formula,
+            converged=False,
+            coefficients=pd.DataFrame(),
+            anova_table=None,
+            r_squared=0.0,
+            r_squared_adj=0.0,
+            aic=glmm_res.aic or 0.0,
+            bic=glmm_res.bic or 0.0,
+            interaction_significant=False,
+            interaction_p_value=1.0,
+            warnings=warnings,
+        )
+
+    # Build coefficients table
+    coeff_df = pd.DataFrame()
+    if glmm_res.params is not None:
+        params = glmm_res.params
+        pvalues = glmm_res.pvalues if glmm_res.pvalues is not None else pd.Series(index=params.index, data=[np.nan] * len(params))
+        conf_int = glmm_res.conf_int if glmm_res.conf_int is not None else None
+
+        estimates = params.values
+        terms = list(params.index)
+        std_err = []
+        z_vals = []
+        pvals = []
+        for i, term in enumerate(terms):
+            est = float(estimates[i])
+            if conf_int is not None and term in conf_int.index:
+                lower = float(conf_int.loc[term].iloc[0])
+                upper = float(conf_int.loc[term].iloc[1])
+                se = (upper - lower) / (2 * 1.96) if np.isfinite(upper) and np.isfinite(lower) else np.nan
+            else:
+                se = np.nan
+            z = float(est / se) if se and se != 0 and not np.isnan(se) else np.nan
+            pv = float(pvalues.get(term, np.nan)) if pvalues is not None else np.nan
+            std_err.append(se)
+            z_vals.append(z)
+            pvals.append(pv)
+
+        coeff_df = pd.DataFrame(
+            {
+                "term": terms,
+                "estimate": estimates,
+                "std_error": std_err,
+                "z_value": z_vals,
+                "p_value": pvals,
+            }
+        )
+
+    # Determine interaction significance (look for ':' in term names)
+    interaction_p = 1.0
+    interaction_sig = False
+    if not coeff_df.empty:
+        interaction_terms = coeff_df[coeff_df["term"].str.contains(":")]
+        if not interaction_terms.empty:
+            # take smallest p-value among interaction terms
+            interaction_p = float(interaction_terms["p_value"].min())
+            interaction_sig = interaction_p < 0.05 if not np.isnan(interaction_p) else False
 
     return DevelopmentalModelResult(
-        model_type="linear_mixed_model_placeholder",
-        formula=f"{dependent_var} ~ age_months * condition + (1 | participant)",
+        model_type="linear_mixed_model",
+        formula=formula,
         converged=True,
-        coefficients=coefficients,
-        anova_table=anova_table,
-        r_squared=0.18,
-        r_squared_adj=0.15,
-        aic=125.4,
-        bic=142.8,
-        interaction_significant=False,
-        interaction_p_value=0.209,
-        warnings=warnings,
+        coefficients=coeff_df,
+        anova_table=None,
+        r_squared=0.0,
+        r_squared_adj=0.0,
+        aic=glmm_res.aic or 0.0,
+        bic=glmm_res.bic or 0.0,
+        interaction_significant=interaction_sig,
+        interaction_p_value=interaction_p,
+        warnings=warnings + (glmm_res.warnings or []),
     )
 
 
@@ -463,41 +547,76 @@ def _generate_outputs(
 def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     """Run AR-5 developmental trajectory analysis."""
     LOGGER.info("Starting AR-5 developmental trajectory analysis")
-
-    try:
-        gaze_fixations = _load_gaze_fixations(config)
-    except FileNotFoundError as exc:
-        LOGGER.warning("Skipping AR-5 analysis: %s", exc)
-        return {
-            "report_id": "AR-5",
-            "title": "Developmental Trajectory Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
-
-    if gaze_fixations.empty:
-        LOGGER.warning("Gaze fixations file is empty; skipping AR-5 analysis")
-        return {
-            "report_id": "AR-5",
-            "title": "Developmental Trajectory Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+    # Load variant configuration (optional)
+    variant_config, variant_name = _load_variant_configuration(config)
+    variant_key = variant_config.get("variant_key", Path(variant_name).stem)
+    variant_label = variant_config.get("variant_label", variant_key)
 
     settings = _load_analysis_settings(config)
+
+    # Resolve cohorts (if provided in variant); otherwise process default processed file
+    cohorts = variant_config.get("cohorts") if isinstance(variant_config, dict) else None
+    cohort_frames: List[pd.DataFrame] = []
+
+    if not cohorts:
+        # Single dataset mode (use processed gaze_fixations)
+        try:
+            gf = _load_gaze_fixations(config)
+        except FileNotFoundError as exc:
+            LOGGER.warning("Skipping AR-5 analysis: %s", exc)
+            return {"report_id": "AR-5", "title": "Developmental Trajectory Analysis", "html_path": "", "pdf_path": ""}
+
+        if gf.empty:
+            LOGGER.warning("Gaze fixations file is empty; skipping AR-5 analysis")
+            return {"report_id": "AR-5", "title": "Developmental Trajectory Analysis", "html_path": "", "pdf_path": ""}
+
+        cohort_frames.append(gf)
+    else:
+        processed_root = Path(config["paths"]["processed_data"]).resolve()
+        for cohort in cohorts:
+            data_path = cohort.get("data_path")
+            label = cohort.get("label", cohort.get("key", "cohort"))
+            if not data_path:
+                LOGGER.warning("Cohort '%s' missing data_path; skipping.", label)
+                continue
+            p = Path(data_path)
+            if not p.is_absolute():
+                p = (processed_root / p).resolve()
+            if not p.exists():
+                LOGGER.warning("Cohort '%s' dataset missing: %s; skipping.", label, p)
+                continue
+            try:
+                df = pd.read_csv(p)
+            except Exception as exc:
+                LOGGER.warning("Failed to read cohort '%s' at %s: %s; skipping.", label, p, exc)
+                continue
+
+            # Apply participant filters if present
+            filters = cohort.get("participant_filters")
+            try:
+                df = apply_filters_tolerant(df, filters)
+            except KeyError as exc:
+                LOGGER.warning("Cohort '%s' filter error: %s; skipping filters.", label, exc)
+
+            if df.empty:
+                LOGGER.info("Cohort '%s' has no data after filtering; skipping.", label)
+                continue
+
+            cohort_frames.append(df)
+
+    if not cohort_frames:
+        LOGGER.warning("No cohorts produced data for AR-5; skipping")
+        return {"report_id": "AR-5", "title": "Developmental Trajectory Analysis", "html_path": "", "pdf_path": ""}
+
+    # Concatenate cohorts and compute dependent variables per participant-condition
+    gaze_fixations = pd.concat(cohort_frames, ignore_index=True)
 
     # Calculate dependent variable (proportion of primary AOIs)
     dependent_var = "proportion_primary_aois"
     data = calculate_proportion_primary_aois(gaze_fixations)
-
     if data.empty:
-        LOGGER.warning("No valid data for AR-5 analysis")
-        return {
-            "report_id": "AR-5",
-            "title": "Developmental Trajectory Analysis",
-            "html_path": "",
-            "pdf_path": "",
-        }
+        LOGGER.warning("No valid data for AR-5 analysis after computing dependent variable")
+        return {"report_id": "AR-5", "title": "Developmental Trajectory Analysis", "html_path": "", "pdf_path": ""}
 
     # Fit developmental model
     test_nonlinear = settings.get("age_modeling", {}).get("test_nonlinear", True)
@@ -506,8 +625,8 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     # Summarize by age group for visualization
     summary = summarize_by_age_group(data, dependent_var)
 
-    # Generate outputs
-    output_dir = Path(config["paths"]["results"]) / DEFAULT_OUTPUT_DIR.name
+    # Generate outputs under variant-specific directory
+    output_dir = Path(config["paths"]["results"]) / DEFAULT_OUTPUT_DIR.name / variant_key
     metadata = _generate_outputs(
         output_dir=output_dir,
         data=data,
@@ -518,7 +637,10 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         config=config,
     )
 
-    LOGGER.info("AR-5 analysis completed; report generated at %s", metadata["html_path"])
+    metadata["variant_key"] = variant_key
+    metadata["variant_label"] = variant_label
+
+    LOGGER.info("AR-5 analysis completed; report generated at %s", metadata.get("html_path"))
     return metadata
 
 

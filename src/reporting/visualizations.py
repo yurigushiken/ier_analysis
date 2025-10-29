@@ -1,4 +1,4 @@
-"""Visualization utilities for reporting modules."""
+﻿"""Visualization utilities for reporting modules."""
 
 from __future__ import annotations
 
@@ -318,7 +318,10 @@ def violin_plot(
         hue=hue,
         inner=inner,
         cut=0,
-        scale="width",
+        density_norm="width",
+        common_norm=False,
+        bw_method="scott",
+        bw_adjust=1.0,
         linewidth=1.2,
     )
 
@@ -327,9 +330,9 @@ def violin_plot(
             data=data,
             x=x,
             y=y,
-            hue=hue if hue is None else None,
-            dodge=hue is None,
-            color="k",
+            hue=None,
+            dodge=False,
+            color='k',
             alpha=0.3,
             size=3,
         )
@@ -356,3 +359,5 @@ def violin_plot(
 
 
 __all__ = ["bar_plot", "line_plot", "line_plot_with_error_bars", "violin_plot", "directed_graph"]
+
+

@@ -40,6 +40,6 @@ temp/
 .claude/
 nul
 .mypy_cache/
-
+.DS_Store
 
 

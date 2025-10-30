@@ -1,0 +1,36 @@
+# AR6 Base Configuration
+# Shared settings for all AR-6 (Trial-Order Effects) analysis variants.
+# Controls trial-variable selection, statistical modelling, visualization, and exports.
+
+trial_analysis:
+  # Trial variable to use for modelling (fallbacks if missing)
+  trial_variable: "trial_order_within_event"
+  # Maximum presentations of an event shown in plots (set to null for all)
+  max_presentations: 6
+  # Minimum number of presentations required per event type to include in modelling
+  min_presentations_per_event: 2
+  # Expected learning pattern for interpretation ("learning", "habituation", or "both")
+  expected_pattern: "both"
+
+statistics:
+  primary_test: "linear_mixed_model"
+  random_intercept: true
+  random_slope: true
+  test_slope_significance: true
+  calculate_effect_size: true
+
+metrics:
+  dependent_variables:
+    - "proportion_primary_aois"
+
+visualization:
+  plot_type: "line_with_regression"
+  show_individual_trajectories: true
+  show_group_mean: true
+  separate_by_condition: true
+  include_confidence_interval: true
+
+output:
+  export_trial_data: true
+  export_regression_coefficients: true
+  include_learning_interpretation: true

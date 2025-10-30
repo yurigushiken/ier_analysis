@@ -13,14 +13,6 @@ segments:
   include:
     - "interaction"
 
-triplets:
-  valid_patterns:
-    - ["man_face", "toy_present", "woman_face"]
-    - ["woman_face", "toy_present", "man_face"]
-  require_consecutive: "gap_tolerant"
-  max_gap_frames: 2
-  summary_age_mode: "child_vs_adult"
-
 cohorts:
   - key: "infant"
     label: "Infant"
@@ -47,4 +39,3 @@ output:
   export_summary_by_age_group: true
   export_directional_bias: true
   export_temporal_summaries: true
-

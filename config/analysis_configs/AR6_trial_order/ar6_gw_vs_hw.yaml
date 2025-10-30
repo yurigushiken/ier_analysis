@@ -1,0 +1,25 @@
+# AR-6 Variant: GIVE_WITH vs HUG_WITH (Trial Order)
+variant_key: "ar6_gw_vs_hw"
+variant_label: "AR-6: GIVE_WITH vs HUG_WITH"
+analysis_name: "AR-6: Trial-Order Effects"
+description: "Examine trial-order slopes for GIVE_WITH versus HUG_WITH presentations in infants and adults."
+
+target_conditions:
+  - "GIVE_WITH"
+  - "HUG_WITH"
+
+trial_order_effects:
+  classify_participants: true
+  slope_threshold: 0.015
+
+cohorts:
+  - key: "infant"
+    label: "Infant Cohort"
+    data_path: "gaze_fixations_child.csv"
+    participant_filters:
+      participant_type: ["infant"]
+  - key: "adult"
+    label: "Adult Control Cohort"
+    data_path: "gaze_fixations_adult.csv"
+    participant_filters:
+      participant_type: ["adult"]

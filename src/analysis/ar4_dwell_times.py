@@ -206,7 +206,7 @@ def summarize_by_aoi(
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
     base_config: Dict[str, Any]
     try:
-        base_config = load_analysis_config("ar4_config")
+        base_config = load_analysis_config("AR4_dwell_times/ar4_config")
     except ConfigurationError:
         base_config = {}
 

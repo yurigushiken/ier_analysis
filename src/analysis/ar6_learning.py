@@ -19,7 +19,7 @@ import os
 
 LOGGER = logging.getLogger("ier.analysis.ar6")
 
-DEFAULT_OUTPUT_DIR = Path("results/AR6_Learning")
+DEFAULT_OUTPUT_DIR = Path("results/AR6_Trial_Order")
 
 
 @dataclass
@@ -38,6 +38,9 @@ class TrialOrderModelResult:
     slope_coefficient: float
     slope_p_value: float
     slope_significant: bool
+    interaction_coefficient: float  # Trial × Condition interaction
+    interaction_p_value: float
+    interaction_significant: bool
     warnings: List[str]
 
 
@@ -69,8 +72,8 @@ def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
 
 def _load_variant_configuration(config: Dict[str, Any]) -> tuple[Dict[str, Any], str]:
     """Load AR-6 variant configuration (supports env override)."""
-    analysis_specific = config.get("analysis_specific", {}).get("ar6_learning", {})
-    default_variant = str(analysis_specific.get("config_name", "AR6_learning/ar6_example")).strip()
+    analysis_specific = config.get("analysis_specific", {}).get("ar6_trial_order", {})
+    default_variant = str(analysis_specific.get("config_name", "AR6_trial_order/ar6_gw_vs_hw")).strip()
     env_variant = os.environ.get("IER_AR6_CONFIG", "").strip()
     variant_name = env_variant or default_variant
 
@@ -86,7 +89,7 @@ def _load_variant_configuration(config: Dict[str, Any]) -> tuple[Dict[str, Any],
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
     """Load AR-6 specific configuration settings."""
     try:
-        analysis_config = load_analysis_config("ar6_config")
+        analysis_config = load_analysis_config("AR6_trial_order/ar6_config")
     except ConfigurationError:
         analysis_config = {}
 
@@ -149,8 +152,12 @@ def calculate_trial_level_metric(
             columns=["participant_id", "trial_number", "trial_number_global", "condition_name", metric_name]
         )
 
-    # Define primary AOIs
-    primary_aois = ["man_face", "woman_face", "toy_present"]
+    # Exclude off-screen fixations from denominator
+    aoi_lower = gaze_fixations["aoi_category"].astype(str).str.lower()
+    gaze_fixations = gaze_fixations[aoi_lower != "off_screen"].copy()
+
+    # Define primary AOIs (faces, toy present, toy location/anticipation)
+    primary_aois = {"man_face", "woman_face", "toy_present", "toy_location"}
     gaze_fixations["is_primary"] = gaze_fixations["aoi_category"].isin(primary_aois)
 
     # Calculate proportion per trial
@@ -229,6 +236,9 @@ def fit_trial_order_model(
             slope_coefficient=0.0,
             slope_p_value=1.0,
             slope_significant=False,
+            interaction_coefficient=0.0,
+            interaction_p_value=1.0,
+            interaction_significant=False,
             warnings=warnings,
         )
 
@@ -257,6 +267,9 @@ def fit_trial_order_model(
                 slope_coefficient=0.0,
                 slope_p_value=1.0,
                 slope_significant=False,
+                interaction_coefficient=0.0,
+                interaction_p_value=1.0,
+                interaction_significant=False,
                 warnings=warnings,
             )
 
@@ -268,8 +281,13 @@ def fit_trial_order_model(
     # Build formula from config-like defaults
     formula = f"{dependent_var} ~ {trial_variable} * C(condition_name)"
 
-    # Fit LMM using helper
+    # Try full model with random slopes first
     glmm_res = fit_linear_mixed_model(formula, working, groups_column="participant", re_formula=f"1 + {trial_variable}")
+
+    # If convergence fails, try simpler model with random intercept only
+    if not glmm_res.converged:
+        warnings.append("Random slopes model failed to converge; trying random intercept only")
+        glmm_res = fit_linear_mixed_model(formula, working, groups_column="participant", re_formula="1")
 
     if not glmm_res.converged:
         warnings.extend(glmm_res.warnings or [])
@@ -314,6 +332,19 @@ def fit_trial_order_model(
         slope_p = 1.0
         slope_sig = False
 
+    # Extract interaction coefficient (Trial × Condition)
+    interaction_term_candidates = [t for t in (glmm_res.params.index if glmm_res.params is not None else [])
+                                    if trial_variable in t and "condition_name" in t and ":" in t]
+    if interaction_term_candidates:
+        interaction_term = interaction_term_candidates[0]
+        interaction_coef = float(glmm_res.params[interaction_term])
+        interaction_p = float(glmm_res.pvalues[interaction_term]) if (glmm_res.pvalues is not None and interaction_term in glmm_res.pvalues.index) else float(np.nan)
+        interaction_sig = (not np.isnan(interaction_p)) and (interaction_p < 0.05)
+    else:
+        interaction_coef = 0.0
+        interaction_p = 1.0
+        interaction_sig = False
+
     # Compute individual participant slopes by fitting simple OLS per participant
     participant_slopes = []
     for pid, grp in working.groupby("participant"):
@@ -344,6 +375,9 @@ def fit_trial_order_model(
         slope_coefficient=float(slope_coef),
         slope_p_value=float(slope_p) if not np.isnan(slope_p) else 1.0,
         slope_significant=bool(slope_sig),
+        interaction_coefficient=float(interaction_coef),
+        interaction_p_value=float(interaction_p) if not np.isnan(interaction_p) else 1.0,
+        interaction_significant=bool(interaction_sig),
         warnings=warnings,
     )
 
@@ -374,19 +408,34 @@ def summarize_by_trial(data: pd.DataFrame, dependent_var: str, trial_variable: s
 
 def _build_overview_text(model_result: TrialOrderModelResult) -> str:
     """Generate overview text for the report."""
+    # Main slope effect
     if model_result.slope_significant:
         direction = "decreasing" if model_result.slope_coefficient < 0 else "increasing"
-        return (
+        slope_text = (
             f"Trial-order effects analysis revealed a significant {direction} trend in looking behavior "
             f"across repeated presentations (slope = {model_result.slope_coefficient:.4f}, p = {model_result.slope_p_value:.3f}). "
-            "This suggests systematic adaptation or learning across trial repetitions."
         )
     else:
-        return (
-            f"Trial-order effects analysis found no significant change in looking behavior across "
+        slope_text = (
+            f"Trial-order effects analysis found no significant overall change in looking behavior across "
             f"repeated presentations (slope = {model_result.slope_coefficient:.4f}, p = {model_result.slope_p_value:.3f}). "
-            "Looking patterns remained relatively stable across trial repetitions."
         )
+
+    # Interaction effect
+    if model_result.interaction_significant:
+        interaction_direction = "accelerated differently" if model_result.interaction_coefficient != 0 else "varied"
+        interaction_text = (
+            f"Importantly, the trial-order effect differed between conditions "
+            f"(interaction coefficient = {model_result.interaction_coefficient:.4f}, p = {model_result.interaction_p_value:.3f}), "
+            f"suggesting that learning or habituation rates varied by event type."
+        )
+    else:
+        interaction_text = (
+            f"The trial-order pattern did not differ significantly between conditions "
+            f"(interaction p = {model_result.interaction_p_value:.3f}), indicating similar adaptation patterns across event types."
+        )
+
+    return slope_text + interaction_text
 
 
 def _build_methods_text(settings: Dict[str, Any]) -> str:
@@ -491,26 +540,41 @@ def _generate_outputs(
             ylabel=dependent_var.replace("_", " ").title(),
             output_path=trial_fig,
         )
+        # Use relative path from HTML file (in same directory as figure)
         figures.append(
             {
-                "path": str(trial_fig),
+                "path": trial_fig.name,  # Just the filename, not full path
                 "caption": f"Trial-order effects for {dependent_var}",
             }
         )
 
     # Build report context
+    from datetime import datetime
+
     context = {
+        # Base template required variables
+        "report_title": "Trial-Order Effects Analysis",
+        "analysis_name": "AR-6: Learning and Habituation",
+        "analysis_id": "AR-6",
+        "generation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "pipeline_version": "1.0",
+        "alpha": 0.05,
+        "min_gaze_frames": 3,
+        "error_bar_type": "SEM",
+
+        # AR6-specific content
         "overview_text": _build_overview_text(model_result),
         "methods_text": _build_methods_text(settings),
-        "statistics_table": _build_statistics_table(model_result),
+        "regression_table": _build_statistics_table(model_result),
         "interpretation_text": (
             "Significant trial-order effects indicate learning or habituation. Negative slopes suggest "
             "adaptation/habituation (decreasing interest), while positive slopes suggest learning "
-            "(increasing interest). The random slopes in this model allow each participant to have "
-            "their own rate of change, which is crucial for individual differences."
+            "(increasing interest). The trial × condition interaction tests whether learning/habituation rates "
+            "differ between event types (e.g., GIVE vs HUG). A significant interaction would indicate that "
+            "infants adapt differently to different event structures."
         ),
-        "figure_entries": figures,
-        "figures": [fig["path"] for fig in figures],
+        "learning_figures": figures,  # Template expects 'learning_figures'
+        "figures": [fig["path"] for fig in figures],  # Already relative paths now
         "tables": [str(trial_csv), str(summary_csv)],
     }
 
@@ -563,16 +627,27 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
         cohort_frames.append(gf)
     else:
-        processed_root = Path(config["paths"]["processed_data"]).resolve()
+        processed_root_cfg = Path(config["paths"]["processed_data"])
+        if processed_root_cfg.is_absolute():
+            processed_root = processed_root_cfg.resolve()
+        else:
+            processed_root = (Path.cwd() / processed_root_cfg).resolve()
+        project_root = Path.cwd()
         for cohort in cohorts:
             data_path = cohort.get("data_path")
             label = cohort.get("label", cohort.get("key", "cohort"))
             if not data_path:
                 LOGGER.warning("Cohort '%s' missing data_path; skipping.", label)
                 continue
-            p = Path(data_path)
-            if not p.is_absolute():
-                p = (processed_root / p).resolve()
+            raw_path = Path(data_path)
+            if raw_path.is_absolute():
+                p = raw_path
+            else:
+                candidate = (project_root / raw_path).resolve()
+                if candidate.exists():
+                    p = candidate
+                else:
+                    p = (processed_root / raw_path).resolve()
             if not p.exists():
                 LOGGER.warning("Cohort '%s' dataset missing: %s; skipping.", label, p)
                 continue
@@ -600,6 +675,22 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         return {"report_id": "AR-6", "title": "Trial-Order Effects Analysis", "html_path": "", "pdf_path": ""}
 
     gaze_fixations = pd.concat(cohort_frames, ignore_index=True)
+
+    # Optional: restrict to target conditions if provided by variant
+    target_conditions = None
+    if isinstance(variant_config, dict):
+        target_conditions = variant_config.get("target_conditions")
+        if target_conditions and "condition_name" in gaze_fixations.columns:
+            before_n = len(gaze_fixations)
+            gaze_fixations = gaze_fixations[gaze_fixations["condition_name"].isin(list(target_conditions))].copy()
+            LOGGER.info(
+                "Filtered to target conditions %s (rows: %s -> %s)",
+                list(target_conditions),
+                before_n,
+                len(gaze_fixations),
+            )
+        elif target_conditions:
+            LOGGER.warning("target_conditions provided but 'condition_name' column not found; skipping filter")
 
     # Calculate trial-level metric
     dependent_var = "proportion_primary_aois"

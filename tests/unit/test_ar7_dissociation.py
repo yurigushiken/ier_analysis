@@ -61,6 +61,7 @@ def _sample_condition_data() -> pd.DataFrame:
 def test_calculate_condition_metrics():
     """Test condition-level metric calculation."""
     gaze_fixations = _sample_condition_data()
+    gaze_fixations["condition_family"] = gaze_fixations["condition_name"]
 
     result = ar7.calculate_condition_metrics(gaze_fixations)
 
@@ -85,9 +86,10 @@ def test_calculate_condition_metrics():
 def test_calculate_condition_metrics_filtered():
     """Test condition metrics with target conditions filter."""
     gaze_fixations = _sample_condition_data()
+    gaze_fixations["condition_family"] = gaze_fixations["condition_name"]
 
-    # Only request GIVE and HUG
-    result = ar7.calculate_condition_metrics(gaze_fixations, target_conditions=["GIVE", "HUG"])
+    filtered = gaze_fixations[gaze_fixations["condition_family"].isin(["GIVE", "HUG"])]
+    result = ar7.calculate_condition_metrics(filtered)
 
     conditions_found = result["condition_name"].unique()
     assert "SHOW" not in conditions_found or len(result[result["condition_name"] == "SHOW"]) == 0
@@ -118,6 +120,86 @@ def test_fit_dissociation_model_empty():
     result = ar7.fit_dissociation_model(empty_df, "proportion_primary_aois", ["GIVE", "HUG"])
 
     assert not result.converged
+
+
+def test_calculate_social_triplet_rate():
+    """Test social triplet rate calculation."""
+    prepared = pd.DataFrame(
+        [
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 1,
+                "aoi_category": "man_face",
+                "gaze_onset_time": 0.0,
+            },
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 1,
+                "aoi_category": "toy_present",
+                "gaze_onset_time": 0.1,
+            },
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 1,
+                "aoi_category": "woman_face",
+                "gaze_onset_time": 0.2,
+            },
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 2,
+                "aoi_category": "man_face",
+                "gaze_onset_time": 0.0,
+            },
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 2,
+                "aoi_category": "toy_location",
+                "gaze_onset_time": 0.1,
+            },
+            {
+                "participant_id": "P1",
+                "condition_family": "SHOW",
+                "trial_number": 2,
+                "aoi_category": "woman_face",
+                "gaze_onset_time": 0.2,
+            },
+            {
+                "participant_id": "P2",
+                "condition_family": "GIVE",
+                "trial_number": 1,
+                "aoi_category": "man_face",
+                "gaze_onset_time": 0.0,
+            },
+            {
+                "participant_id": "P2",
+                "condition_family": "GIVE",
+                "trial_number": 1,
+                "aoi_category": "toy_present",
+                "gaze_onset_time": 0.1,
+            },
+            {
+                "participant_id": "P2",
+                "condition_family": "GIVE",
+                "trial_number": 1,
+                "aoi_category": "man_face",
+                "gaze_onset_time": 0.2,
+            },
+        ]
+    )
+
+    result = ar7.calculate_social_triplet_rate(prepared)
+
+    assert not result.empty
+    show_rate = result[result["condition_name"] == "SHOW"]["social_triplet_rate"].iloc[0]
+    give_rate = result[result["condition_name"] == "GIVE"]["social_triplet_rate"].iloc[0]
+
+    assert pytest.approx(show_rate, rel=1e-6) == 1.0  # average of two trials with one triplet each
+    assert pytest.approx(give_rate, rel=1e-6) == 0.0  # no valid triplet
     assert result.condition_means.empty
 
 

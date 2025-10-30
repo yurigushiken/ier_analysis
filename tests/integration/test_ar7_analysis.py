@@ -78,7 +78,7 @@ def test_ar7_analysis_end_to_end(tmp_path: Path):
     assert result["html_path"] != ""
 
     # Verify outputs
-    ar7_output_dir = results_dir / "AR7_Dissociation"
+    ar7_output_dir = results_dir / "AR7_Event_Dissociation"
     assert ar7_output_dir.exists()
 
     html_path = Path(result["html_path"])
@@ -86,7 +86,10 @@ def test_ar7_analysis_end_to_end(tmp_path: Path):
 
     # Verify CSV outputs
     data_csv = ar7_output_dir / "proportion_primary_aois_by_condition.csv"
+    triplet_csv = ar7_output_dir / "social_triplet_rate_by_condition.csv"
+    assert any('social_triplet_rate_by_condition.csv' in table for table in result.get('tables', []))
     assert data_csv.exists()
+    assert triplet_csv.exists()
 
 
 def test_ar7_missing_gaze_fixations(tmp_path: Path):
@@ -125,6 +128,7 @@ def test_ar7_calculate_condition_metrics_integration():
             {"participant_id": "P2", "condition_name": "HUG", "aoi_category": "screen_nonAOI", "gaze_duration_ms": 500},
         ]
     )
+    gaze_fixations['condition_family'] = gaze_fixations['condition_name']
 
     result = ar7.calculate_condition_metrics(gaze_fixations)
 

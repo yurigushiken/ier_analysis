@@ -1,0 +1,36 @@
+# AR-7 Variant: SHOW vs GIVE vs HUG (Event Dissociation)
+variant_key: "ar7_show_vs_give_hug"
+variant_label: "AR-7: SHOW vs GIVE vs HUG"
+analysis_name: "AR-7: Event Dissociation"
+description: "Assess whether SHOW events dissociate from GIVE and HUG by comparing toy attention and social gaze patterns."
+
+target_conditions:
+  - "GIVE"
+  - "HUG"
+  - "SHOW"
+
+condition_mapping:
+  GIVE_WITH: "GIVE"
+  GIVE_WITHOUT: "GIVE"
+  HUG_WITH: "HUG"
+  HUG_WITHOUT: "HUG"
+  SHOW_WITH: "SHOW"
+  SHOW_WITHOUT: "SHOW"
+  UPSIDE_DOWN_GIVE_WITH: "GIVE"
+  UPSIDE_DOWN_GIVE_WITHOUT: "GIVE"
+  UPSIDE_DOWN_HUG_WITH: "HUG"
+  UPSIDE_DOWN_HUG_WITHOUT: "HUG"
+  UPSIDE_DOWN_SHOW_WITH: "SHOW"
+  UPSIDE_DOWN_SHOW_WITHOUT: "SHOW"
+
+cohorts:
+  - key: "infant"
+    label: "Infant Cohort"
+    data_path: "gaze_fixations_child.csv"
+    participant_filters:
+      participant_type: ["infant"]
+  - key: "adult"
+    label: "Adult Control Cohort"
+    data_path: "gaze_fixations_adult.csv"
+    participant_filters:
+      participant_type: ["adult"]

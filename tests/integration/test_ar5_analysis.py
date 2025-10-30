@@ -206,7 +206,7 @@ def test_ar5_analysis_end_to_end(tmp_path: Path):
             "results": str(results_dir),
         },
         "analysis_specific": {
-            "ar5_development": {
+            "ar5_developmental_trajectories": {
                 "age_modeling": {
                     "use_continuous_age": True,
                     "test_nonlinear": True,
@@ -228,7 +228,7 @@ def test_ar5_analysis_end_to_end(tmp_path: Path):
     assert result["pdf_path"] != ""
 
     # Verify: Check output files exist
-    ar5_output_dir = results_dir / "AR5_Development"
+    ar5_output_dir = results_dir / "AR5_Developmental_Trajectories"
     assert ar5_output_dir.exists()
 
     # Verify: HTML report exists

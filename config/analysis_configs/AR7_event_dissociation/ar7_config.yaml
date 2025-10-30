@@ -1,0 +1,34 @@
+# AR7 Base Configuration
+# Shared defaults for all Event Dissociation variants.
+
+comparisons:
+  contrasts:
+    - name: "GIVE vs HUG"
+      conditions: ["GIVE", "HUG"]
+    - name: "GIVE vs SHOW"
+      conditions: ["GIVE", "SHOW"]
+    - name: "HUG vs SHOW"
+      conditions: ["HUG", "SHOW"]
+  correction_method: "bonferroni"
+
+statistics:
+  primary_test: "linear_mixed_model"
+  posthoc_comparisons: true
+  calculate_effect_size: true
+
+metrics:
+  dependent_variables:
+    - "proportion_primary_aois"
+    - "social_triplet_rate"
+
+visualization:
+  plot_type: "grouped_bar"
+  subplot_per_metric: true
+
+output:
+  include_dissociation_interpretation: true
+  include_theoretical_interpretation: true
+
+dissociation:
+  key_metric: "social_triplet_rate"
+  min_effect_size: 0.5

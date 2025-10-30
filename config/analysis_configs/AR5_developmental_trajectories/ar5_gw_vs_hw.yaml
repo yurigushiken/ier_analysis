@@ -1,0 +1,23 @@
+﻿# AR-5 Variant: GIVE_WITH vs HUG_WITH (Developmental)
+variant_key: "ar5_gw_vs_hw"
+variant_label: "AR-5: GIVE_WITH vs HUG_WITH"
+analysis_name: "AR-5: Developmental Trajectory"
+description: "Age x Condition analysis restricted to GIVE_WITH and HUG_WITH. Reports child (by months) and adult."
+
+# Restrict analysis to these conditions (AR-5 models Age x Condition)
+target_conditions:
+  - "GIVE_WITH"
+  - "HUG_WITH"
+
+# Cohorts: child and adult
+cohorts:
+  - key: "infant"
+    label: "Infant Cohort"
+    data_path: "data/processed/gaze_fixations_child.csv"
+    participant_filters:
+      participant_type: ["infant"]
+  - key: "adult"
+    label: "Adult Control Cohort"
+    data_path: "data/processed/gaze_fixations_adult.csv"
+    participant_filters:
+      participant_type: ["adult"]

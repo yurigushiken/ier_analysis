@@ -92,7 +92,7 @@ def test_ar6_analysis_end_to_end(tmp_path: Path):
     assert result["html_path"] != ""
 
     # Verify outputs
-    ar6_output_dir = results_dir / "AR6_Learning"
+    ar6_output_dir = results_dir / "AR6_Trial_Order"
     assert ar6_output_dir.exists()
 
     html_path = Path(result["html_path"])

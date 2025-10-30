@@ -1,0 +1,68 @@
+# AR4 Base Configuration
+# Shared settings for all AR-4 (Dwell Time) analysis variants.
+# These settings define the dwell time filtering, AOI analysis, and statistical methodology.
+
+# Dwell Time Filtering Settings
+dwell_time:
+  # Minimum dwell time: fixations shorter than this (in ms) are excluded as likely noise.
+  min_dwell_time_ms: 100
+
+  # Maximum dwell time: fixations longer than this (in ms) are excluded (e.g., tracker loss).
+  max_dwell_time_ms: 10000
+
+  # Outlier removal: within each participant × condition, remove fixations beyond this SD threshold.
+  outlier_threshold_sd: 3.0
+
+# AOI Analysis Settings
+aoi_analysis:
+  # Focus categories included in dwell time summaries by default; variants can override if needed.
+  focus_categories:
+    - "toy_present"
+    - "toy_location"
+    - "man_face"
+    - "woman_face"
+
+  # Support categories retained for reference reporting (unused in calculations but documented here).
+  support_categories:
+    - "man_body"
+    - "woman_body"
+    - "man_hands"
+    - "woman_hands"
+
+  # Optional list of AOI categories flagged as primary interest (empty = include all).
+  aoi_categories_of_interest: []
+
+  # Minimum number of fixations required for an AOI to appear in summaries.
+  min_gaze_fixations_per_aoi: 3
+
+# Statistical Analysis Settings
+statistics:
+  # Minimum participants per condition required for valid statistical tests.
+  min_participants_per_condition: 3
+
+  # Linear Mixed Model formula (participant-level analysis).
+  lmm_formula: "mean_dwell_time_ms ~ condition_name"
+
+  # Optional extended model that tests AOI interactions; variants can override or disable.
+  lmm_formula_by_aoi: "mean_dwell_time_ms ~ condition_name * aoi_category"
+
+# Visualization Settings
+visualization:
+  colors: {}  # Variants can supply condition-specific color palettes.
+  show_secondary_plots: true
+  violin_plot: false
+  individual_alpha: 0.35
+
+# Reporting Settings
+reporting:
+  include_methods: true
+  include_interpretation: true
+  include_age_notes: false
+
+# Output Settings
+output:
+  export_participant_means: true
+  export_condition_summary: true
+  export_aoi_summary: true
+  generate_violin_plot: false
+  include_violin_plot: false

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -19,7 +20,7 @@ from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar5")
 
-DEFAULT_OUTPUT_DIR = Path("results/AR5_Development")
+DEFAULT_OUTPUT_DIR = Path("results/AR5_Developmental_Trajectories")
 
 
 @dataclass
@@ -65,8 +66,8 @@ def _load_gaze_fixations(config: Dict[str, Any]) -> pd.DataFrame:
 
 def _load_variant_configuration(config: Dict[str, Any]) -> Tuple[Dict[str, Any], str]:
     """Load AR-5 variant configuration (supports env override)."""
-    analysis_specific = config.get("analysis_specific", {}).get("ar5_development", {})
-    default_variant = str(analysis_specific.get("config_name", "AR5_development/ar5_example")).strip()
+    analysis_specific = config.get("analysis_specific", {}).get("ar5_developmental_trajectories", {})
+    default_variant = str(analysis_specific.get("config_name", "AR5_developmental_trajectories/ar5_example")).strip()
     env_variant = os.environ.get("IER_AR5_CONFIG", "").strip()
     variant_name = env_variant or default_variant
 
@@ -82,7 +83,7 @@ def _load_variant_configuration(config: Dict[str, Any]) -> Tuple[Dict[str, Any],
 def _load_analysis_settings(config: Dict[str, Any]) -> Dict[str, Any]:
     """Load AR-5 specific configuration settings."""
     try:
-        analysis_config = load_analysis_config("ar5_config")
+        analysis_config = load_analysis_config("AR5_developmental_trajectories/ar5_config")
     except ConfigurationError:
         analysis_config = {}
 
@@ -139,6 +140,10 @@ def calculate_proportion_primary_aois(gaze_fixations: pd.DataFrame) -> pd.DataFr
     """
     if gaze_fixations.empty:
         return pd.DataFrame(columns=["participant_id", "age_months", "condition_name", "proportion_primary_aois"])
+
+    # Exclude off-screen fixations from denominator
+    aoi_lower = gaze_fixations["aoi_category"].astype(str).str.lower()
+    gaze_fixations = gaze_fixations[aoi_lower != "off_screen"].copy()
 
     # Define primary AOIs (faces and toy)
     primary_aois = ["man_face", "woman_face", "toy_present"]
@@ -227,7 +232,7 @@ def fit_developmental_model(
     test_nonlinear: bool = True,
 ) -> DevelopmentalModelResult:
     """
-    Fit developmental trajectory model with Age × Condition interaction.
+    Fit developmental trajectory model with Age x Condition interaction.
 
     Uses placeholder for now until statsmodels LMM is fully integrated.
     """
@@ -390,12 +395,12 @@ def _build_overview_text(model_result: DevelopmentalModelResult) -> str:
     """Generate overview text for the report."""
     if model_result.interaction_significant:
         return (
-            "Developmental trajectory analysis revealed a significant Age × Condition interaction, "
+            "Developmental trajectory analysis revealed a significant Age x Condition interaction, "
             f"indicating that the effect of experimental condition changes with infant age (p = {model_result.interaction_p_value:.3f})."
         )
     else:
         return (
-            "Developmental trajectory analysis found no significant Age × Condition interaction "
+            "Developmental trajectory analysis found no significant Age x Condition interaction "
             f"(p = {model_result.interaction_p_value:.3f}), suggesting that condition effects are "
             "relatively stable across the age range studied."
         )
@@ -413,7 +418,7 @@ def _build_methods_text(settings: Dict[str, Any]) -> str:
 
     return (
         f"Developmental trajectories were analyzed using Linear Mixed Models (LMM) with {age_desc} "
-        "as a predictor. The primary model tested the Age × Condition interaction to determine whether "
+        "as a predictor. The primary model tested the Age x Condition interaction to determine whether "
         "experimental condition effects varied with infant age. Random intercepts for participants "
         "accounted for individual differences in baseline gaze patterns."
         f"{nonlinear_desc}"
@@ -432,8 +437,8 @@ def _build_statistics_table(model_result: DevelopmentalModelResult) -> str:
     model_fit_html = f"""
     <h4>Model Fit</h4>
     <ul>
-        <li><strong>R² (marginal):</strong> {model_result.r_squared:.3f}</li>
-        <li><strong>R² (adjusted):</strong> {model_result.r_squared_adj:.3f}</li>
+        <li><strong>R^2 (marginal):</strong> {model_result.r_squared:.3f}</li>
+        <li><strong>R^2 (adjusted):</strong> {model_result.r_squared_adj:.3f}</li>
         <li><strong>AIC:</strong> {model_result.aic:.2f}</li>
         <li><strong>BIC:</strong> {model_result.bic:.2f}</li>
     </ul>
@@ -466,6 +471,9 @@ def _generate_outputs(
     dependent_var: str,
     settings: Dict[str, Any],
     config: Dict[str, Any],
+    variant_key: str,
+    variant_label: str,
+    variant_config: Dict[str, Any],
 ) -> Dict[str, Any]:
     """Generate all AR-5 outputs: tables, figures, reports."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -477,19 +485,23 @@ def _generate_outputs(
     summary_csv = output_dir / f"{dependent_var}_summary.csv"
     summary.to_csv(summary_csv, index=False)
 
+    table_paths = [data_csv, summary_csv]
+
     if model_result.coefficients is not None and not model_result.coefficients.empty:
         coef_csv = output_dir / f"{dependent_var}_coefficients.csv"
         model_result.coefficients.to_csv(coef_csv, index=False)
+        table_paths.append(coef_csv)
 
     if model_result.anova_table is not None and not model_result.anova_table.empty:
         anova_csv = output_dir / f"{dependent_var}_anova.csv"
         model_result.anova_table.to_csv(anova_csv, index=False)
+        table_paths.append(anova_csv)
 
     # Generate figures
     figures = []
 
     if not summary.empty:
-        # Interaction plot: Age × Condition
+        # Interaction plot: Age x Condition
         interaction_fig = output_dir / f"{dependent_var}_age_by_condition.png"
         visualizations.line_plot_with_error_bars(
             summary,
@@ -503,24 +515,47 @@ def _generate_outputs(
         )
         figures.append(
             {
-                "path": str(interaction_fig),
-                "caption": f"Age × Condition interaction for {dependent_var}",
+                "path": interaction_fig.name,
+                "full_path": str(interaction_fig),
+                "caption": f"Age x Condition interaction for {dependent_var}",
             }
         )
 
+    reporting_cfg = config.get("reporting", {})
+    analysis_cfg = config.get("analysis", {})
+    metadata_cfg = config.get("metadata", {})
+
+    report_title = variant_config.get("report_title") or variant_label or "AR-5: Developmental Trajectory"
+    analysis_name = variant_config.get("analysis_name", "AR-5: Developmental Trajectory")
+    analysis_id = variant_config.get("analysis_id", variant_key or "AR-5")
+    generation_date = datetime.now().strftime("%Y-%m-%d %H:%M")
+    pipeline_version = metadata_cfg.get("pipeline_version", "")
+
     # Build report context
     context = {
+        "report_title": report_title,
+        "analysis_name": analysis_name,
+        "analysis_id": analysis_id,
+        "generation_date": generation_date,
+        "pipeline_version": pipeline_version,
+        "alpha": analysis_cfg.get("alpha", ""),
+        "min_gaze_frames": analysis_cfg.get("min_gaze_frames", ""),
+        "error_bar_type": (reporting_cfg.get("error_bar_type") or "").lower(),
+        "git_commit": metadata_cfg.get("git_commit", ""),
         "overview_text": _build_overview_text(model_result),
         "methods_text": _build_methods_text(settings),
         "statistics_table": _build_statistics_table(model_result),
         "interpretation_text": (
-            "Interpret Age × Condition interactions carefully. Significant interactions suggest that "
+            "Interpret Age x Condition interactions carefully. Significant interactions suggest that "
             "developmental timing matters for understanding infant event representation. "
             "Non-significant interactions indicate relatively stable condition effects across age."
         ),
-        "figure_entries": figures,
-        "figures": [fig["path"] for fig in figures],
-        "tables": [str(data_csv), str(summary_csv)],
+        "variant_label": variant_label,
+        "variant_key": variant_key,
+        "variant_description": variant_config.get("description", ""),
+        "interaction_figures": figures,
+        "figures": [fig["full_path"] for fig in figures],
+        "tables": [str(path) for path in table_paths],
     }
 
     # Render report
@@ -539,8 +574,8 @@ def _generate_outputs(
         "title": "Developmental Trajectory Analysis",
         "html_path": str(html_path),
         "pdf_path": str(pdf_path),
-        "tables": [str(data_csv), str(summary_csv)],
-        "figures": [fig["path"] for fig in figures],
+        "tables": [str(path) for path in table_paths],
+        "figures": [fig["full_path"] for fig in figures],
     }
 
 
@@ -572,16 +607,27 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
 
         cohort_frames.append(gf)
     else:
-        processed_root = Path(config["paths"]["processed_data"]).resolve()
+        processed_root_cfg = Path(config["paths"]["processed_data"])
+        if processed_root_cfg.is_absolute():
+            processed_root = processed_root_cfg.resolve()
+        else:
+            processed_root = (Path.cwd() / processed_root_cfg).resolve()
+        project_root = Path.cwd()
         for cohort in cohorts:
             data_path = cohort.get("data_path")
             label = cohort.get("label", cohort.get("key", "cohort"))
             if not data_path:
                 LOGGER.warning("Cohort '%s' missing data_path; skipping.", label)
                 continue
-            p = Path(data_path)
-            if not p.is_absolute():
-                p = (processed_root / p).resolve()
+            raw_path = Path(data_path)
+            if raw_path.is_absolute():
+                p = raw_path
+            else:
+                candidate = (project_root / raw_path).resolve()
+                if candidate.exists():
+                    p = candidate
+                else:
+                    p = (processed_root / raw_path).resolve()
             if not p.exists():
                 LOGGER.warning("Cohort '%s' dataset missing: %s; skipping.", label, p)
                 continue
@@ -611,6 +657,22 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
     # Concatenate cohorts and compute dependent variables per participant-condition
     gaze_fixations = pd.concat(cohort_frames, ignore_index=True)
 
+    # Optional: restrict to target conditions if provided by variant
+    target_conditions = None
+    if isinstance(variant_config, dict):
+        target_conditions = variant_config.get("target_conditions")
+        if target_conditions and "condition_name" in gaze_fixations.columns:
+            before_n = len(gaze_fixations)
+            gaze_fixations = gaze_fixations[gaze_fixations["condition_name"].isin(list(target_conditions))].copy()
+            LOGGER.info(
+                "Filtered to target conditions %s (rows: %s -> %s)",
+                list(target_conditions),
+                before_n,
+                len(gaze_fixations),
+            )
+        elif target_conditions:
+            LOGGER.warning("target_conditions provided but 'condition_name' column not found; skipping filter")
+
     # Calculate dependent variable (proportion of primary AOIs)
     dependent_var = "proportion_primary_aois"
     data = calculate_proportion_primary_aois(gaze_fixations)
@@ -635,6 +697,9 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         dependent_var=dependent_var,
         settings=settings,
         config=config,
+        variant_key=variant_key,
+        variant_label=variant_label,
+        variant_config=variant_config,
     )
 
     metadata["variant_key"] = variant_key

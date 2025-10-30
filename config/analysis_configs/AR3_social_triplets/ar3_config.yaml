@@ -1,0 +1,52 @@
+# AR3 Base Configuration
+# Shared settings for all AR-3 (Social Gaze Triplet) analysis variants.
+# These settings centralize triplet detection methodology, statistics, and reporting defaults.
+
+# Triplet Detection Settings
+triplet_definition:
+  # Valid triplet patterns: sequences of three consecutive gazes that count as social triplets.
+  valid_patterns:
+    - ["man_face", "toy_present", "woman_face"]
+    - ["woman_face", "toy_present", "man_face"]
+
+  # Gap tolerance: how many empty frames are allowed between consecutive gazes.
+  # "gap_tolerant" mode with max_gap_frames: 2 means up to two frames can be skipped.
+  require_consecutive: "gap_tolerant"
+  max_gap_frames: 2
+
+  # Age summary mode governs how age data is grouped in reports.
+  # "child_vs_adult" collapses infant ages; "detailed" keeps each month separate.
+  summary_age_mode: "child_vs_adult"
+
+  # Toy absent mapping: during WITHOUT conditions, map substitute AOI to the canonical toy AOI.
+  toy_absent_mapping:
+    toy_present: "toy_location"
+
+# Statistical Analysis Settings
+statistics:
+  primary_test: "glmm_poisson"
+  glmm_formula: "triplet_count ~ condition + (1 | participant)"
+  family: "poisson"
+  use_offset: true
+  offset_variable: "log_trial_count"
+  random_intercept: true
+  check_overdispersion: true
+  overdispersion_threshold: 1.5
+  report_aic_bic: true
+  calculate_effect_size: true
+
+# Reporting Settings
+reporting:
+  show_heatmaps: false
+  show_directed_graphs: false
+  show_transition_tables: false
+  include_participant_summary: true
+  include_methods: true
+  include_interpretation: true
+
+# Output Settings
+output:
+  export_transition_matrices: false
+  export_participant_metrics: true
+  export_summary: true
+  include_source_data: false

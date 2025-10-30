@@ -38,40 +38,15 @@ cohorts:
 
 primary_cohort: "month_8"
 
-aoi_analysis:
-  focus_categories:
-    - "toy_present"
-    - "toy_location"
-    - "man_face"
-    - "woman_face"
-  support_categories:
-    - "man_body"
-    - "woman_body"
-    - "man_hands"
-    - "woman_hands"
-
 visualization:
   colors:
     GIVE_WITH: "#e67e22"
     GIVE_WITHOUT: "#8e44ad"
-  show_secondary_plots: true
   violin_plot: true
-  individual_alpha: 0.35
-
-statistics:
-  min_participants_per_condition: 3
-  lmm_formula: "mean_dwell_time_ms ~ condition_name"
-  lmm_formula_by_aoi: "mean_dwell_time_ms ~ condition_name * aoi_category"
 
 reporting:
-  include_methods: true
-  include_interpretation: true
   include_age_notes: true
 
 output:
-  export_participant_means: true
-  export_condition_summary: true
-  export_aoi_summary: true
   generate_violin_plot: true
   include_violin_plot: true
-

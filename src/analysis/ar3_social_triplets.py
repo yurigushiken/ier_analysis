@@ -118,7 +118,7 @@ def _cohort_metadata(triplets: pd.DataFrame, counts: pd.DataFrame) -> Dict[str, 
 
 def _load_variant_configuration(config: Mapping[str, Any]) -> Tuple[Dict[str, Any], str, Dict[str, Any]]:
     try:
-        base_config = load_analysis_config("ar3_config")
+        base_config = load_analysis_config("AR3_social_triplets/ar3_config")
     except ConfigurationError:
         base_config = {}
 

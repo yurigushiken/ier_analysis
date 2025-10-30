@@ -1,0 +1,42 @@
+# AR5 Base Configuration
+# Shared settings for all AR-5 (Developmental Trajectory) analysis variants.
+# These settings define the age × condition modeling approach, statistics, visualization, and outputs.
+
+# Age Modeling Settings
+age_modeling:
+  # Use continuous age (in months) rather than discrete age groups.
+  use_continuous_age: true
+
+  # Test for non-linear developmental trajectories by adding a quadratic age term.
+  test_nonlinear: false
+
+# Statistical Analysis Settings
+statistics:
+  # Primary statistical test examines the Age × Condition interaction.
+  primary_test: "linear_mixed_model"
+  test_interaction: true
+  calculate_effect_size: true
+  report_aic_bic: true
+  check_residuals: true
+  compare_models: true
+
+# Dependent Variables
+metrics:
+  dependent_variables:
+    - "proportion_primary_aois"
+    # - "social_triplet_rate"
+    # - "mean_dwell_time"
+
+# Visualization Settings
+visualization:
+  plot_type: "line_with_error_bars"
+  generate_interaction_plot: true
+  show_regression_line: true
+  show_confidence_band: true
+  confidence_level: 0.95
+
+# Output Settings
+output:
+  export_age_group_summaries: true
+  export_anova_table: true
+  include_developmental_interpretation: true

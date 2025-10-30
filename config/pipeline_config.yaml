@@ -228,17 +228,18 @@ analysis_specific:
       - ["woman_face", "toy_present", "man_face"]
 
   # AR-5: Developmental Trajectory
-  ar5_development:
+  ar5_developmental_trajectories:
+    config_name: "AR5_developmental_trajectories/ar5_gw_vs_hw"
     # Model type: "anova" or "mixed_effects"
     model_type: "anova"
 
-  # AR-6: Learning/Habituation
-  ar6_learning:
-    # Metrics to plot across trials
-    metrics:
-      - "social_triplet_frequency"
-      - "toy_looking_proportion"
+  # AR-6: Trial-Order Effects
+  ar6_trial_order:
+    config_name: "AR6_trial_order/ar6_gw_vs_hw"
 
+  # AR-7: Event Dissociation
+  ar7_event_dissociation:
+    config_name: "AR7_event_dissociation/ar7_show_vs_give_hug"
 # Performance Settings
 performance:
   # Number of workers for parallel processing (0 = auto-detect)

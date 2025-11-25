@@ -26,6 +26,7 @@ class GLMMResult:
     warnings: list[str]
     params: Optional[pd.Series] = None
     pvalues: Optional[pd.Series] = None
+    bse: Optional[pd.Series] = None  # Standard errors
     conf_int: Optional[pd.DataFrame] = None
     aic: Optional[float] = None
     bic: Optional[float] = None
@@ -80,6 +81,7 @@ def fit_glmm_placeholder(*args, **kwargs) -> GLMMResult:
         warnings=["Install statsmodels>=0.14 to enable GLMM analysis."],
         params=None,
         pvalues=None,
+        bse=None,
         conf_int=None,
         aic=None,
         bic=None,
@@ -146,6 +148,11 @@ def fit_linear_mixed_model(
         pvalues = getattr(fit, "pvalues", None)
         if pvalues is not None and params_series is not None:
             pvalues = pd.Series(pvalues, index=params_series.index)
+
+        # Extract standard errors
+        bse = getattr(fit, "bse", None)
+        bse_series = pd.Series(bse, index=params_series.index) if bse is not None and params_series is not None else None
+
         try:
             conf_int = fit.conf_int()
             if isinstance(conf_int, np.ndarray):
@@ -159,6 +166,7 @@ def fit_linear_mixed_model(
             warnings=warnings,
             params=params_series,
             pvalues=pvalues,
+            bse=bse_series,
             conf_int=conf_int,
             aic=getattr(fit, "aic", None),
             bic=getattr(fit, "bic", None),
@@ -172,6 +180,7 @@ def fit_linear_mixed_model(
             warnings=[f"Install statsmodels to enable LMM fitting: {exc}"],
             params=None,
             pvalues=None,
+            bse=None,
             conf_int=None,
             aic=None,
             bic=None,
@@ -186,6 +195,7 @@ def fit_linear_mixed_model(
             warnings=[str(exc)],
             params=None,
             pvalues=None,
+            bse=None,
             conf_int=None,
             aic=None,
             bic=None,

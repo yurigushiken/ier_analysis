@@ -1,0 +1,6 @@
+Participant,Frame Number,What,Where,Onset,Offset,trial_number,participant_type,participant_age_months,event_verified,segment,frame_count_trial_number
+Infant-001,1,man,face,0.000,0.033,1,infant,10,gw,approach,1
+Infant-001,2,man,face,0.033,0.066,1,infant,10,gw,approach,2
+Infant-001,3,man,face,0.066,0.099,1,infant,10,gw,approach,3
+Infant-001,4,toy,other,0.099,0.132,1,infant,10,gw,interaction,4
+

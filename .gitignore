@@ -8,6 +8,7 @@ data/processed/
 results/
 reports/
 logs/
+project_extension/outputs/
 
 # Python artifacts and caches.
 __pycache__/
@@ -42,4 +43,4 @@ nul
 .mypy_cache/
 .DS_Store
 
-
+.project_extension/outputs/

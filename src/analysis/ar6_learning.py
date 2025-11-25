@@ -297,13 +297,25 @@ def fit_trial_order_model(
     if glmm_res.params is not None:
         params = glmm_res.params
         pvals = glmm_res.pvalues if glmm_res.pvalues is not None else pd.Series(index=params.index, data=[np.nan] * len(params))
+
+        # Extract standard errors from GLMMResult
         std_err = []
         z_vals = []
-        for term in params.index:
-            est = float(params.get(term, np.nan))
-            # std_err not provided by helper directly; leave NaN
-            std_err.append(np.nan)
-            z_vals.append(np.nan)
+
+        if glmm_res.bse is not None:
+            # Use standard errors directly from statsmodels
+            for term in params.index:
+                se = float(glmm_res.bse.get(term, np.nan))
+                std_err.append(se)
+                # Calculate z-value from estimate and SE
+                est = float(params.get(term, np.nan))
+                z_val = est / se if (not np.isnan(se) and se != 0) else np.nan
+                z_vals.append(float(z_val))
+        else:
+            # Fallback: leave as NaN if bse not available
+            for term in params.index:
+                std_err.append(np.nan)
+                z_vals.append(np.nan)
 
         fixed_df = pd.DataFrame(
             {

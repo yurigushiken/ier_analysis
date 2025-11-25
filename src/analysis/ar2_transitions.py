@@ -16,7 +16,8 @@ from scipy import stats
 
 from src.reporting import visualizations
 from src.reporting.report_generator import render_report
-from src.utils.config import load_analysis_config
+from src.utils.config import load_analysis_config, load_config
+from src.utils.logging_config import setup_logging
 from src.analysis.filter_utils import apply_filters_tolerant
 
 LOGGER = logging.getLogger("ier.analysis.ar2")
@@ -156,6 +157,7 @@ def _aggregate_probabilities(
     if counts.empty:
         return pd.DataFrame(), pd.DataFrame()
 
+    # Compute per-participant transition probabilities
     totals = (
         counts.groupby(["participant_id", "condition_name", "from_aoi"], as_index=False)["count"].sum()
     )
@@ -163,10 +165,42 @@ def _aggregate_probabilities(
     merged["probability"] = merged["count"] / merged["count_total"].replace(0, np.nan)
     merged = merged.dropna(subset=["probability"])
 
-    participant_summary = merged[["participant_id", "condition_name", "from_aoi", "to_aoi", "probability"]]
+    # CRITICAL FIX: Reindex to include ALL possible to_aoi destinations with probability=0 when absent
+    # This ensures all participants contribute to all transition probabilities (as 0 if not observed)
 
+    # Get all unique (condition, to_aoi) combinations that exist in the data
+    all_to_aois = merged.groupby("condition_name")["to_aoi"].unique()
+
+    # Reindex each participant's probabilities to include all destinations
+    reindexed_rows = []
+    for (participant, condition, from_aoi), group in merged.groupby(["participant_id", "condition_name", "from_aoi"]):
+        # Get all possible destinations for this condition
+        possible_destinations = all_to_aois.get(condition, [])
+
+        # Create a row for each possible destination
+        for to_aoi in possible_destinations:
+            existing = group[group["to_aoi"] == to_aoi]
+            if not existing.empty:
+                # Use observed probability
+                prob = existing["probability"].iloc[0]
+            else:
+                # Fill with 0 for unobserved transitions
+                prob = 0.0
+
+            reindexed_rows.append({
+                "participant_id": participant,
+                "condition_name": condition,
+                "from_aoi": from_aoi,
+                "to_aoi": to_aoi,
+                "probability": prob
+            })
+
+    participant_summary = pd.DataFrame(reindexed_rows)
+
+    # Now aggregate: mean is over ALL participants who had ANY transition from that from_aoi
+    # This gives proper normalized probabilities (rows sum to 1.0)
     condition_summary = (
-        merged.groupby(["condition_name", "from_aoi", "to_aoi"])
+        participant_summary.groupby(["condition_name", "from_aoi", "to_aoi"])
         .agg(
             mean_probability=("probability", "mean"),
             sd_probability=("probability", "std"),
@@ -504,6 +538,7 @@ def _render_report(context: Dict[str, Any], output_dir: Path) -> Dict[str, Any]:
 
 
 def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
+    setup_logging(config)
     LOGGER.info("Starting AR-2 gaze transition analysis")
 
     variant_config, variant_name = _load_variant_configuration(config)
@@ -675,3 +710,14 @@ def run(*, config: Dict[str, Any]) -> Dict[str, Any]:
         }
     )
     return metadata
+
+
+def main() -> int:
+    """CLI entrypoint so `python -m src.analysis.ar2_transitions` runs the analysis."""
+    config = load_config()
+    run(config=config)
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover - CLI hook
+    raise SystemExit(main())

@@ -1,0 +1,10 @@
+participant_id,trial_number,condition,aoi_category,gaze_start_frame,gaze_end_frame,participant_age_months
+p1,1,gw,man_face,10,20,7
+p1,1,gw,woman_face,21,25,7
+p1,1,gw,man_face,26,30,7
+p1,1,gw,toy_present,31,33,7
+p2,1,gw,woman_face,15,22,10
+p2,1,gw,man_body,23,28,10
+p2,1,gw,woman_face,29,35,10
+p2,1,gw,man_face,36,40,10
+

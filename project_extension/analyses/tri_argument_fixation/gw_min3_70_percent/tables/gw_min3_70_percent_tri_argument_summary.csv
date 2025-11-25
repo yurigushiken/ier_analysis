@@ -1,0 +1,7 @@
+cohort,participants,total_trials,successful_trials,success_rate
+7-month-olds,3,9,6,0.6666666666666666
+8-month-olds,4,12,9,0.75
+9-month-olds,5,16,9,0.5625
+10-month-olds,11,30,20,0.6666666666666666
+11-month-olds,5,12,11,0.9166666666666666
+Adults,13,39,32,0.8205128205128205

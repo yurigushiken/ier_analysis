@@ -1,0 +1,250 @@
+"""Plotting utilities for the tri-argument analyses."""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import matplotlib
+
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.patches import Patch
+from pandas.api.types import CategoricalDtype
+
+from .pipeline import EVENT_CATEGORY_ORDER, DYAD_CATEGORIES, MONAD_CATEGORIES, FULL_CATEGORY
+from .stats import format_significance
+
+DEFAULT_DPI = 300
+
+CATEGORY_COLORS = {
+    "Toy_Only": "#fee8c8",
+    "Man_Only": "#fdd49e",
+    "Woman_Only": "#fdbb84",
+    "Other": "#e34a33",
+    "Man_Toy": "#91bfdb",
+    "Woman_Toy": "#74add1",
+    "Woman_Man": "#4575b4",
+    "Full_Trifecta": "#1a9850",
+}
+
+
+def plot_success(
+    summary: pd.DataFrame,
+    figure_path: Path,
+    *,
+    title: str,
+    stats_summary: Optional[pd.DataFrame] = None,
+    reference_label: Optional[str] = None,
+) -> None:
+    """Render the cohort-level success chart with optional significance bars."""
+    plt.figure(figsize=(8, 4))
+    ax = plt.gca()
+    x_pos = range(len(summary))
+    ax.bar(x_pos, summary["success_rate"] * 100, color="#4C72B0")
+    ax.set_ylabel("Tri-argument coverage (%)")
+    ax.set_xlabel("Cohort")
+    ax.set_ylim(0, 100)
+    ax.set_title(title)
+    ax.set_xticks(list(x_pos))
+    ax.set_xticklabels(summary["cohort"], rotation=30, ha="right")
+    for idx, rate in enumerate(summary["success_rate"]):
+        ax.text(idx, rate * 100 + 1, f"{rate * 100:.1f}%", ha="center", va="bottom", fontsize=8)
+
+    if stats_summary is not None and reference_label is not None:
+        _annotate_significance(ax, summary, stats_summary, reference_label)
+
+    # Footnote removed per latest requirements (legend space no longer needed)
+    plt.tight_layout()
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close()
+
+
+def plot_forest(
+    stats_summary: pd.DataFrame,
+    figure_path: Path,
+    *,
+    title: str,
+    reference_label: Optional[str] = None,
+) -> None:
+    """Render the odds-ratio forest plot."""
+    plot_df = stats_summary.copy()
+    plot_df["odds_ratio"] = np.exp(plot_df["coef"])
+    plot_df["ci_low_or"] = np.exp(plot_df["ci_low"])
+    plot_df["ci_high_or"] = np.exp(plot_df["ci_high"])
+
+    y_pos = np.arange(len(plot_df))
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.axvline(1.0, color="gray", linestyle="--", linewidth=1)
+
+    or_values = plot_df["odds_ratio"]
+    err_low = or_values - plot_df["ci_low_or"]
+    err_high = plot_df["ci_high_or"] - or_values
+
+    ax.errorbar(or_values, y_pos, xerr=[err_low, err_high], fmt="o", color="#4C72B0", ecolor="#4C72B0", capsize=4)
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(plot_df["cohort"])
+    ax.set_xlabel("Odds ratio vs reference")
+    ax.set_title("\n".join(_wrap_title(title, width=45)))
+    ax.set_xscale("log")
+    ax.set_xlim(left=0.1, right=max(plot_df["ci_high_or"].max() * 1.2, 1.5))
+    if reference_label:
+        ax.text(0.02, 0.98, f"Reference: {reference_label}", transform=ax.transAxes, va="top", fontsize=9)
+    plt.tight_layout()
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close()
+
+
+def plot_trials_per_participant(
+    trial_results: pd.DataFrame,
+    figure_path: Path,
+    *,
+    cohorts: List[Dict[str, object]],
+) -> None:
+    """Render bar chart summarizing valid trial counts."""
+    if trial_results.empty:
+        return
+
+    cohort_order = [c["label"] for c in cohorts]
+    counts = (
+        trial_results.groupby("participant_id")
+        .agg(trial_count=("trial_number", "nunique"), cohort=("cohort", lambda x: x.iloc[0]))
+        .reset_index()
+    )
+    counts["cohort"] = pd.Categorical(counts["cohort"], categories=cohort_order, ordered=True)
+    counts = counts.sort_values(["cohort", "participant_id"])
+
+    plt.figure(figsize=(max(8, len(counts) * 0.35), 4))
+    colors = plt.cm.tab20.colors
+    color_map = {label: colors[i % len(colors)] for i, label in enumerate(cohort_order)}
+    bar_colors = [color_map.get(cohort, "#4C72B0") for cohort in counts["cohort"]]
+
+    ax = plt.gca()
+    ax.bar(range(len(counts)), counts["trial_count"], color=bar_colors)
+    ax.set_ylabel("Valid trials")
+    ax.set_xlabel("Participant")
+    ax.set_title("Trials contributed per participant")
+    ax.set_xticks(range(len(counts)))
+    ax.set_xticklabels(counts["participant_id"], rotation=60, ha="right", fontsize=8)
+    legend_handles = [
+        plt.Line2D([0], [0], color=color_map[label], lw=6, label=label)
+        for label in cohort_order
+        if label in counts["cohort"].values
+    ]
+    if legend_handles:
+        ax.legend(handles=legend_handles, title="Cohort", bbox_to_anchor=(1.02, 1), loc="upper left")
+
+    plt.tight_layout()
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close()
+
+
+def plot_event_structure_breakdown(summary: pd.DataFrame, figure_path: Path, *, title: str) -> None:
+    """Render a 100% stacked bar showing event-structure categories by cohort."""
+    if summary.empty:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "No trials to summarize", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=DEFAULT_DPI)
+        plt.close(fig)
+        return
+
+    pivot = summary.pivot(index="cohort", columns="event_category", values="percentage").fillna(0.0)
+    if isinstance(pivot.columns, pd.MultiIndex):
+        pivot = pivot.droplevel(0, axis=1)
+    pivot = pivot.reindex(columns=EVENT_CATEGORY_ORDER, fill_value=0.0)
+    if isinstance(summary["cohort"].dtype, CategoricalDtype):
+        ordered_cohorts = list(summary["cohort"].cat.categories)
+    else:
+        ordered_cohorts = list(dict.fromkeys(summary["cohort"]))
+    pivot = pivot.reindex(ordered_cohorts, fill_value=0.0)
+    cohorts = pivot.index.tolist()
+    positions = np.arange(len(cohorts))
+    bottom = np.zeros(len(cohorts))
+
+    fig, ax = plt.subplots(figsize=(max(8, len(cohorts) * 1.2), 5))
+    for category in EVENT_CATEGORY_ORDER:
+        values = pivot[category].to_numpy() if category in pivot else np.zeros(len(cohorts))
+        color = CATEGORY_COLORS.get(category, "#bbbbbb")
+        ax.bar(positions, values, bottom=bottom, color=color, label=category.replace("_", " "))
+        bottom += values
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(cohorts, rotation=30, ha="right")
+    ax.set_ylabel("Proportion of trials (%)")
+    ax.set_ylim(0, 100)
+    ax.set_title(title)
+    legend_categories = list(reversed(EVENT_CATEGORY_ORDER))
+    legend_handles = []
+    for category in legend_categories:
+        if category not in pivot.columns:
+            continue
+        label = _friendly_event_label(category)
+        legend_handles.append(
+            Patch(facecolor=CATEGORY_COLORS.get(category, "#bbbbbb"), label=label)
+        )
+    if legend_handles:
+        ax.legend(handles=legend_handles, bbox_to_anchor=(1.02, 1), loc="upper left")
+    plt.tight_layout()
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close()
+
+
+def _annotate_significance(
+    ax, summary: pd.DataFrame, stats_summary: pd.DataFrame, reference_label: str
+) -> None:
+    bars = summary["success_rate"] * 100
+    idx_map = {cohort: i for i, cohort in enumerate(summary["cohort"])}
+    ref_idx = idx_map.get(reference_label)
+    if ref_idx is None:
+        return
+    bump_tracker: Dict[tuple, float] = {}
+    for _, row in stats_summary.iterrows():
+        cohort = row["cohort"]
+        if cohort == reference_label:
+            continue
+        label = format_significance(row["pvalue"])
+        other_idx = idx_map.get(cohort)
+        if not label or other_idx is None:
+            continue
+        base_height = max(bars.iloc[ref_idx], bars.iloc[other_idx])
+        key = (min(ref_idx, other_idx), max(ref_idx, other_idx))
+        bump = bump_tracker.get(key, 0.0)
+        y = base_height + 5 + bump
+        ax.plot([ref_idx, ref_idx, other_idx, other_idx], [y, y + 2, y + 2, y], color="black", linewidth=1)
+        ax.text((ref_idx + other_idx) / 2, y + 2.5, label, ha="center", va="bottom", fontsize=10)
+        bump_tracker[key] = bump + 6
+
+
+def _wrap_title(title: str, width: int = 50) -> List[str]:
+    words = title.split()
+    lines: List[str] = []
+    current: List[str] = []
+    current_len = 0
+    for word in words:
+        next_len = current_len + len(word) + (1 if current else 0)
+        if next_len > width and current:
+            lines.append(" ".join(current))
+            current = [word]
+            current_len = len(word)
+        else:
+            current.append(word)
+            current_len = next_len
+    if current:
+        lines.append(" ".join(current))
+    return lines
+
+
+def _friendly_event_label(category: str) -> str:
+    if category == "Full_Trifecta":
+        return "Trifecta"
+    return category.replace("_", " ")
+

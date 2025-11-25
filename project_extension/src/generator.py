@@ -21,6 +21,8 @@ def generate_for_thresholds(
     child_dirs: Optional[Sequence[Path]] = None,
     adult_dirs: Optional[Sequence[Path]] = None,
     output_root: Path | None = None,
+    min_onscreen_frames: int = MIN_ONSCREEN_FRAMES,
+    dir_suffix: str = "",
 ) -> None:
     """Generate gaze-fixation CSVs for the requested thresholds."""
     resolved_thresholds = list(thresholds or EXTENSION_CONFIG.thresholds)
@@ -33,11 +35,11 @@ def generate_for_thresholds(
 
     child_frames = _filter_trials_with_screen_time(
         load_frame_csvs(child_sources, required_columns=EXTENSION_CONFIG.required_columns),
-        MIN_ONSCREEN_FRAMES,
+        min_onscreen_frames,
     )
     adult_frames = _filter_trials_with_screen_time(
         load_frame_csvs(adult_sources, required_columns=EXTENSION_CONFIG.required_columns),
-        MIN_ONSCREEN_FRAMES,
+        min_onscreen_frames,
     )
 
     for threshold in resolved_thresholds:
@@ -46,6 +48,7 @@ def generate_for_thresholds(
             child_frames=child_frames,
             adult_frames=adult_frames,
             output_root=output_root,
+            dir_suffix=dir_suffix,
         )
 
 
@@ -55,8 +58,10 @@ def _generate_single_threshold(
     child_frames: pd.DataFrame,
     adult_frames: pd.DataFrame,
     output_root: Path,
+    dir_suffix: str = "",
 ) -> None:
-    min_dir = output_root / f"min{threshold}"
+    suffix = dir_suffix or ""
+    min_dir = output_root / f"min{threshold}{suffix}"
     min_dir.mkdir(parents=True, exist_ok=True)
 
     child_fix = _assign_cohort(
@@ -90,13 +95,16 @@ def _filter_trials_with_screen_time(df: pd.DataFrame, min_frames: int) -> pd.Dat
     if df.empty or "What" not in df.columns or "Where" not in df.columns:
         return df
 
-    on_screen = ~(
-        df["What"].astype(str).str.lower().eq("no") & df["Where"].astype(str).str.lower().eq("signal")
-    )
+    what = df["What"].astype(str).str.lower()
+    where = df["Where"].astype(str).str.lower()
+    offscreen_mask = (what == "no") & (where == "signal")
+    on_screen = ~offscreen_mask
     key_cols = []
-    for candidate in ("Participant", "trial_number"):
+    for candidate in ("Participant", "trial_number_global", "trial_number"):
         if candidate in df.columns:
             key_cols.append(candidate)
+            if candidate == "trial_number":
+                break
         else:
             return df
 
@@ -146,6 +154,18 @@ def run_cli() -> None:
         default=EXTENSION_CONFIG.output_root,
         help="Directory where threshold-specific outputs will be written.",
     )
+    parser.add_argument(
+        "--min-onscreen-frames",
+        type=int,
+        default=MIN_ONSCREEN_FRAMES,
+        help="Minimum on-screen frames required to keep a trial (default: %(default)s).",
+    )
+    parser.add_argument(
+        "--dir-suffix",
+        type=str,
+        default="",
+        help="Optional suffix appended to the min-directory names (e.g., '-50_percent').",
+    )
     args = parser.parse_args()
 
     generate_for_thresholds(
@@ -153,6 +173,8 @@ def run_cli() -> None:
         child_dirs=[Path(p) for p in args.child_dirs] if args.child_dirs else None,
         adult_dirs=[Path(p) for p in args.adult_dirs] if args.adult_dirs else None,
         output_root=args.output_root,
+        min_onscreen_frames=args.min_onscreen_frames,
+        dir_suffix=args.dir_suffix,
     )
 
 

@@ -1,0 +1,131 @@
+"""Statistical helpers for latency-to-toy analysis."""
+
+from __future__ import annotations
+
+from typing import Dict, List, Tuple
+
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+
+def run_adult_reference_gee(
+    latency_df: pd.DataFrame,
+    cohorts: List[Dict[str, int]],
+) -> Tuple[pd.DataFrame, str]:
+    """Run latency_frames ~ C(cohort, Treatment(reference='Adults'))."""
+    if latency_df.empty:
+        raise ValueError("No latency data available for GEE.")
+    working = latency_df.copy()
+    cohort_labels = [c["label"] for c in cohorts]
+    working["cohort"] = working["participant_age_months"].apply(
+        lambda age: _assign_cohort(age, cohorts)
+    )
+    working = working.dropna(subset=["cohort"])
+    if working.empty:
+        raise ValueError("No rows remaining after cohort assignment.")
+    reference = None
+    for label in cohort_labels:
+        if "adult" in label.lower():
+            reference = label
+            break
+    if reference is None:
+        reference = cohort_labels[-1]
+    working["cohort"] = pd.Categorical(
+        working["cohort"],
+        categories=cohort_labels,
+        ordered=True,
+    )
+    formula = f"latency_frames ~ C(cohort, Treatment(reference='{reference}'))"
+    model = smf.gee(
+        formula=formula,
+        groups="participant_id",
+        data=working,
+        family=sm.families.Gaussian(),
+    )
+    result = model.fit()
+    stats_rows = []
+    conf_int = result.conf_int()
+    summary_lines = [
+        "Latency GEE with adult reference",
+        f"Reference cohort: {reference}",
+        f"Participants: {working['participant_id'].nunique()}",
+        f"Trials: {len(working)}",
+        "",
+        result.summary().as_text(),
+    ]
+    for cohort in working["cohort"].cat.categories:
+        if cohort == reference:
+            stats_rows.append(
+                {
+                    "cohort": cohort,
+                    "coef": 0.0,
+                    "pvalue": np.nan,
+                    "std_err": np.nan,
+                    "ci_low": np.nan,
+                    "ci_high": np.nan,
+                }
+            )
+            continue
+        term = f"C(cohort, Treatment(reference='{reference}'))[T.{cohort}]"
+        coef = float(result.params.get(term, np.nan))
+        pvalue = float(result.pvalues.get(term, np.nan))
+        std_err = float(result.bse.get(term, np.nan))
+        ci_low, ci_high = conf_int.loc[term]
+        stats_rows.append(
+            {
+                "cohort": cohort,
+                "coef": coef,
+                "pvalue": pvalue,
+                "std_err": std_err,
+                "ci_low": float(ci_low),
+                "ci_high": float(ci_high),
+            }
+        )
+    return pd.DataFrame(stats_rows), "\n".join(summary_lines)
+def _assign_cohort(age: float, cohorts: List[Dict[str, int]]) -> str | None:
+    for cohort in cohorts:
+        if cohort["min_months"] <= age <= cohort["max_months"]:
+            return cohort["label"]
+    return None
+
+
+def summarize_adult_vs_infant(
+    latency_df: pd.DataFrame,
+    *,
+    infant_cohorts: List[Dict[str, int]],
+    cohorts: List[Dict[str, int]],
+) -> Dict[str, float]:
+    """Return adult vs infant mean latency comparison."""
+    if latency_df.empty:
+        return {}
+
+    if infant_cohorts:
+        infant_min = infant_cohorts[0]["min_months"]
+        infant_max = infant_cohorts[-1]["max_months"]
+    else:
+        infant_min = cohorts[0]["min_months"]
+        infant_max = cohorts[0]["max_months"]
+
+    adult_min = None
+    for cohort in cohorts:
+        if "adult" in cohort["label"].lower():
+            adult_min = cohort["min_months"]
+            break
+    if adult_min is None:
+        adult_min = cohorts[-1]["min_months"]
+
+    infants = latency_df[
+        (latency_df["participant_age_months"] >= infant_min)
+        & (latency_df["participant_age_months"] <= infant_max)
+    ]["latency_frames"]
+    adults = latency_df[latency_df["participant_age_months"] >= adult_min]["latency_frames"]
+
+    return {
+        "infant_mean_frames": float(infants.mean()) if not infants.empty else float("nan"),
+        "infant_trials": int(infants.count()),
+        "adult_mean_frames": float(adults.mean()) if not adults.empty else float("nan"),
+        "adult_trials": int(adults.count()),
+    }
+

@@ -10,7 +10,7 @@ from typing import Dict
 import yaml
 
 CONDITION_LABELS = {
-    "gw": "Give",
+    "gw": "Give with toy",
     "gwo": "Give (no toy)",
     "sw": "Show",
     "swo": "Show (no toy)",
@@ -32,9 +32,9 @@ if __package__ in (None, ""):
     PROJECT_ROOT = Path(__file__).resolve().parents[3]
     if str(PROJECT_ROOT) not in sys.path:
         sys.path.append(str(PROJECT_ROOT))
-    from project_extension.analyses.tri_argument_fixation import pipeline, reports, stats, visuals
+    from project_extension.analyses.tri_argument_fixation import latency_analysis, pipeline, reports, stats, visuals
 else:
-    from . import pipeline, reports, stats, visuals
+    from . import latency_analysis, pipeline, reports, stats, visuals
 
 
 def run_analysis(config_path: Path) -> None:
@@ -123,6 +123,32 @@ def run_analysis(config_path: Path) -> None:
         event_summary,
         figures_dir / f"{config_name}_event_structure_breakdown.png",
         title=f"{display_label} - Event structure coverage",
+    )
+
+    latency_metrics = latency_analysis.compute_latency_metrics(
+        df,
+        trial_results,
+        aoi_groups=config["aoi_groups"],
+        condition_codes=config["condition_codes"],
+        frame_window=config.get("frame_window"),
+    )
+    latency_summary = latency_analysis.summarize_latency_by_cohort(
+        latency_metrics, config["cohorts"]
+    )
+    latency_summary.to_csv(tables_dir / f"{config_name}_latency_summary.csv", index=False)
+
+    infant_cohorts = [cohort for cohort in config["cohorts"] if cohort["max_months"] <= 11]
+    trend_stats, trend_report = latency_analysis.run_latency_trend(
+        latency_metrics,
+        infant_cohorts=infant_cohorts,
+    )
+    (reports_dir / f"{config_name}_latency_trend.txt").write_text(trend_report, encoding="utf-8")
+    visuals.plot_latency_to_trifecta(
+        latency_summary,
+        figures_dir / f"{config_name}_latency_to_trifecta.png",
+        title=f"{display_label} - Processing efficiency (latency to trifecta)",
+        cohort_order=[c["label"] for c in config["cohorts"]],
+        trend_stats=trend_stats,
     )
 
 

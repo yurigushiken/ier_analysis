@@ -66,6 +66,10 @@ python -m project_extension.src.generator `
 
 - Default inputs are `data/csvs_human_verified_vv/child` and `/adult`. Override
   with repeated `--child-dir`/`--adult-dir` flags if needed.
+- Pass `--exclude-screen-nonroi` to drop `screen_nonAOI` fixations from the exported CSVs
+  while still counting them toward on-screen frame totals (useful for the new “no
+  screen-other” datasets under `min4-50_percent_no_screen_nonroi` and
+  `min4-70_percent_no_screen_nonroi`).
 - Outputs per threshold include:
   - `project_extension/outputs/min3/gaze_fixations_child_min3.csv`
   - `project_extension/outputs/min3/gaze_fixations_adult_min3.csv`

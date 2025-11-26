@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
-from typing import Dict, List, Sequence
+from typing import Dict, List, Sequence, Tuple
 
 import pandas as pd
 import statsmodels.api as sm
@@ -12,6 +13,11 @@ import statsmodels.formula.api as smf
 FACE_AOIS = {"man_face", "woman_face"}
 BODY_AOIS = {"man_body", "woman_body"}
 TOY_AOIS = {"toy_present", "toy_location"}
+STRATEGY_COLUMNS = [
+    ("social_verification_pct", "Social Verification"),
+    ("object_face_linking_pct", "Object-Face Linking"),
+    ("mechanical_tracking_pct", "Mechanical Tracking"),
+]
 
 
 def compute_strategy_proportions(transitions_df: pd.DataFrame) -> pd.DataFrame:
@@ -108,6 +114,47 @@ def build_strategy_summary(
     return grouped
 
 
+def build_strategy_descriptive_stats(
+    proportions_df: pd.DataFrame,
+    *,
+    cohorts: List[Dict],
+) -> pd.DataFrame:
+    """Return mean/SEM per strategy/cohort."""
+    if proportions_df.empty:
+        return pd.DataFrame(
+            columns=["cohort", "strategy", "mean", "sem", "n_trials"]
+        )
+    working = proportions_df.copy()
+    working["cohort"] = working["participant_age_months"].apply(
+        lambda age: _assign_cohort(age, cohorts)
+    )
+    working = working.dropna(subset=["cohort"])
+    if working.empty:
+        return pd.DataFrame(
+            columns=["cohort", "strategy", "mean", "sem", "n_trials"]
+        )
+    rows = []
+    for cohort, cohort_df in working.groupby("cohort"):
+        n_trials = len(cohort_df)
+        for col, label in STRATEGY_COLUMNS:
+            mean = float(cohort_df[col].mean())
+            if n_trials > 1:
+                std = float(cohort_df[col].std(ddof=1))
+                sem = std / math.sqrt(n_trials)
+            else:
+                sem = 0.0
+            rows.append(
+                {
+                    "cohort": cohort,
+                    "strategy": label,
+                    "mean": mean,
+                    "sem": sem,
+                    "n_trials": n_trials,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
 def _assign_cohort(age: float, cohorts: List[Dict]) -> str | None:
     for cohort in cohorts:
         if cohort["min_months"] <= age <= cohort["max_months"]:
@@ -119,51 +166,51 @@ def run_strategy_gee(
     proportions_df: pd.DataFrame,
     *,
     cohorts: List[Dict],
-    reports_dir: Path,
-    filename_prefix: str,
-) -> pd.DataFrame:
-    """Run GEE on social verification proportions."""
+    value_column: str,
+    metric_label: str,
+) -> Tuple[pd.DataFrame, str]:
+    """Run GEE on the requested strategy proportion."""
     if proportions_df.empty:
-        raise ValueError("No strategy proportions available for GEE.")
+        return pd.DataFrame(), f"{metric_label}: no strategy proportions available."
     working = proportions_df.copy()
     working["cohort"] = working["participant_age_months"].apply(
         lambda age: _assign_cohort(age, cohorts)
     )
     working = working.dropna(subset=["cohort"])
     if working.empty:
-        raise ValueError("Strategy GEE has no rows after cohort assignment.")
+        return pd.DataFrame(), f"{metric_label}: no rows after cohort assignment."
     reference = cohorts[0]["label"]
     working["cohort"] = pd.Categorical(
         working["cohort"],
         categories=[c["label"] for c in cohorts],
         ordered=True,
     )
-    formula = f"social_verification_pct ~ C(cohort, Treatment(reference='{reference}'))"
+    formula = f"{value_column} ~ C(cohort, Treatment(reference='{reference}'))"
     model = smf.gee(
         formula=formula,
         groups="participant_id",
         data=working,
         family=sm.families.Gaussian(),
     )
+    report_body = ""
     try:
         result = model.fit()
         report_body = result.summary().as_text()
     except ValueError as exc:
         report_body = f"GEE failed to converge: {exc}"
-        gee_path = reports_dir / f"{filename_prefix}_strategy_gee.txt"
-        gee_path.write_text(report_body, encoding="utf-8")
-        return pd.DataFrame([{"cohort": reference, "coef": 0.0, "pvalue": None}])
+        return (
+            pd.DataFrame([{"cohort": reference, "coef": 0.0, "pvalue": None}]),
+            _format_gee_report(metric_label, reference, working, report_body),
+        )
 
     report_lines = [
-        "GEE results for social verification proportion",
+        f"GEE results for {metric_label}",
         f"Reference cohort: {reference}",
         f"Participants: {working['participant_id'].nunique()}",
         f"Trials: {len(working)}",
         "",
         report_body,
     ]
-    gee_path = reports_dir / f"{filename_prefix}_strategy_gee.txt"
-    gee_path.write_text("\n".join(report_lines), encoding="utf-8")
 
     stats_rows = [{"cohort": reference, "coef": 0.0, "pvalue": None}]
     for cohort in working["cohort"].cat.categories[1:]:
@@ -176,18 +223,20 @@ def run_strategy_gee(
                     "pvalue": result.pvalues[term],
                 }
             )
-    return pd.DataFrame(stats_rows)
+    return pd.DataFrame(stats_rows), "\n".join(report_lines)
 
 
 def run_linear_trend_test(
     proportions_df: pd.DataFrame,
     *,
     infant_cohorts: List[Dict],
-    reports_dir: Path,
-    filename_prefix: str,
-) -> Dict[str, float]:
+    value_column: str,
+    metric_label: str,
+) -> Tuple[Dict[str, float], str]:
     """Run linear trend (age numeric) GEE on infant cohorts (7-11 months)."""
     working = proportions_df.copy()
+    if not infant_cohorts:
+        return {}, f"{metric_label}: no infant cohorts available for linear trend."
     min_age = infant_cohorts[0]["min_months"]
     max_age = infant_cohorts[-1]["max_months"]
     working = working[
@@ -195,10 +244,10 @@ def run_linear_trend_test(
         & (working["participant_age_months"] <= max_age)
     ].copy()
     if working.empty:
-        return {}
+        return {}, f"{metric_label}: no rows within infant cohort range."
     working["age_numeric"] = working["participant_age_months"]
     model = smf.gee(
-        "social_verification_pct ~ age_numeric",
+        f"{value_column} ~ age_numeric",
         groups="participant_id",
         data=working,
         family=sm.families.Gaussian(),
@@ -206,16 +255,14 @@ def run_linear_trend_test(
     try:
         result = model.fit()
     except ValueError:
-        return {}
-    coef = float(result.params["age_numeric"])
-    pvalue = float(result.pvalues["age_numeric"])
+        return {}, f"{metric_label}: linear trend failed to converge."
+    coef = float(result.params.get("age_numeric", 0.0))
+    pvalue = float(result.pvalues.get("age_numeric", float("nan")))
     lines = [
-        "Linear Trend Test (Infants 7-11mo)",
+        f"Linear Trend Test ({metric_label}, infants {min_age}-{max_age} mo)",
         result.summary().as_text(),
     ]
-    report_path = reports_dir / f"{filename_prefix}_linear_trend_results.txt"
-    report_path.write_text("\n\n".join(lines), encoding="utf-8")
-    return {"coef": coef, "pvalue": pvalue}
+    return {"coef": coef, "pvalue": pvalue}, "\n\n".join(lines)
 def build_significance_annotations(
     gee_results: pd.DataFrame,
     *,
@@ -258,4 +305,16 @@ def _format_pvalue(pvalue: float) -> str | None:
     if pvalue < 0.1:
         return f"p={pvalue:.2f}"
     return None
+
+
+def _format_gee_report(metric_label: str, reference: str, working: pd.DataFrame, body: str) -> str:
+    lines = [
+        f"GEE results for {metric_label}",
+        f"Reference cohort: {reference}",
+        f"Participants: {working['participant_id'].nunique() if 'participant_id' in working else 0}",
+        f"Trials: {len(working)}",
+        "",
+        body,
+    ]
+    return "\n".join(lines)
 

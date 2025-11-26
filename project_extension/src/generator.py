@@ -23,6 +23,7 @@ def generate_for_thresholds(
     output_root: Path | None = None,
     min_onscreen_frames: int = MIN_ONSCREEN_FRAMES,
     dir_suffix: str = "",
+    exclude_screen_nonroi: bool = False,
 ) -> None:
     """Generate gaze-fixation CSVs for the requested thresholds."""
     resolved_thresholds = list(thresholds or EXTENSION_CONFIG.thresholds)
@@ -49,6 +50,7 @@ def generate_for_thresholds(
             adult_frames=adult_frames,
             output_root=output_root,
             dir_suffix=dir_suffix,
+            exclude_screen_nonroi=exclude_screen_nonroi,
         )
 
 
@@ -59,6 +61,7 @@ def _generate_single_threshold(
     adult_frames: pd.DataFrame,
     output_root: Path,
     dir_suffix: str = "",
+    exclude_screen_nonroi: bool = False,
 ) -> None:
     suffix = dir_suffix or ""
     min_dir = output_root / f"min{threshold}{suffix}"
@@ -72,6 +75,10 @@ def _generate_single_threshold(
         detect_fixations(adult_frames, min_frames=threshold),
         cohort="adult",
     )
+
+    if exclude_screen_nonroi:
+        child_fix = _remove_screen_nonroi(child_fix)
+        adult_fix = _remove_screen_nonroi(adult_fix)
 
     combined = pd.concat([child_fix, adult_fix], ignore_index=True)
 
@@ -89,6 +96,13 @@ def _assign_cohort(df: pd.DataFrame, cohort: str) -> pd.DataFrame:
 def _write_output(df: pd.DataFrame, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, index=False)
+
+
+def _remove_screen_nonroi(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty or "aoi_category" not in df.columns:
+        return df
+    mask = df["aoi_category"] != "screen_nonAOI"
+    return df[mask].copy()
 
 
 def _filter_trials_with_screen_time(df: pd.DataFrame, min_frames: int) -> pd.DataFrame:
@@ -166,6 +180,11 @@ def run_cli() -> None:
         default="",
         help="Optional suffix appended to the min-directory names (e.g., '-50_percent').",
     )
+    parser.add_argument(
+        "--exclude-screen-nonroi",
+        action="store_true",
+        help="Exclude 'screen_nonAOI' fixations from CSV outputs while still counting them toward on-screen time.",
+    )
     args = parser.parse_args()
 
     generate_for_thresholds(
@@ -175,6 +194,7 @@ def run_cli() -> None:
         output_root=args.output_root,
         min_onscreen_frames=args.min_onscreen_frames,
         dir_suffix=args.dir_suffix,
+        exclude_screen_nonroi=args.exclude_screen_nonroi,
     )
 
 

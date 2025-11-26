@@ -1,0 +1,19 @@
+cohort,strategy,mean,sem,n_trials
+10-month-olds,Social Verification,0.01515151515151515,0.01515151515151515,22
+10-month-olds,Object-Face Linking,0.28809523809523807,0.07283016410961055,22
+10-month-olds,Mechanical Tracking,0.5156926406926406,0.07771796157546328,22
+11-month-olds,Social Verification,0.015625,0.015625,16
+11-month-olds,Object-Face Linking,0.22395833333333331,0.05143696137380561,16
+11-month-olds,Mechanical Tracking,0.484375,0.09230169872739594,16
+7-month-olds,Social Verification,0.0,0.0,6
+7-month-olds,Object-Face Linking,0.23611111111111108,0.11866671868496571,6
+7-month-olds,Mechanical Tracking,0.3333333333333333,0.16666666666666669,6
+8-month-olds,Social Verification,0.0,0.0,8
+8-month-olds,Object-Face Linking,0.22916666666666666,0.10296930888098925,8
+8-month-olds,Mechanical Tracking,0.5520833333333333,0.13813660351318446,8
+9-month-olds,Social Verification,0.0,0.0,16
+9-month-olds,Object-Face Linking,0.0625,0.042695628191498324,16
+9-month-olds,Mechanical Tracking,0.765625,0.1006974376949748,16
+Adults,Social Verification,0.08392857142857141,0.026466965582715964,30
+Adults,Object-Face Linking,0.35944444444444446,0.059532290948386045,30
+Adults,Mechanical Tracking,0.4284920634920635,0.06410376685768025,30

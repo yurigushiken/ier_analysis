@@ -65,7 +65,7 @@ def test_compute_strategy_proportions(sample_transitions_df):
     assert pytest.approx(p1["mechanical_tracking_pct"]) == 1 / 4
 
 
-def test_strategy_summary_and_gee(sample_transitions_df, tmp_path):
+def test_strategy_summary_and_gee(sample_transitions_df):
     cohorts = [
         {"label": "7-month-olds", "min_months": 7, "max_months": 7},
         {"label": "10-month-olds", "min_months": 10, "max_months": 10},
@@ -75,21 +75,29 @@ def test_strategy_summary_and_gee(sample_transitions_df, tmp_path):
     seven = summary[summary["cohort"] == "7-month-olds"].iloc[0]
     assert pytest.approx(seven["social_verification_mean"]) == 0.5
 
-    results = strategy.run_strategy_gee(
+    descriptive = strategy.build_strategy_descriptive_stats(proportions, cohorts=cohorts)
+    assert set(descriptive["strategy"]) == {
+        "Social Verification",
+        "Object-Face Linking",
+        "Mechanical Tracking",
+    }
+
+    results, report_text = strategy.run_strategy_gee(
         proportions,
         cohorts=cohorts,
-        reports_dir=tmp_path,
-        filename_prefix="sample_strategy",
+        value_column="social_verification_pct",
+        metric_label="Social Verification",
     )
     assert "cohort" in results.columns
-    assert (tmp_path / "sample_strategy_strategy_gee.txt").exists()
+    assert "GEE results for Social Verification" in report_text
     annotations = strategy.build_significance_annotations(results, reference="7-month-olds", cohort_order=[c["label"] for c in cohorts])
     assert isinstance(annotations, list)
-    trend = strategy.run_linear_trend_test(
+    trend, trend_report = strategy.run_linear_trend_test(
         proportions,
         infant_cohorts=cohorts,
-        reports_dir=tmp_path,
-        filename_prefix="sample_strategy",
+        value_column="social_verification_pct",
+        metric_label="Social Verification",
     )
     assert isinstance(trend, dict)
+    assert isinstance(trend_report, str) and trend_report
 

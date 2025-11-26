@@ -30,15 +30,22 @@ def build_transition_matrix(
     df = df.dropna(subset=["cohort"])
     if df.empty:
         raise ValueError("All transitions were dropped after cohort assignment.")
+
+    total_trials = (
+        df.groupby("cohort")[["participant_id", "trial_number"]]
+        .nunique()
+        .rename(columns={"participant_id": "participants", "trial_number": "trials"})
+    )
+
     grouped = (
         df.groupby(["cohort", "from_aoi", "to_aoi"])["count"]
-        .mean()
+        .sum()
         .reset_index()
-        .rename(columns={"count": "mean_count"})
     )
-    # Ensure every cohort/from/to combination exists (fill zeros)
+
     records = []
     for cohort in [c["label"] for c in cohorts]:
+        cohort_trials = float(total_trials.get("trials", {}).get(cohort, 0))
         for from_aoi in aoi_nodes:
             for to_aoi in aoi_nodes:
                 if from_aoi == to_aoi:
@@ -48,16 +55,15 @@ def build_transition_matrix(
                     & (grouped["from_aoi"] == from_aoi)
                     & (grouped["to_aoi"] == to_aoi)
                 ]
-                if match.empty:
-                    records.append(
-                        {
-                            "cohort": cohort,
-                            "from_aoi": from_aoi,
-                            "to_aoi": to_aoi,
-                            "mean_count": 0.0,
-                        }
-                    )
-                else:
-                    records.append(match.iloc[0].to_dict())
+                total_count = match["count"].iloc[0] if not match.empty else 0.0
+                mean_count = 0.0 if cohort_trials == 0 else total_count / cohort_trials
+                records.append(
+                    {
+                        "cohort": cohort,
+                        "from_aoi": from_aoi,
+                        "to_aoi": to_aoi,
+                        "mean_count": mean_count,
+                    }
+                )
     return pd.DataFrame(records)
 

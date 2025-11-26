@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 import matplotlib
 
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 from matplotlib.patches import Patch
@@ -78,7 +79,7 @@ def plot_forest(
     plot_df["ci_high_or"] = np.exp(plot_df["ci_high"])
 
     y_pos = np.arange(len(plot_df))
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(6, 4.5))
     ax.axvline(1.0, color="gray", linestyle="--", linewidth=1)
 
     or_values = plot_df["odds_ratio"]
@@ -90,11 +91,19 @@ def plot_forest(
     ax.set_yticklabels(plot_df["cohort"])
     ax.set_xlabel("Odds ratio vs reference")
     ax.set_title("\n".join(_wrap_title(title, width=45)))
-    ax.set_xscale("log")
-    ax.set_xlim(left=0.1, right=max(plot_df["ci_high_or"].max() * 1.2, 1.5))
+    finite_high = plot_df["ci_high_or"].replace([np.inf, -np.inf], np.nan).dropna()
+    finite_low = plot_df["ci_low_or"].replace([np.inf, -np.inf], np.nan).dropna()
+    max_high = finite_high.max() if not finite_high.empty else 3
+    min_low = finite_low.min() if not finite_low.empty else 0.3
+    span = max_high - min_low
+    left = max(0, min_low - 0.2 * span)
+    right = max(max_high + 0.2 * span, left + 1)
+    ax.set_xlim(left=left, right=right)
+    ax.xaxis.set_major_locator(mticker.MaxNLocator(nbins=6, integer=True))
+    ax.xaxis.set_major_formatter(mticker.ScalarFormatter())
     if reference_label:
         ax.text(0.02, 0.98, f"Reference: {reference_label}", transform=ax.transAxes, va="top", fontsize=9)
-    plt.tight_layout()
+    plt.subplots_adjust(top=0.78, bottom=0.15, left=0.22, right=0.95)
     figure_path.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(figure_path, dpi=DEFAULT_DPI)
     plt.close()
@@ -196,6 +205,58 @@ def plot_event_structure_breakdown(summary: pd.DataFrame, figure_path: Path, *, 
     figure_path.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(figure_path, dpi=DEFAULT_DPI)
     plt.close()
+
+
+def plot_latency_to_trifecta(
+    summary: pd.DataFrame,
+    figure_path: Path,
+    *,
+    title: str,
+    cohort_order: Sequence[str],
+    trend_stats: Optional[Dict[str, float]] = None,
+) -> None:
+    """Plot processing-efficiency (latency) means per cohort."""
+    if summary.empty:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "No successful trifecta trials to summarize", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=DEFAULT_DPI)
+        plt.close(fig)
+        return
+
+    working = summary.set_index("cohort").reindex(cohort_order).reset_index()
+    working = working.dropna(subset=["mean_latency_frames"])
+    x = np.arange(len(working))
+    y = working["mean_latency_frames"]
+
+    fig, ax = plt.subplots(figsize=(max(7, len(working) * 1.1), 4.5))
+    ax.plot(x, y, marker="o", color="#C44E52", linewidth=2)
+    ax.set_xticks(x)
+    ax.set_xticklabels(working["cohort"], rotation=30, ha="right")
+    ax.set_ylabel("Latency to trifecta (frames)")
+    ax.set_xlabel("Cohort")
+    ax.set_ylim(0, max(10, y.max() * 1.2))
+    ax.set_title(title)
+    for idx, value in enumerate(y):
+        ax.text(x[idx], value + 1, f"{value:.1f}f", ha="center", va="bottom", fontsize=9)
+
+    if trend_stats and trend_stats.get("pvalue") is not None:
+        pvalue = trend_stats["pvalue"]
+        ax.text(
+            0.02,
+            0.92,
+            f"Linear trend p={pvalue:.3f}",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=10,
+        )
+
+    plt.tight_layout()
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close(fig)
 
 
 def _annotate_significance(

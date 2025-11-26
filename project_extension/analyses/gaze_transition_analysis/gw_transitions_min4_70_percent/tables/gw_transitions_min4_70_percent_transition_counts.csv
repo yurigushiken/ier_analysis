@@ -1,8 +1,8 @@
 participant_id,trial_number,condition,participant_age_months,man_face_to_man_body,man_face_to_woman_face,man_face_to_woman_body,man_face_to_toy_present,man_face_to_toy_location,man_body_to_man_face,man_body_to_woman_face,man_body_to_woman_body,man_body_to_toy_present,man_body_to_toy_location,woman_face_to_man_face,woman_face_to_man_body,woman_face_to_woman_body,woman_face_to_toy_present,woman_face_to_toy_location,woman_body_to_man_face,woman_body_to_man_body,woman_body_to_woman_face,woman_body_to_toy_present,woman_body_to_toy_location,toy_present_to_man_face,toy_present_to_man_body,toy_present_to_woman_face,toy_present_to_woman_body,toy_present_to_toy_location,toy_location_to_man_face,toy_location_to_man_body,toy_location_to_woman_face,toy_location_to_woman_body,toy_location_to_toy_present
 Eight-0201-1464,1,gw,8.0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-Eight-0201-1464,2,gw,8.0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+Eight-0201-1464,2,gw,8.0,1,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
 Eight-0201-1464,3,gw,8.0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-Eight-0301-1658,1,gw,8.0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Eight-0301-1658,1,gw,8.0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
 Eight-0301-1658,9,gw,8.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 Eight-0401-1638,1,gw,8.0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0
 Eight-0401-1638,2,gw,8.0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
@@ -56,7 +56,7 @@ Seven-0101-1373,2,gw,7.0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 Seven-0101-1373,3,gw,7.0,0,0,0,1,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
 Seven-0102-5982,1,gw,7.0,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0
 Seven-0102-5982,2,gw,7.0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-Seven-0102-5982,3,gw,7.0,0,2,0,1,0,0,0,0,0,0,2,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+Seven-0102-5982,3,gw,7.0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 Seven-0201-1152,10,gw,7.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,1,0,0,0,0,0,0
 Seven-0202-6362,1,gw,7.0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0
 Seven-0202-6362,2,gw,7.0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0

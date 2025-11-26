@@ -124,3 +124,79 @@ def plot_latency_forest(
     fig.savefig(figure_path, dpi=300)
     plt.close(fig)
 
+
+def plot_latency_linear_trend(
+    summary_df: pd.DataFrame,
+    *,
+    figure_path: Path,
+    title: str,
+    trend_stats: Dict[str, float] | None,
+    infant_labels: Sequence[str],
+    adult_label: str | None,
+) -> None:
+    """Scatter + linear fit for infant cohorts with adult marker."""
+    if summary_df.empty or not infant_labels:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "No latency data available for trend", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=300)
+        plt.close(fig)
+        return
+
+    infant_df = summary_df[summary_df["cohort"].isin(infant_labels)].copy()
+    infant_df = infant_df.dropna(subset=["mean_latency_frames"])
+    if infant_df.empty or not trend_stats:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "Latency linear trend unavailable", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=300)
+        plt.close(fig)
+        return
+
+    x = infant_df["cohort"].str.extract(r"(\d+)").astype(float)[0].to_numpy()
+    y = infant_df["mean_latency_frames"].to_numpy()
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.scatter(x, y, color="#1f77b4", label="Infant cohorts")
+
+    slope = float(trend_stats.get("coef", 0.0))
+    intercept = float(trend_stats.get("intercept", np.mean(y) if len(y) else 0.0))
+    if len(x) >= 2:
+        x_line = np.linspace(x.min(), x.max(), 100)
+    else:
+        x_line = np.array([x.min(), x.min() + 1])
+    ax.plot(x_line, intercept + slope * x_line, color="#ff7f0e", label="Linear fit")
+
+    ticks = list(x)
+    tick_labels = [str(int(val)) for val in x]
+    adult_series = summary_df[summary_df["cohort"] == adult_label]["mean_latency_frames"] if adult_label else pd.Series()
+    if not adult_series.empty:
+        adult_x = x.max() + 1 if len(x) else 12
+        ax.scatter([adult_x], adult_series.to_numpy(), color="#f4a261", label=adult_label or "Adults")
+        ticks.append(adult_x)
+        tick_labels.append(adult_label or "Adults")
+
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(tick_labels, rotation=30, ha="right")
+    ax.set_xlabel("Cohort")
+    ax.set_ylabel("Mean latency to toy (frames)")
+    ax.set_title(title)
+
+    pvalue = trend_stats.get("pvalue")
+    if pvalue is not None and not np.isnan(pvalue):
+        ax.text(
+            0.02,
+            0.92,
+            f"slope={slope:.2f}, p={pvalue:.3f}",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=10,
+        )
+    ax.legend()
+    plt.subplots_adjust(top=0.84, bottom=0.25, left=0.15, right=0.95)
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(figure_path, dpi=300)
+    plt.close(fig)
+

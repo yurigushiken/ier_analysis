@@ -47,6 +47,7 @@ def run_analysis(config_path: Path) -> None:
         raise ValueError("No latency measurements were found for the configured window/AOIs.")
 
     cohorts = config["cohorts"]
+    infant_cohorts = [c for c in cohorts if c["max_months"] <= 11]
     summary = calculator.summarize_by_cohort(latencies, cohorts=cohorts)
     summary_path = tables_dir / f"{config_name}_latency_stats.csv"
     summary.to_csv(summary_path, index=False)
@@ -57,7 +58,7 @@ def run_analysis(config_path: Path) -> None:
     gee_results, gee_report = stats.run_adult_reference_gee(latencies, cohorts=cohorts)
     adult_vs_infant = stats.summarize_adult_vs_infant(
         latencies,
-        infant_cohorts=[c for c in cohorts if c["max_months"] <= 11],
+        infant_cohorts=infant_cohorts,
         cohorts=cohorts,
     )
 
@@ -98,6 +99,35 @@ def run_analysis(config_path: Path) -> None:
         reference_label=_find_adult_label(cohorts),
         figure_path=figures_dir / f"{config_name}_latency_forest_plot.png",
         title=forest_title,
+    )
+
+    linear_stats, linear_report = stats.run_infant_linear_trend(
+        latencies,
+        infant_cohorts=infant_cohorts,
+    )
+    reports_dir.joinpath(f"{config_name}_latency_linear_trend.txt").write_text(
+        linear_report,
+        encoding="utf-8",
+    )
+    linear_summary_path = tables_dir / f"{config_name}_latency_linear_summary.csv"
+    linear_columns = ["coef", "intercept", "pvalue", "age_min", "age_max", "n_participants", "n_trials"]
+    if linear_stats:
+        pd.DataFrame([linear_stats])[linear_columns].to_csv(linear_summary_path, index=False)
+    else:
+        pd.DataFrame(columns=linear_columns).to_csv(linear_summary_path, index=False)
+
+    linear_title = (
+        '"Give with toy" – Latency to fixation on toy\n'
+        "starting from frame 30 (begin toy forward motion)\n"
+        "Linear trend across infant cohorts"
+    )
+    visuals.plot_latency_linear_trend(
+        summary,
+        figure_path=figures_dir / f"{config_name}_latency_linear_plot.png",
+        title=linear_title,
+        trend_stats=linear_stats if linear_stats else None,
+        infant_labels=[c["label"] for c in infant_cohorts],
+        adult_label=_find_adult_label(cohorts),
     )
 
 

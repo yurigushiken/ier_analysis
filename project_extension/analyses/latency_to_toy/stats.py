@@ -129,3 +129,54 @@ def summarize_adult_vs_infant(
         "adult_trials": int(adults.count()),
     }
 
+
+def run_infant_linear_trend(
+    latency_df: pd.DataFrame,
+    *,
+    infant_cohorts: List[Dict[str, int]],
+) -> Tuple[Dict[str, float], str]:
+    """Run latency_frames ~ age_numeric for infant cohorts only."""
+    if latency_df.empty:
+        return {}, "Latency linear trend: no latency data available."
+    if not infant_cohorts:
+        return {}, "Latency linear trend: no infant cohorts configured."
+    infant_min = infant_cohorts[0]["min_months"]
+    infant_max = infant_cohorts[-1]["max_months"]
+    working = latency_df[
+        (latency_df["participant_age_months"] >= infant_min)
+        & (latency_df["participant_age_months"] <= infant_max)
+    ].copy()
+    if working.empty:
+        return {}, "Latency linear trend: no infant trials within the specified range."
+    working["age_numeric"] = working["participant_age_months"]
+    model = smf.gee(
+        "latency_frames ~ age_numeric",
+        groups="participant_id",
+        data=working,
+        family=sm.families.Gaussian(),
+    )
+    try:
+        result = model.fit()
+    except ValueError as exc:
+        return {}, f"Latency linear trend failed to converge: {exc}"
+    coef = float(result.params.get("age_numeric", 0.0))
+    intercept = float(result.params.get("Intercept", 0.0))
+    pvalue = float(result.pvalues.get("age_numeric", float("nan")))
+    stats = {
+        "coef": coef,
+        "intercept": intercept,
+        "pvalue": pvalue,
+        "age_min": infant_min,
+        "age_max": infant_max,
+        "n_participants": int(working["participant_id"].nunique()),
+        "n_trials": int(len(working)),
+    }
+    summary_lines = [
+        f"Latency linear trend for infants ({infant_min}-{infant_max} months)",
+        f"Participants: {stats['n_participants']}",
+        f"Trials: {stats['n_trials']}",
+        "",
+        result.summary().as_text(),
+    ]
+    return stats, "\n".join(summary_lines)
+

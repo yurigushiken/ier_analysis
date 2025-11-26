@@ -62,6 +62,9 @@ def test_run_analysis_produces_outputs(tmp_path: Path):
     summary = output_dir / "tables" / f"{config_path.stem}_latency_stats.csv"
     assert summary.exists()
     assert (output_dir / "figures" / f"{config_path.stem}_latency_forest_plot.png").exists()
+    assert (output_dir / "figures" / f"{config_path.stem}_latency_linear_plot.png").exists()
+    assert (output_dir / "tables" / f"{config_path.stem}_latency_linear_summary.csv").exists()
+    assert (output_dir / "reports" / f"{config_path.stem}_latency_linear_trend.txt").exists()
 
 
 def test_infant_trend_output(tmp_path: Path):

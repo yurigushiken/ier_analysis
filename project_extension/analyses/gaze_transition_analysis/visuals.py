@@ -203,6 +203,7 @@ def plot_linear_trend(
     label: str,
     title: str,
     y_axis_label: str | None = None,
+    adult_label: str | None = None,
 ) -> None:
     if summary_df.empty or trend_metrics is None:
         fig, ax = plt.subplots(figsize=(6, 4))
@@ -219,20 +220,36 @@ def plot_linear_trend(
         fig.savefig(figure_path, dpi=DEFAULT_DPI)
         plt.close(fig)
         return
-    x = infants["cohort"].str.extract(r"(\d+)").astype(int)[0]
-    y = infants[value_column]
-    coef = trend_metrics.get("coef", 0)
-    intercept = y.mean() - coef * x.mean()
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.scatter(x, y, color="#1f77b4", label="Cohort mean")
-    ax.plot(x, intercept + coef * x, color="#ff7f0e", label="Trend")
+    x = infants["cohort"].str.extract(r"(\d+)").astype(float)[0].to_numpy()
+    y = infants[value_column].to_numpy()
+    coef = trend_metrics.get("coef", 0.0)
+    intercept = trend_metrics.get("intercept", float(np.mean(y) - coef * np.mean(x)))
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.scatter(x, y, color="#1f77b4", label="Infant cohorts")
+    x_line = np.linspace(x.min(), x.max(), 100) if len(x) > 1 else np.array([x.min(), x.min() + 1])
+    ax.plot(x_line, intercept + coef * x_line, color="#ff7f0e", label="Linear fit")
     ax.set_xlabel("Age (months)")
-    xticks = sorted(x.unique())
+    xticks = list(sorted(set(x)))
+    tick_labels = [str(int(val)) for val in xticks]
+    adult_series = (
+        summary_df.loc[summary_df["cohort"] == adult_label, value_column]
+        if adult_label
+        else pd.Series(dtype=float)
+    )
+    if not adult_series.empty:
+        adult_x = (max(xticks) if xticks else 11) + 1
+        ax.scatter([adult_x], adult_series.to_numpy(), color="#f4a261", marker="s", label=adult_label or "Adults")
+        xticks.append(adult_x)
+        tick_labels.append(adult_label or "Adults")
     ax.set_xticks(xticks)
-    ax.set_xticklabels([str(val) for val in xticks])
+    ax.set_xticklabels(tick_labels, rotation=30, ha="right")
     axis_label = y_axis_label or f"{label} proportion"
     ax.set_ylabel(axis_label)
-    upper = min(1.0, max(0.35, (y.max() if not y.empty else 0) + 0.1))
+    combined_values = list(y)
+    if not adult_series.empty:
+        combined_values.extend(adult_series.to_list())
+    max_value = max(combined_values) if combined_values else 0.0
+    upper = min(1.0, max(0.35, max_value + 0.1))
     ax.set_ylim(0, upper)
     ax.set_title(title)
     pvalue = trend_metrics.get("pvalue")
@@ -245,8 +262,8 @@ def plot_linear_trend(
         va="top",
         fontsize=10,
     )
-    ax.legend()
-    plt.tight_layout()
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.25), ncol=1)
+    plt.subplots_adjust(top=0.84, bottom=0.35, left=0.12, right=0.95)
     figure_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(figure_path, dpi=DEFAULT_DPI)
     plt.close(fig)

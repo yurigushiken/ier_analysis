@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -151,4 +151,60 @@ def _extract_qic(result) -> Optional[float]:
         while isinstance(qic_value, (tuple, list, np.ndarray)) and len(qic_value) > 0:
             qic_value = qic_value[0]
     return qic_value
+
+
+def run_success_linear_trend(
+    trial_results: pd.DataFrame,
+    *,
+    infant_cohorts: List[Dict[str, int]],
+) -> Tuple[Dict[str, float], str]:
+    """Run Binomial GEE on infant cohorts only (success ~ age_numeric)."""
+    if not infant_cohorts:
+        return {}, "Tri-argument linear trend: no infant cohorts configured."
+
+    cohort_mapping = {
+        cohort["label"]: (cohort["min_months"] + cohort["max_months"]) / 2 for cohort in infant_cohorts
+    }
+    cohort_labels = list(cohort_mapping.keys())
+    data = trial_results[trial_results["cohort"].isin(cohort_labels)].copy()
+    if data.empty:
+        return {}, "Tri-argument linear trend: no infant cohort trials available."
+
+    data["age_numeric"] = data["cohort"].map(cohort_mapping)
+    data = data.dropna(subset=["age_numeric"])
+    if data.empty:
+        return {}, "Tri-argument linear trend: missing numeric ages for infant cohorts."
+
+    data["tri_argument_success"] = data["tri_argument_success"].astype(int)
+    model = smf.gee(
+        "tri_argument_success ~ age_numeric",
+        groups="participant_id",
+        data=data,
+        family=sm.families.Binomial(),
+    )
+    try:
+        result = model.fit()
+    except ValueError as exc:
+        return {}, f"Tri-argument linear trend failed to converge: {exc}"
+
+    coef = float(result.params.get("age_numeric", 0.0))
+    intercept = float(result.params.get("Intercept", 0.0))
+    pvalue = float(result.pvalues.get("age_numeric", float("nan")))
+    stats_summary = {
+        "coef": coef,
+        "intercept": intercept,
+        "pvalue": pvalue,
+        "age_min": float(min(cohort_mapping.values())),
+        "age_max": float(max(cohort_mapping.values())),
+        "n_participants": int(data["participant_id"].nunique()),
+        "n_trials": int(len(data)),
+    }
+    summary_lines = [
+        f"Tri-argument success linear trend (infants {int(stats_summary['age_min'])}-{int(stats_summary['age_max'])} months)",
+        f"Participants: {stats_summary['n_participants']}",
+        f"Trials: {stats_summary['n_trials']}",
+        "",
+        result.summary().as_text(),
+    ]
+    return stats_summary, "\n".join(summary_lines)
 

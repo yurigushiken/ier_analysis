@@ -35,3 +35,13 @@ def test_format_significance_labels():
     assert tri_stats.format_significance(0.02) == "*"
     assert tri_stats.format_significance(0.2) is None
 
+
+def test_run_success_linear_trend_requires_outputs(sample_trial_results):
+    infant_cohorts = [
+        {"label": "infant", "min_months": 7, "max_months": 11},
+    ]
+    stats, report = tri_stats.run_success_linear_trend(sample_trial_results, infant_cohorts=infant_cohorts)
+    assert stats  # expect non-empty stats dict
+    assert "coef" in stats
+    assert "pvalue" in stats
+    assert "linear trend" in report.lower()

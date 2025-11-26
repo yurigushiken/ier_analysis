@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import Dict
 
+import pandas as pd
 import yaml
 
 CONDITION_LABELS = {
@@ -125,6 +126,33 @@ def run_analysis(config_path: Path) -> None:
         title=f"{display_label} - Event structure coverage",
     )
 
+    infant_cohorts = [cohort for cohort in config["cohorts"] if cohort["max_months"] <= 11]
+    infant_labels = [c["label"] for c in infant_cohorts]
+    adult_label = next((c["label"] for c in config["cohorts"] if "adult" in c["label"].lower()), None)
+
+    trend_stats_success, trend_report_success = stats.run_success_linear_trend(
+        trial_results,
+        infant_cohorts=infant_cohorts,
+    )
+    reports_dir.joinpath(f"{config_name}_tri_argument_linear_trend.txt").write_text(
+        trend_report_success,
+        encoding="utf-8",
+    )
+    trend_columns = ["coef", "intercept", "pvalue", "age_min", "age_max", "n_participants", "n_trials"]
+    trend_summary_path = tables_dir / f"{config_name}_tri_argument_linear_trend_summary.csv"
+    if trend_stats_success:
+        pd.DataFrame([trend_stats_success])[trend_columns].to_csv(trend_summary_path, index=False)
+    else:
+        pd.DataFrame(columns=trend_columns).to_csv(trend_summary_path, index=False)
+    visuals.plot_trifecta_linear_trend(
+        summary,
+        figures_dir / f"{config_name}_tri_argument_linear_trend.png",
+        title=f"{display_label} - Trifecta success linear trend",
+        infant_labels=infant_labels,
+        trend_stats=trend_stats_success if trend_stats_success else None,
+        adult_label=adult_label,
+    )
+
     latency_metrics = latency_analysis.compute_latency_metrics(
         df,
         trial_results,
@@ -137,7 +165,6 @@ def run_analysis(config_path: Path) -> None:
     )
     latency_summary.to_csv(tables_dir / f"{config_name}_latency_summary.csv", index=False)
 
-    infant_cohorts = [cohort for cohort in config["cohorts"] if cohort["max_months"] <= 11]
     trend_stats, trend_report = latency_analysis.run_latency_trend(
         latency_metrics,
         infant_cohorts=infant_cohorts,

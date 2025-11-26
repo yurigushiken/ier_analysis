@@ -67,4 +67,7 @@ def test_cli_generates_expected_outputs(tmp_path):
     assert (output_root / "reports" / f"{prefix}_tri_argument_report.pdf").exists()
     assert (output_root / "tables" / f"{prefix}_event_structure_breakdown.csv").exists()
     assert (output_root / "figures" / f"{prefix}_event_structure_breakdown.png").exists()
+    assert (output_root / "figures" / f"{prefix}_tri_argument_linear_trend.png").exists()
+    assert (output_root / "tables" / f"{prefix}_tri_argument_linear_trend_summary.csv").exists()
+    assert (output_root / "reports" / f"{prefix}_tri_argument_linear_trend.txt").exists()
 

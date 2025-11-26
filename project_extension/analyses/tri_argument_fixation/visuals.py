@@ -259,6 +259,81 @@ def plot_latency_to_trifecta(
     plt.close(fig)
 
 
+def plot_trifecta_linear_trend(
+    summary: pd.DataFrame,
+    figure_path: Path,
+    *,
+    title: str,
+    infant_labels: Sequence[str],
+    trend_stats: Optional[Dict[str, float]],
+    adult_label: Optional[str],
+) -> None:
+    """Render developmental trend plot for trifecta success."""
+    if summary.empty or not infant_labels:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "No infant cohorts to plot", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=DEFAULT_DPI)
+        plt.close(fig)
+        return
+
+    working = summary[summary["cohort"].isin(infant_labels)].copy()
+    if working.empty or not trend_stats:
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.axis("off")
+        ax.text(0.5, 0.5, "Linear trend unavailable", ha="center", va="center", fontsize=12)
+        figure_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(figure_path, dpi=DEFAULT_DPI)
+        plt.close(fig)
+        return
+
+    x = working["cohort"].str.extract(r"(\d+)").astype(float)[0].to_numpy()
+    y = (working["success_rate"].to_numpy()) * 100
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.scatter(x, y, color="#1f77b4", label="Infant cohorts")
+
+    slope = float(trend_stats.get("coef", 0.0))
+    intercept = float(trend_stats.get("intercept", 0.0))
+    x_line = np.linspace(x.min(), x.max(), 200) if len(x) > 1 else np.array([x.min(), x.min() + 1])
+    y_pred = (1.0 / (1.0 + np.exp(-(intercept + slope * x_line)))) * 100
+    ax.plot(x_line, y_pred, color="#ff7f0e", label="Logistic fit")
+
+    ticks = list(x)
+    tick_labels = [str(int(val)) for val in x]
+    if adult_label:
+        adult_value = summary.loc[summary["cohort"] == adult_label, "success_rate"]
+        if not adult_value.empty:
+            adult_x = (max(x) if len(x) else 11) + 1
+            ax.scatter([adult_x], adult_value.to_numpy() * 100, color="#f4a261", marker="s", label=adult_label)
+            ticks.append(adult_x)
+            tick_labels.append(adult_label)
+
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(tick_labels, rotation=30, ha="right")
+    ax.set_ylabel("Trifecta success (%)")
+    ax.set_xlabel("Cohort")
+    y_max = max(max(y), np.max(y_pred))
+    ax.set_ylim(0, min(100, max(40, y_max + 10)))
+    ax.set_title(title)
+    pvalue = trend_stats.get("pvalue")
+    if pvalue is not None and not np.isnan(pvalue):
+        ax.text(
+            0.02,
+            0.92,
+            f"slope={slope:.3f}, p={pvalue:.3f}",
+            transform=ax.transAxes,
+            ha="left",
+            va="top",
+            fontsize=10,
+        )
+    ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.2))
+    plt.subplots_adjust(top=0.84, bottom=0.32, left=0.12, right=0.95)
+    figure_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(figure_path, dpi=DEFAULT_DPI)
+    plt.close(fig)
+
+
 def _annotate_significance(
     ax, summary: pd.DataFrame, stats_summary: pd.DataFrame, reference_label: str
 ) -> None:

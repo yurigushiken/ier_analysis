@@ -82,6 +82,7 @@ def run_analysis(config_path: Path) -> None:
     cohort_labels = [c["label"] for c in cohorts]
     infant_cohorts = [c for c in cohorts if c["max_months"] <= 11]
     reference_label = cohort_labels[0]
+    adult_label = next((label for label in cohort_labels if "adult" in label.lower()), None)
     display_order = [reference_label] + [label for label in cohort_labels if label != reference_label]
     condition_label = _condition_label(condition_codes)
     arrow = "↔"
@@ -130,6 +131,7 @@ def run_analysis(config_path: Path) -> None:
         label="Social Verification",
         title=f"\"{condition_label}\" - {social_caption}\nLinear trend across infant cohorts",
         y_axis_label=f"man_face {arrow} woman_face",
+        adult_label=adult_label,
     )
 
     mechanical_gee, mechanical_gee_report = strategy.run_strategy_gee(
@@ -173,6 +175,7 @@ def run_analysis(config_path: Path) -> None:
         label="Mechanical Tracking",
         title=f"\"{condition_label}\" - {mechanical_caption}\nLinear trend across infant cohorts",
         y_axis_label=f"toy {arrow} body",
+        adult_label=adult_label,
     )
 
     object_gee, object_gee_report = strategy.run_strategy_gee(
@@ -216,6 +219,7 @@ def run_analysis(config_path: Path) -> None:
         label="Object-Face Linking",
         title=f"\"{condition_label}\" - {object_caption}\nLinear trend across infant cohorts",
         y_axis_label=f"face {arrow} toy",
+        adult_label=adult_label,
     )
     _write_text_report(
         transitions_df,

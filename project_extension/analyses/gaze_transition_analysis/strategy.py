@@ -13,10 +13,23 @@ import statsmodels.formula.api as smf
 FACE_AOIS = {"man_face", "woman_face"}
 BODY_AOIS = {"man_body", "woman_body"}
 TOY_AOIS = {"toy_present", "toy_location"}
+
+AGENT_AGENT_ATTENTION_KEY = "agent_agent_attention"
+AGENT_OBJECT_BINDING_KEY = "agent_object_binding"
+MOTION_TRACKING_KEY = "motion_tracking"
+
+AGENT_AGENT_ATTENTION_PCT = f"{AGENT_AGENT_ATTENTION_KEY}_pct"
+AGENT_OBJECT_BINDING_PCT = f"{AGENT_OBJECT_BINDING_KEY}_pct"
+MOTION_TRACKING_PCT = f"{MOTION_TRACKING_KEY}_pct"
+
+AGENT_AGENT_ATTENTION_MEAN = f"{AGENT_AGENT_ATTENTION_KEY}_mean"
+AGENT_OBJECT_BINDING_MEAN = f"{AGENT_OBJECT_BINDING_KEY}_mean"
+MOTION_TRACKING_MEAN = f"{MOTION_TRACKING_KEY}_mean"
+
 STRATEGY_COLUMNS = [
-    ("social_verification_pct", "Social Verification"),
-    ("object_face_linking_pct", "Object-Face Linking"),
-    ("mechanical_tracking_pct", "Mechanical Tracking"),
+    (AGENT_AGENT_ATTENTION_PCT, "Agent-Agent Attention"),
+    (AGENT_OBJECT_BINDING_PCT, "Agent-Object Binding"),
+    (MOTION_TRACKING_PCT, "Motion Tracking"),
 ]
 
 
@@ -30,9 +43,9 @@ def compute_strategy_proportions(transitions_df: pd.DataFrame) -> pd.DataFrame:
                 "condition",
                 "participant_age_months",
                 "total_transitions",
-                "social_verification_pct",
-                "object_face_linking_pct",
-                "mechanical_tracking_pct",
+                AGENT_AGENT_ATTENTION_PCT,
+                AGENT_OBJECT_BINDING_PCT,
+                MOTION_TRACKING_PCT,
             ]
         )
     grouped = []
@@ -43,9 +56,9 @@ def compute_strategy_proportions(transitions_df: pd.DataFrame) -> pd.DataFrame:
         if total == 0:
             continue
         counts = {
-            "social_verification": 0.0,
-            "object_face_linking": 0.0,
-            "mechanical_tracking": 0.0,
+            AGENT_AGENT_ATTENTION_KEY: 0.0,
+            AGENT_OBJECT_BINDING_KEY: 0.0,
+            MOTION_TRACKING_KEY: 0.0,
         }
         for row in trial_df.itertuples():
             strategy_key = _categorize_transition(row.from_aoi, row.to_aoi)
@@ -58,9 +71,9 @@ def compute_strategy_proportions(transitions_df: pd.DataFrame) -> pd.DataFrame:
                 "condition": trial_df["condition"].iloc[0],
                 "participant_age_months": float(trial_df["participant_age_months"].iloc[0]),
                 "total_transitions": total,
-                "social_verification_pct": counts["social_verification"] / total,
-                "object_face_linking_pct": counts["object_face_linking"] / total,
-                "mechanical_tracking_pct": counts["mechanical_tracking"] / total,
+                AGENT_AGENT_ATTENTION_PCT: counts[AGENT_AGENT_ATTENTION_KEY] / total,
+                AGENT_OBJECT_BINDING_PCT: counts[AGENT_OBJECT_BINDING_KEY] / total,
+                MOTION_TRACKING_PCT: counts[MOTION_TRACKING_KEY] / total,
             }
         )
     return pd.DataFrame(grouped)
@@ -68,17 +81,17 @@ def compute_strategy_proportions(transitions_df: pd.DataFrame) -> pd.DataFrame:
 
 def _categorize_transition(from_aoi: str, to_aoi: str) -> str | None:
     if {from_aoi, to_aoi} == {"man_face", "woman_face"}:
-        return "social_verification"
+        return AGENT_AGENT_ATTENTION_KEY
     if (
         (from_aoi in FACE_AOIS and to_aoi in TOY_AOIS)
         or (to_aoi in FACE_AOIS and from_aoi in TOY_AOIS)
     ):
-        return "object_face_linking"
+        return AGENT_OBJECT_BINDING_KEY
     if (
         (from_aoi in BODY_AOIS and to_aoi in TOY_AOIS)
         or (to_aoi in BODY_AOIS and from_aoi in TOY_AOIS)
     ):
-        return "mechanical_tracking"
+        return MOTION_TRACKING_KEY
     return None
 
 
@@ -92,9 +105,9 @@ def build_strategy_summary(
         return pd.DataFrame(
             columns=[
                 "cohort",
-                "social_verification_mean",
-                "object_face_linking_mean",
-                "mechanical_tracking_mean",
+                AGENT_AGENT_ATTENTION_MEAN,
+                AGENT_OBJECT_BINDING_MEAN,
+                MOTION_TRACKING_MEAN,
             ]
         )
     working = proportions_df.copy()
@@ -105,9 +118,11 @@ def build_strategy_summary(
     grouped = (
         working.groupby("cohort")
         .agg(
-            social_verification_mean=("social_verification_pct", "mean"),
-            object_face_linking_mean=("object_face_linking_pct", "mean"),
-            mechanical_tracking_mean=("mechanical_tracking_pct", "mean"),
+            **{
+                AGENT_AGENT_ATTENTION_MEAN: (AGENT_AGENT_ATTENTION_PCT, "mean"),
+                AGENT_OBJECT_BINDING_MEAN: (AGENT_OBJECT_BINDING_PCT, "mean"),
+                MOTION_TRACKING_MEAN: (MOTION_TRACKING_PCT, "mean"),
+            }
         )
         .reset_index()
     )

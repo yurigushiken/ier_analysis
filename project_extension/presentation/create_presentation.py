@@ -143,7 +143,7 @@ def add_strategy_diagram(slide) -> None:
 def add_gw_vs_ugw_chart(slide) -> None:
     """Insert the GW vs UGW social verification paired bar chart."""
     chart_data = CategoryChartData()
-    chart_data.categories = ["Social Verification"]
+    chart_data.categories = ["Agent-Agent Attention"]
     chart_data.add_series("GW (Upright)", (0.17,))
     chart_data.add_series("UGW (Inverted)", (0.008,))
 
@@ -183,9 +183,9 @@ def build_presentation() -> None:
         "Definitions & Gaze Strategies",
         [
             "Concept: We moved beyond simple \"looking time\" to analyze every AOI transition and classify each gaze strategy.",
-            "Strategy 1 - Man Face <-> Woman Face (Social Verification): Direct gaze shifts between the giver and receiver that verify shared intent.",
-            "Strategy 2 - Body <-> Toy (Mechanical Tracking): Tracks the hands/bodies and the moving object without invoking the agents' minds.",
-            "Strategy 3 - Face <-> Toy (Object-Face Linking): Links an agent's face and the object yet stops short of connecting both people.",
+            "Strategy 1 - Man Face ↔ Woman Face (Agent-Agent Attention): Direct gaze shifts between the giver and receiver that verify shared intent.",
+            "Strategy 2 - Body ↔ Toy (Motion Tracking): Tracks the hands/bodies and the moving object without invoking the agents' minds.",
+            "Strategy 3 - Face ↔ Toy (Agent-Object Binding): Links an agent's face and the object yet stops short of connecting both people.",
             "Visual: Diagram shows every bidirectional arrow for the three strategies.",
         ],
     )
@@ -194,48 +194,48 @@ def build_presentation() -> None:
     # Slide 2
     slide2 = add_text_slide(
         prs,
-        "The Rise of Social Verification",
+        "The Rise of Agent-Agent Attention",
         [
             "Story: Older infants increasingly verify the social connection between actors.",
-            "Key Finding: Face <-> Face transitions climb steadily from 7 to 11 months (~4 percentage points per month).",
+            "Key Finding: Face ↔ Face transitions climb steadily from 7 to 11 months (~4 percentage points per month).",
             "Stats: Linear trend across 7-11 months is significant (p = 0.025).",
-            "Adults Comparison: Adults show far higher Social Verification than 7-month-olds (p = 0.006).",
+            "Adults Comparison: Adults show far higher Agent-Agent Attention than 7-month-olds (p = 0.006).",
             "Visual: Linear trend scatter with regression line.",
         ],
     )
-    add_image(slide2, "gw_transitions_min3_50_percent_linear_trend_plot.png")
+    add_image(slide2, "gw_transitions_min3_50_percent_linear_trend_agent_agent_attention.png")
 
     # Slide 3
     slide3 = add_text_slide(
         prs,
-        "The Decline of Mechanical Tracking",
+        "The Decline of Motion Tracking",
         [
-            "Story: As Social Verification rises, purely mechanical tracking falls.",
-            "Key Finding: 7-month-olds devote over half of their transitions to Body <-> Toy tracking before the strategy drops with age.",
+            "Story: As Agent-Agent Attention rises, purely motion tracking falls.",
+            "Key Finding: 7-month-olds devote over half of their transitions to Body ↔ Toy tracking before the strategy drops with age.",
             "Stats: Linear trend shows a significant negative slope (p = 0.005).",
-            "Baseline: Mechanical Tracking dominates early gaze behavior.",
-            "Visual: Linear trend scatter for Mechanical Tracking.",
+            "Baseline: Motion Tracking dominates early gaze behavior.",
+            "Visual: Linear trend scatter for Motion Tracking.",
         ],
     )
     add_image(
         slide3,
-        "gw_transitions_min3_50_percent_linear_trend_mechanical_tracking.png",
+        "gw_transitions_min3_50_percent_linear_trend_motion_tracking.png",
     )
 
     # Slide 4
     slide4 = add_text_slide(
         prs,
-        "Object-Face Linking",
+        "Agent-Object Binding",
         [
-            "Story: Face <-> Toy transitions peak at 9 months, bridging mechanical tracking and full social verification.",
+            "Story: Face ↔ Toy transitions peak at 9 months, bridging motion tracking and full agent-agent attention.",
             "Observation: 9-month-olds allocate roughly half of their transitions to linking the agent and the object but not the recipient.",
             "Stats: Placeholder for the detailed GEE stats describing the 9-month peak and adult contrasts.",
-            "Visual: Developmental profile of Object-Face Linking.",
+            "Visual: Developmental profile of Agent-Object Binding.",
         ],
     )
     add_image(
         slide4,
-        "gw_transitions_min3_50_percent_linear_trend_object_face_linking.png",
+        "gw_transitions_min3_50_percent_linear_trend_agent_object_binding.png",
     )
 
     # Slide 5
@@ -245,9 +245,9 @@ def build_presentation() -> None:
         [
             "Question: Do 10-month-olds fixate faces because of semantic understanding or simple facial attraction?",
             "Method: Compare the upright Give (GW) to the inverted Give (UGW).",
-            "Key Finding: GW maintains high Social Verification (17%) but UGW collapses to 0.8%.",
+            "Key Finding: GW maintains high Agent-Agent Attention (17%) but UGW collapses to 0.8%.",
             "Conclusion: Strategy is driven by semantics; the gaze pattern disappears when meaning breaks.",
-            "Visual: Paired bar chart (GW vs UGW) for Social Verification.",
+            "Visual: Paired bar chart (GW vs UGW) for Agent-Agent Attention.",
         ],
     )
     add_gw_vs_ugw_chart(slide5)
@@ -285,9 +285,9 @@ def build_presentation() -> None:
         prs,
         "The Story in Summary",
         [
-            "7-8 Months: Mechanical trackers driven by motion (Body <-> Toy) with reflexively fast reactions.",
-            "9 Months: Object linkers obsessed with Agent-Object connections and slower processing times.",
-            "10-11 Months: Social verifiers who capture the giver, recipient, and object but still process slowly and miss reactions.",
+            "7-8 Months: Motion tracking driven by Body ↔ Toy transitions with reflexively fast reactions.",
+            "9 Months: Agent-object binders obsessed with Agent ↔ Object connections and slower processing times.",
+            "10-11 Months: Agent-agent attention peaks—infants capture giver, recipient, and object but still process slowly and miss reactions.",
             "Adults: Experts who are fast, predictive, and fully socially integrated.",
             "Takeaway: Event structure understanding emerges in stages; efficiency and social goals lag behind structural mastery.",
         ],

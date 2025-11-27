@@ -4,18 +4,18 @@
 
 **Concept:** We moved beyond simple "looking time" to analyze the structure of the infant's gaze. We classified every transition between Areas of Interest (AOIs) into three distinct strategies.
 
-*   **Strategy 1: Man Face ↔ Woman Face (Social Verification)**
+*   **Strategy 1: Man Face ↔ Woman Face (Agent-Agent Attention)**
     *   **Definition:** Direct gaze shifts between the Giver and Receiver. Verifies shared intent and the social contract of the exchange.
-*   **Strategy 2: Body ↔ Toy (Mechanical Tracking)**
+*   **Strategy 2: Body ↔ Toy (Motion Tracking)**
     *   **Definition:** Gaze shifts between the hands/bodies and the moving object. Tracks the physical mechanics of the transfer without referencing the agents' minds.
-*   **Strategy 3: Face ↔ Toy (Object-Face Linking)**
+*   **Strategy 3: Face ↔ Toy (Agent-Object Binding)**
     *   **Definition:** Shifts between an Agent's face and the Object. References the relationship between the person and the thing, but does not link the two people.
 
 **Visual:** [Insert: A simple diagram or screenshot showing arrows for each of the 3 strategies]
 
 ---
 
-## Slide 2: The Rise of Social Verification (Face ↔ Face)
+## Slide 2: The Rise of Agent-Agent Attention (Face ↔ Face)
 
 **The Story:** Older infants increasingly verify the social connection between the actors.
 
@@ -25,33 +25,33 @@
 *   Linear Trend (Infants 7–11mo): Significant (p = 0.025). Growth rate ≈ 4% per month.
 *   Adults vs. 7-month-olds: Significantly higher (p = 0.006).
 
-**Visual:** [Insert: The Linear Trend Scatter Plot for Social Verification (with regression line) - `gw_transitions_min3_50_percent_linear_trend_plot.png`]
+**Visual:** [Insert: The Linear Trend Scatter Plot for Agent-Agent Attention (with regression line) - `gw_transitions_min3_50_percent_linear_trend_agent_agent_attention.png`]
 
 ---
 
-## Slide 3: The Decline of Mechanical Tracking (Body ↔ Toy)
+## Slide 3: The Decline of Motion Tracking (Body ↔ Toy)
 
-**The Story:** As social verification rises, purely mechanical tracking falls. Younger infants are driven by the physics of the moving parts.
+**The Story:** As agent-agent attention rises, purely motion tracking falls. Younger infants are driven by the physics of the moving parts.
 
-**Key Finding:** 7-month-olds devote over 50% of their transitions to mechanical tracking; this drops significantly with age.
+**Key Finding:** 7-month-olds devote over 50% of their transitions to motion tracking; this drops significantly with age.
 
 **Stats:**
 *   Linear Trend: Significant Negative Slope (p = 0.005).
 *   7-Month-Old Baseline: Dominant strategy (>50%).
 
-**Visual:** [Insert: The Linear Trend Scatter Plot for Mechanical Tracking - `gw_transitions_min3_50_percent_linear_trend_mechanical_tracking.png`]
+**Visual:** [Insert: The Linear Trend Scatter Plot for Motion Tracking - `gw_transitions_min3_50_percent_linear_trend_motion_tracking.png`]
 
 ---
 
-## Slide 4: Object-Face Linking (Face ↔ Toy)
+## Slide 4: Agent-Object Binding (Face ↔ Toy)
 
-**The Story:** This strategy peaks at 9 months, serving as a "bridge" between mechanical tracking and full social verification.
+**The Story:** This strategy peaks at 9 months, serving as a "bridge" between motion tracking and full agent-agent attention.
 
 **Observation:** 9-month-olds are obsessed with linking the Agent to the Object (~50% of transitions), but they have not yet graduated to linking the Agent to the Recipient.
 
 **Stats:** [Placeholder: You will insert your GEE stats here regarding the 9-month peak or difference from adults]
 
-**Visual:** [Insert: The Bar Chart for Object-Face Linking - `gw_transitions_min3_50_percent_linear_trend_object_face_linking.png`]
+**Visual:** [Insert: The Bar Chart for Agent-Object Binding - `gw_transitions_min3_50_percent_linear_trend_agent_object_binding.png`]
 
 ---
 
@@ -62,12 +62,12 @@
 **Method:** We compared the standard "Give" (GW) to an Inverted "Give" (UGW).
 
 **Key Finding:**
-*   GW (Upright): High Social Verification (17%).
-*   UGW (Inverted): Social Verification collapses to 0.8%.
+*   GW (Upright): High Agent-Agent Attention (17%).
+*   UGW (Inverted): Agent-Agent Attention collapses to 0.8%.
 
 **Conclusion:** The strategy is driven by semantic understanding. When the meaning breaks, the strategy disappears.
 
-**Visual:** [Insert: The Paired Bar Chart (Blue/Red) for GW vs UGW Social Verification - IMAGE NOT FOUND]
+**Visual:** [Insert: The Paired Bar Chart (Blue/Red) for GW vs UGW Agent-Agent Attention - IMAGE NOT FOUND]
 
 ---
 
@@ -108,7 +108,7 @@
 
 ## Slide 8: Summary of "The Story"
 
-*   **7-8 Months: Mechanical Trackers.** Driven by motion (Body ↔ Toy). Fast reaction times (reflexive).
-*   **9 Months: Object Linkers.** Obsessed with the Agent-Object connection. Slower reaction times (processing).
-*   **10-11 Months: Social Verifiers.** They have the "Trifecta" and check faces (Face ↔ Face), but they are still slow (processing) and miss the "Reaction" in showing.
+*   **7-8 Months: Motion Trackers.** Driven by movement (Body ↔ Toy). Fast reaction times (reflexive).
+*   **9 Months: Agent-Object Binders.** Obsessed with linking the Agent and the Object. Slower reaction times (processing).
+*   **10-11 Months: Agent-Agent Monitors.** They have the "Trifecta" and check faces (Face ↔ Face), but they are still slow (processing) and miss the "Reaction" in showing.
 *   **Adults: Experts.** Fast, predictive, and socially integrated.

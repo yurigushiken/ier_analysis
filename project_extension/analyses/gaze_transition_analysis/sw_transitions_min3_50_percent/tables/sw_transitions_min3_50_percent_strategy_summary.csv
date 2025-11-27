@@ -1,4 +1,4 @@
-cohort,social_verification_mean,object_face_linking_mean,mechanical_tracking_mean
+cohort,agent_agent_attention_mean,agent_object_binding_mean,motion_tracking_mean
 10-month-olds,0.14174107142857142,0.34985119047619045,0.23430059523809524
 11-month-olds,0.13076923076923078,0.41245421245421243,0.1622252747252747
 7-month-olds,0.06961697722567287,0.24254658385093167,0.4232919254658385

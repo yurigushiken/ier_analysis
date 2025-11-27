@@ -86,15 +86,15 @@ def run_analysis(config_path: Path) -> None:
     display_order = [reference_label] + [label for label in cohort_labels if label != reference_label]
     condition_label = _condition_label(condition_codes)
     arrow = "↔"
-    social_caption = f"Fixations man_face {arrow} woman_face ('social verification')"
-    mechanical_caption = f"Fixations toy {arrow} body ('mechanical tracking')"
-    object_caption = f"Fixations face {arrow} toy ('object-face linking')"
+    social_caption = f"Fixations man_face {arrow} woman_face ('agent-agent attention')"
+    mechanical_caption = f"Fixations toy {arrow} body ('motion tracking')"
+    object_caption = f"Fixations face {arrow} toy ('agent-object binding')"
 
     social_gee, social_gee_report = strategy.run_strategy_gee(
         strategy_df,
         cohorts=cohorts,
-        value_column="social_verification_pct",
-        metric_label="Social Verification",
+        value_column=strategy.AGENT_AGENT_ATTENTION_PCT,
+        metric_label="Agent-Agent Attention",
     )
     social_annotations = strategy.build_significance_annotations(
         social_gee,
@@ -104,20 +104,26 @@ def run_analysis(config_path: Path) -> None:
     social_trend, social_trend_report = strategy.run_linear_trend_test(
         strategy_df,
         infant_cohorts=infant_cohorts,
-        value_column="social_verification_pct",
-        metric_label="Social Verification",
+        value_column=strategy.AGENT_AGENT_ATTENTION_PCT,
+        metric_label="Agent-Agent Attention",
     )
     _write_stats_report(
-        reports_dir / f"{config_name}_stats_social_verification.txt",
+        reports_dir / f"{config_name}_stats_agent_agent_attention.txt",
         gee_text=social_gee_report,
         trend_text=social_trend_report,
     )
     visuals.plot_single_strategy_bars(
         strategy_summary,
-        value_column="social_verification_mean",
-        label="Social Verification",
-        figure_path=figures_dir / f"{config_name}_social_verification_strategy.png",
-        title=f"\"{condition_label}\" - {social_caption}",
+        value_column=strategy.AGENT_AGENT_ATTENTION_MEAN,
+        label="Agent-Agent Attention",
+        figure_path=figures_dir / f"{config_name}_agent_agent_attention_strategy.png",
+        title="\n".join(
+            [
+                condition_label,
+                social_caption,
+                "Strategy prevalence by cohort",
+            ]
+        ),
         cohorts_order=display_order,
         color="#1f77b4",
         annotations=social_annotations,
@@ -126,10 +132,10 @@ def run_analysis(config_path: Path) -> None:
     visuals.plot_linear_trend(
         strategy_summary,
         social_trend if social_trend else None,
-        figure_path=figures_dir / f"{config_name}_linear_trend_plot.png",
-        value_column="social_verification_mean",
-        label="Social Verification",
-        title=f"\"{condition_label}\" - {social_caption}\nLinear trend across infant cohorts",
+        figure_path=figures_dir / f"{config_name}_linear_trend_agent_agent_attention.png",
+        value_column=strategy.AGENT_AGENT_ATTENTION_MEAN,
+        label="Agent-Agent Attention",
+        title="\n".join([condition_label, social_caption, "Linear trend across infant cohorts"]),
         y_axis_label=f"man_face {arrow} woman_face",
         adult_label=adult_label,
     )
@@ -137,8 +143,8 @@ def run_analysis(config_path: Path) -> None:
     mechanical_gee, mechanical_gee_report = strategy.run_strategy_gee(
         strategy_df,
         cohorts=cohorts,
-        value_column="mechanical_tracking_pct",
-        metric_label="Mechanical Tracking",
+        value_column=strategy.MOTION_TRACKING_PCT,
+        metric_label="Motion Tracking",
     )
     mechanical_annotations = strategy.build_significance_annotations(
         mechanical_gee,
@@ -148,20 +154,26 @@ def run_analysis(config_path: Path) -> None:
     mechanical_trend, mechanical_trend_report = strategy.run_linear_trend_test(
         strategy_df,
         infant_cohorts=infant_cohorts,
-        value_column="mechanical_tracking_pct",
-        metric_label="Mechanical Tracking",
+        value_column=strategy.MOTION_TRACKING_PCT,
+        metric_label="Motion Tracking",
     )
     _write_stats_report(
-        reports_dir / f"{config_name}_stats_mechanical_tracking.txt",
+        reports_dir / f"{config_name}_stats_motion_tracking.txt",
         gee_text=mechanical_gee_report,
         trend_text=mechanical_trend_report,
     )
     visuals.plot_single_strategy_bars(
         strategy_summary,
-        value_column="mechanical_tracking_mean",
-        label="Mechanical Tracking",
-        figure_path=figures_dir / f"{config_name}_mechanical_tracking_strategy.png",
-        title=f"\"{condition_label}\" - {mechanical_caption}",
+        value_column=strategy.MOTION_TRACKING_MEAN,
+        label="Motion Tracking",
+        figure_path=figures_dir / f"{config_name}_motion_tracking_strategy.png",
+        title="\n".join(
+            [
+                condition_label,
+                mechanical_caption,
+                "Strategy prevalence by cohort",
+            ]
+        ),
         cohorts_order=display_order,
         color="#2ca02c",
         annotations=mechanical_annotations,
@@ -170,10 +182,10 @@ def run_analysis(config_path: Path) -> None:
     visuals.plot_linear_trend(
         strategy_summary,
         mechanical_trend if mechanical_trend else None,
-        figure_path=figures_dir / f"{config_name}_linear_trend_mechanical_tracking.png",
-        value_column="mechanical_tracking_mean",
-        label="Mechanical Tracking",
-        title=f"\"{condition_label}\" - {mechanical_caption}\nLinear trend across infant cohorts",
+        figure_path=figures_dir / f"{config_name}_linear_trend_motion_tracking.png",
+        value_column=strategy.MOTION_TRACKING_MEAN,
+        label="Motion Tracking",
+        title="\n".join([condition_label, mechanical_caption, "Linear trend across infant cohorts"]),
         y_axis_label=f"toy {arrow} body",
         adult_label=adult_label,
     )
@@ -181,8 +193,8 @@ def run_analysis(config_path: Path) -> None:
     object_gee, object_gee_report = strategy.run_strategy_gee(
         strategy_df,
         cohorts=cohorts,
-        value_column="object_face_linking_pct",
-        metric_label="Object-Face Linking",
+        value_column=strategy.AGENT_OBJECT_BINDING_PCT,
+        metric_label="Agent-Object Binding",
     )
     object_annotations = strategy.build_significance_annotations(
         object_gee,
@@ -192,20 +204,26 @@ def run_analysis(config_path: Path) -> None:
     object_trend, object_trend_report = strategy.run_linear_trend_test(
         strategy_df,
         infant_cohorts=infant_cohorts,
-        value_column="object_face_linking_pct",
-        metric_label="Object-Face Linking",
+        value_column=strategy.AGENT_OBJECT_BINDING_PCT,
+        metric_label="Agent-Object Binding",
     )
     _write_stats_report(
-        reports_dir / f"{config_name}_stats_object_face_linking.txt",
+        reports_dir / f"{config_name}_stats_agent_object_binding.txt",
         gee_text=object_gee_report,
         trend_text=object_trend_report,
     )
     visuals.plot_single_strategy_bars(
         strategy_summary,
-        value_column="object_face_linking_mean",
-        label="Object-Face Linking",
-        figure_path=figures_dir / f"{config_name}_object_face_linking_strategy.png",
-        title=f"\"{condition_label}\" - {object_caption}",
+        value_column=strategy.AGENT_OBJECT_BINDING_MEAN,
+        label="Agent-Object Binding",
+        figure_path=figures_dir / f"{config_name}_agent_object_binding_strategy.png",
+        title="\n".join(
+            [
+                condition_label,
+                object_caption,
+                "Strategy prevalence by cohort",
+            ]
+        ),
         cohorts_order=display_order,
         color="#9467bd",
         annotations=object_annotations,
@@ -214,10 +232,10 @@ def run_analysis(config_path: Path) -> None:
     visuals.plot_linear_trend(
         strategy_summary,
         object_trend if object_trend else None,
-        figure_path=figures_dir / f"{config_name}_linear_trend_object_face_linking.png",
-        value_column="object_face_linking_mean",
-        label="Object-Face Linking",
-        title=f"\"{condition_label}\" - {object_caption}\nLinear trend across infant cohorts",
+        figure_path=figures_dir / f"{config_name}_linear_trend_agent_object_binding.png",
+        value_column=strategy.AGENT_OBJECT_BINDING_MEAN,
+        label="Agent-Object Binding",
+        title="\n".join([condition_label, object_caption, "Linear trend across infant cohorts"]),
         y_axis_label=f"face {arrow} toy",
         adult_label=adult_label,
     )
@@ -248,6 +266,8 @@ def _condition_label(codes: List[str]) -> str:
         "sw": "Show",
         "gwo": "Give (no toy)",
         "swo": "Show (no toy)",
+        "ugw": "Upside-down Give with Toy",
+        "ugwo": "Upside-down Give (no toy)",
     }
     first = codes[0].lower() if codes else ""
     return mapping.get(first, first.upper() or "Condition")
@@ -295,7 +315,7 @@ def _write_stats_report(output_path: Path, *, gee_text: str, trend_text: str) ->
 
 
 def _write_descriptive_summary(summary_df: pd.DataFrame, output_path: Path) -> None:
-    header = "Cohort,Social_Verification,Object_Face_Linking,Mechanical_Tracking"
+    header = "Cohort,Agent_Agent_Attention,Agent_Object_Binding,Motion_Tracking"
     if summary_df.empty:
         output_path.write_text(f"{header}\nN/A,N/A,N/A,N/A\n", encoding="utf-8")
         return
@@ -305,9 +325,9 @@ def _write_descriptive_summary(summary_df: pd.DataFrame, output_path: Path) -> N
             ",".join(
                 [
                     str(row.cohort),
-                    f"{row.social_verification_mean:.3f}",
-                    f"{row.object_face_linking_mean:.3f}",
-                    f"{row.mechanical_tracking_mean:.3f}",
+                    f"{getattr(row, strategy.AGENT_AGENT_ATTENTION_MEAN):.3f}",
+                    f"{getattr(row, strategy.AGENT_OBJECT_BINDING_MEAN):.3f}",
+                    f"{getattr(row, strategy.MOTION_TRACKING_MEAN):.3f}",
                 ]
             )
         )

@@ -1,4 +1,4 @@
-participant_id,trial_number,condition,participant_age_months,total_transitions,social_verification_pct,object_face_linking_pct,mechanical_tracking_pct
+participant_id,trial_number,condition,participant_age_months,total_transitions,agent_agent_attention_pct,agent_object_binding_pct,motion_tracking_pct
 Eight-0101-1579,1,sw,8.0,5,0.2,0.6,0.0
 Eight-0101-947,1,sw,8.0,3,0.3333333333333333,0.0,0.0
 Eight-0101-947,2,sw,8.0,3,0.3333333333333333,0.0,0.3333333333333333

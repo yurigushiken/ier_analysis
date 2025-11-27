@@ -157,15 +157,19 @@ python project_extension/analyses/gaze_transition_analysis/run.py `
   - `figures/*_transition_heatmap.png` – stacked heatmap visualizing cohort
     differences in transition frequencies.
   - `tables/*_strategy_proportions.csv` & `tables/*_strategy_summary.csv` –
-    normalized “Social Verification / Object-Face Linking / Mechanical
+    normalized “Agent-Agent Attention / Agent-Object Binding / Motion
     Tracking” proportions per trial and cohort.
   - `figures/*_gaze_strategy_comparison.png` – grouped bar chart with
     significance brackets showing strategy proportions per cohort.
-  - `reports/*_strategy_gee.txt` – social-verification GEE (categorical) plus a
-    dedicated linear trend test (infants 7–11 mo). The linear trend summary is
-    also saved as `reports/*_linear_trend_results.txt`.
-  - `figures/*_linear_trend_plot.png` – scatter/trend-line visualization of
-    social-verification proportions vs. age (7–11 mo).
+  - `reports/*_stats_agent_agent_attention.txt`,
+    `reports/*_stats_motion_tracking.txt`, and
+    `reports/*_stats_agent_object_binding.txt` – GEE summaries for each
+    strategy plus the infant linear trend tests (7–11 mo). Linear trend
+    summaries are stored alongside these reports.
+  - `figures/*_linear_trend_agent_agent_attention.png`,
+    `figures/*_linear_trend_motion_tracking.png`, and
+    `figures/*_linear_trend_agent_object_binding.png` – scatter/trend-line
+    visualizations of each strategy vs. age (7–11 mo).
   - `reports/*_transition_summary.txt` – cohort-organized lists of the top AOI
     transitions, plus total transition counts.
 

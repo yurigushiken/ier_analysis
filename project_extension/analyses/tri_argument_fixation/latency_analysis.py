@@ -40,9 +40,11 @@ def compute_latency_metrics(
         )
 
     filtered = fixations_df[fixations_df["condition"].isin(condition_codes)].copy()
+    window_start = 0
     if frame_window:
         start = frame_window["start"]
         end = frame_window["end"]
+        window_start = frame_window.get("event_onset", start)
         filtered = filtered[
             (filtered["gaze_end_frame"] >= start) & (filtered["gaze_start_frame"] <= end)
         ].copy()
@@ -69,9 +71,14 @@ def compute_latency_metrics(
                 continue
             seen.add(argument)
             if len(seen) == required_count:
-                latency_frames = int(
-                    getattr(fix, "gaze_start_frame", getattr(fix, "frame_count_trial_number", 0))
+                absolute_frame = int(
+                    getattr(
+                        fix,
+                        "gaze_start_frame",
+                        getattr(fix, "frame_count_trial_number", 0),
+                    )
                 )
+                latency_frames = max(absolute_frame - window_start, 0)
                 latency_seconds = latency_frames / FRAME_RATE
                 latency_ms = latency_seconds * 1000.0
                 break

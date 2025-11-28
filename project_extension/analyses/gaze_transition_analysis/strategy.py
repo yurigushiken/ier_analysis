@@ -201,11 +201,17 @@ def run_strategy_gee(
         ordered=True,
     )
     formula = f"{value_column} ~ C(cohort, Treatment(reference='{reference}'))"
+    if "total_transitions" in working:
+        weights = working["total_transitions"].fillna(0)
+    else:
+        weights = pd.Series(1.0, index=working.index)
+
     model = smf.gee(
         formula=formula,
         groups="participant_id",
         data=working,
         family=sm.families.Gaussian(),
+        weights=weights,
     )
     report_body = ""
     try:
@@ -261,11 +267,16 @@ def run_linear_trend_test(
     if working.empty:
         return {}, f"{metric_label}: no rows within infant cohort range."
     working["age_numeric"] = working["participant_age_months"]
+    if "total_transitions" in working:
+        weights = working["total_transitions"].fillna(0)
+    else:
+        weights = pd.Series(1.0, index=working.index)
     model = smf.gee(
         f"{value_column} ~ age_numeric",
         groups="participant_id",
         data=working,
         family=sm.families.Gaussian(),
+        weights=weights,
     )
     try:
         result = model.fit()

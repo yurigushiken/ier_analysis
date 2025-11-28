@@ -18,6 +18,16 @@ import pandas as pd
 DEFAULT_DPI = 300
 
 
+def _format_trend_pvalue(pvalue: float | None) -> str:
+    if pvalue is None or np.isnan(pvalue):
+        return "p=NA"
+    if pvalue < 1e-4:
+        return "p<0.0001"
+    if pvalue < 1e-3:
+        return "p<0.001"
+    return f"p={pvalue:.3f}"
+
+
 def plot_heatmap(
     matrix_df: pd.DataFrame,
     *,
@@ -253,10 +263,11 @@ def plot_linear_trend(
     ax.set_ylim(0, upper)
     ax.set_title(title)
     pvalue = trend_metrics.get("pvalue")
+    pvalue_text = _format_trend_pvalue(pvalue)
     ax.text(
         0.05,
         0.92,
-        f"coef={coef:.3f}, p={pvalue:.3f}" if pvalue is not None else f"coef={coef:.3f}",
+        f"coef={coef:.3f}, {pvalue_text}",
         transform=ax.transAxes,
         ha="left",
         va="top",

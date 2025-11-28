@@ -301,19 +301,24 @@ def plot_trifecta_linear_trend(
 
     ticks = list(x)
     tick_labels = [str(int(val)) for val in x]
+    adult_values = []
     if adult_label:
         adult_value = summary.loc[summary["cohort"] == adult_label, "success_rate"]
         if not adult_value.empty:
             adult_x = (max(x) if len(x) else 11) + 1
-            ax.scatter([adult_x], adult_value.to_numpy() * 100, color="#f4a261", marker="s", label=adult_label)
+            adult_y = adult_value.to_numpy() * 100
+            ax.scatter([adult_x], adult_y, color="#f4a261", marker="s", label=adult_label)
             ticks.append(adult_x)
             tick_labels.append(adult_label)
+            adult_values.extend(adult_y.tolist())
 
     ax.set_xticks(ticks)
     ax.set_xticklabels(tick_labels, rotation=30, ha="right")
     ax.set_ylabel("Trifecta success (%)")
     ax.set_xlabel("Cohort")
-    y_max = max(max(y), np.max(y_pred))
+    combined_y = list(y) + adult_values
+    y_max = max(combined_y) if combined_y else max(y)
+    y_max = max(y_max, np.max(y_pred))
     ax.set_ylim(0, min(100, max(40, y_max + 10)))
     ax.set_title(title)
     pvalue = trend_stats.get("pvalue")

@@ -31,11 +31,12 @@ def build_transition_matrix(
     if df.empty:
         raise ValueError("All transitions were dropped after cohort assignment.")
 
-    total_trials = (
-        df.groupby("cohort")[["participant_id", "trial_number"]]
-        .nunique()
-        .rename(columns={"participant_id": "participants", "trial_number": "trials"})
+    trial_rows = (
+        df.groupby(["cohort", "participant_id", "trial_number"])
+        .size()
+        .reset_index(name="transition_events")
     )
+    trials_per_cohort = trial_rows.groupby("cohort").size().to_dict()
 
     grouped = (
         df.groupby(["cohort", "from_aoi", "to_aoi"])["count"]
@@ -45,7 +46,7 @@ def build_transition_matrix(
 
     records = []
     for cohort in [c["label"] for c in cohorts]:
-        cohort_trials = float(total_trials.get("trials", {}).get(cohort, 0))
+        cohort_trials = float(trials_per_cohort.get(cohort, 0))
         for from_aoi in aoi_nodes:
             for to_aoi in aoi_nodes:
                 if from_aoi == to_aoi:
